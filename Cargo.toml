@@ -1,0 +1,31 @@
+[package]
+name = "random-word-api"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+rust-version = "1.75"
+publish = false
+
+authors = ["Andrea C"]
+repository = "http://github.com/andreacfromtheapp/random-word-api"
+homepage = "sps-api.netlify.app"
+description = "A simple random word API in axum to a) learn and b) use with a speak and spell web app"
+keywords = ["speak-and-spell"]
+
+[dependencies]
+axum = { version = "0.8.4", features = ["macros"] }
+chrono = { version = "0.4.41", features = ["serde"] }
+dotenvy = "0.15.7"
+http = "1.3.1"
+serde = { version = "1.0.219", features = ["derive"] }
+serde_json = "1.0.141"
+sqlx = { version = "0.8.6", features = [
+  "runtime-tokio-rustls",
+  "sqlite",
+  "chrono",
+  "macros",
+] }
+tokio = { version = "1.46.1", features = ["macros", "rt-multi-thread"] }
+tower-http = { version = "0.6.6", features = ["trace", "cors"] }
+tracing = "0.1.41"
+tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
