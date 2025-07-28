@@ -3,7 +3,7 @@ use http::Method;
 use tower_http::cors::CorsLayer;
 use tower_http::trace::TraceLayer;
 
-use crate::handlers::{ping, word_create, word_delete, word_list, word_read, word_update};
+use crate::handlers::*;
 
 pub async fn create_router(dbpool: sqlx::Pool<sqlx::Sqlite>) -> axum::Router {
     let origins = [
@@ -14,8 +14,9 @@ pub async fn create_router(dbpool: sqlx::Pool<sqlx::Sqlite>) -> axum::Router {
     Router::new()
         .route("/alive", get(|| async { "ok" }))
         .route("/ready", get(ping))
+        .route("/word", get(word_random))
         .nest(
-            "/v1",
+            "/admin",
             Router::new()
                 .route("/words", get(word_list))
                 .route("/words/new", post(word_create))

@@ -15,14 +15,21 @@ pub struct Word {
 }
 
 impl Word {
-    pub async fn list(dbpool: SqlitePool) -> Result<Vec<Word>, Error> {
+    pub async fn list(dbpool: SqlitePool) -> Result<Vec<Self>, Error> {
         query_as("select * from words")
             .fetch_all(&dbpool)
             .await
             .map_err(Into::into)
     }
 
-    pub async fn create(dbpool: SqlitePool, new_word: UpsertWord) -> Result<Word, Error> {
+    pub async fn random(dbpool: SqlitePool) -> Result<Self, Error> {
+        query_as("select * from words order by random() limit 1")
+            .fetch_one(&dbpool)
+            .await
+            .map_err(Into::into)
+    }
+
+    pub async fn create(dbpool: SqlitePool, new_word: UpsertWord) -> Result<Self, Error> {
         query_as("insert into words (word, definition, pronunciation) values (?, ?, ?) returning *")
             .bind(new_word.word())
             .bind(new_word.definition())
@@ -32,7 +39,7 @@ impl Word {
             .map_err(Into::into)
     }
 
-    pub async fn read(dbpool: SqlitePool, id: u32) -> Result<Word, Error> {
+    pub async fn read(dbpool: SqlitePool, id: u32) -> Result<Self, Error> {
         query_as("select * from words where id = ?")
             .bind(id)
             .fetch_one(&dbpool)
@@ -44,7 +51,7 @@ impl Word {
         dbpool: SqlitePool,
         id: u32,
         updated_word: UpsertWord,
-    ) -> Result<Word, Error> {
+    ) -> Result<Self, Error> {
         query_as(
             "update words set word = ?, definition = ?, pronunciation = ?  where id = ? returning *",
         )
