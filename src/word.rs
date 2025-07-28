@@ -16,14 +16,14 @@ pub struct Word {
 
 impl Word {
     pub async fn list(dbpool: SqlitePool) -> Result<Vec<Self>, Error> {
-        query_as("select * from words")
+        query_as("SELECT * FROM words")
             .fetch_all(&dbpool)
             .await
             .map_err(Into::into)
     }
 
     pub async fn random(dbpool: SqlitePool) -> Result<Self, Error> {
-        query_as("select * from words order by random() limit 1")
+        query_as("SELECT * FROM words ORDER BY random() LIMIT 1")
             .fetch_one(&dbpool)
             .await
             .map_err(Into::into)
@@ -31,7 +31,7 @@ impl Word {
 
     pub async fn create(dbpool: SqlitePool, new_word: UpsertWord) -> Result<Self, Error> {
         query_as(
-            "insert into words (word, definition, pronunciation) values ($1, $2, $3) returning *",
+            "INSERT INTO words (word, definition, pronunciation) VALUES ($1, $2, $3) RETURNING *",
         )
         .bind(new_word.word())
         .bind(new_word.definition())
@@ -42,7 +42,7 @@ impl Word {
     }
 
     pub async fn read(dbpool: SqlitePool, id: u32) -> Result<Self, Error> {
-        query_as("select * from words where id = $1")
+        query_as("SELECT * FROM words WHERE id = $1")
             .bind(id)
             .fetch_one(&dbpool)
             .await
@@ -55,7 +55,7 @@ impl Word {
         updated_word: UpsertWord,
     ) -> Result<Self, Error> {
         query_as(
-            "update words set word = $1, definition = $2, pronunciation = $3  where id = $4 returning *",
+            "UPDATE words SET word = $1, definition = $2, pronunciation = $3 WHERE id = $4 RETURNING *",
         )
         .bind(updated_word.word())
         .bind(updated_word.definition())
@@ -67,7 +67,7 @@ impl Word {
     }
 
     pub async fn delete(dbpool: SqlitePool, id: u32) -> Result<(), Error> {
-        query("delete from words where id = $1")
+        query("DELETE FROM words WHERE id = $1")
             .bind(id)
             .execute(&dbpool)
             .await?;
