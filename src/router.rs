@@ -11,13 +11,12 @@ pub async fn create_router(dbpool: sqlx::Pool<sqlx::Sqlite>) -> axum::Router {
         "http://127.0.0.1".parse().unwrap(),
     ];
 
-    Router::new()
-        .route("/alive", get(|| async { "ok" }))
-        .route("/ready", get(ping))
-        .route("/word", get(word_random))
+    let admin_routes = Router::new()
         .nest(
             "/admin",
             Router::new()
+                .route("/alive", get(|| async { "ok" }))
+                .route("/ready", get(ping))
                 .route("/words", get(word_list))
                 .route("/words/new", post(word_create))
                 .route(
@@ -25,11 +24,26 @@ pub async fn create_router(dbpool: sqlx::Pool<sqlx::Sqlite>) -> axum::Router {
                     get(word_read).put(word_update).delete(word_delete),
                 ),
         )
-        .with_state(dbpool)
+        .with_state(dbpool.clone())
         .layer(
             CorsLayer::new()
                 .allow_methods([Method::POST, Method::GET, Method::PUT, Method::DELETE])
-                .allow_origin(origins),
-        )
+                .allow_origin(origins.clone()),
+        );
+
+    let public_routes = Router::new()
+        .route("/alive", get(|| async { "ok" }))
+        .route("/ready", get(ping))
+        .route("/word", get(word_random))
+        .with_state(dbpool.clone())
+        .layer(
+            CorsLayer::new()
+                .allow_methods([Method::GET])
+                .allow_origin(origins.clone()),
+        );
+
+    Router::new()
+        .merge(admin_routes)
+        .merge(public_routes)
         .layer(TraceLayer::new_for_http())
 }
