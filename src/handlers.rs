@@ -19,6 +19,10 @@ pub async fn word_list(State(dbpool): State<SqlitePool>) -> Result<Json<Vec<Word
     Word::list(dbpool).await.map(Json::from)
 }
 
+pub async fn word_random(State(dbpool): State<SqlitePool>) -> Result<Json<Word>, Error> {
+    Word::random(dbpool).await.map(Json::from)
+}
+
 pub async fn word_create(
     State(dbpool): State<SqlitePool>,
     Json(new_word): Json<UpsertWord>,
