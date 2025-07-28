@@ -9,7 +9,7 @@ publish = false
 authors = ["Andrea C"]
 repository = "http://github.com/andreacfromtheapp/random-word-api"
 homepage = "sps-api.netlify.app"
-description = "A simple random word API in axum to a) learn and b) use with a speak and spell web app"
+description = "A simple API to use with my Speak and Spell toy project. To learn Axum and REST API development."
 keywords = ["speak-and-spell"]
 
 [dependencies]
