@@ -30,17 +30,19 @@ impl Word {
     }
 
     pub async fn create(dbpool: SqlitePool, new_word: UpsertWord) -> Result<Self, Error> {
-        query_as("insert into words (word, definition, pronunciation) values (?, ?, ?) returning *")
-            .bind(new_word.word())
-            .bind(new_word.definition())
-            .bind(new_word.pronunciation())
-            .fetch_one(&dbpool)
-            .await
-            .map_err(Into::into)
+        query_as(
+            "insert into words (word, definition, pronunciation) values ($1, $2, $3) returning *",
+        )
+        .bind(new_word.word())
+        .bind(new_word.definition())
+        .bind(new_word.pronunciation())
+        .fetch_one(&dbpool)
+        .await
+        .map_err(Into::into)
     }
 
     pub async fn read(dbpool: SqlitePool, id: u32) -> Result<Self, Error> {
-        query_as("select * from words where id = ?")
+        query_as("select * from words where id = $1")
             .bind(id)
             .fetch_one(&dbpool)
             .await
@@ -53,7 +55,7 @@ impl Word {
         updated_word: UpsertWord,
     ) -> Result<Self, Error> {
         query_as(
-            "update words set word = ?, definition = ?, pronunciation = ?  where id = ? returning *",
+            "update words set word = $1, definition = $2, pronunciation = $3  where id = $4 returning *",
         )
         .bind(updated_word.word())
         .bind(updated_word.definition())
@@ -65,7 +67,7 @@ impl Word {
     }
 
     pub async fn delete(dbpool: SqlitePool, id: u32) -> Result<(), Error> {
-        query("delete from words where id = ?")
+        query("delete from words where id = $1")
             .bind(id)
             .execute(&dbpool)
             .await?;
