@@ -15,6 +15,7 @@ pub enum Environment {
 
 /// Application configuration
 #[derive(Clone)]
+#[allow(dead_code)]
 pub struct AppConfiguration {
     pub version: &'static str,
     pub env: Environment,
