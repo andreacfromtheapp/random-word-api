@@ -9,12 +9,13 @@ publish = false
 authors = ["Andrea C"]
 repository = "http://github.com/andreacfromtheapp/random-word-api"
 homepage = "sps-api.netlify.app"
-description = "A simple API to use with my Speak and Spell toy project. To learn Axum and REST API development."
+description = "A simple API to use with my Speak and Spell toy project"
 keywords = ["speak-and-spell"]
 
 [dependencies]
 axum = { version = "0.8.4", features = ["macros"] }
 chrono = { version = "0.4.41", features = ["serde"] }
+clap = { version = "4.5.41", features = ["derive", "cargo", "env"] }
 dotenvy = "0.15.7"
 http = "1.3.1"
 serde = { version = "1.0.219", features = ["derive"] }
