@@ -1,5 +1,6 @@
 # TODO
 
+- [ ] Add sanity checks on endpoint data!
 - [x] Documentation:
   - [x] <https://doc.rust-lang.org/rustdoc/index.html>
   - [x] Improve read me
@@ -25,3 +26,4 @@
 - [ ] Add Open Telemetry
   - [ ] <https://crates.io/search?q=opentelemetry>
   - [ ] <https://crates.io/crates/axum-tracing-opentelemetry>
+- Add the possibility to use `.env` or configuration file to clap

@@ -2,6 +2,12 @@
 //! with Rust.
 //!
 //! Its main purpose it to be a simple API to use with my Speak and Spell toy project. WIP. Come back soon.
+//!
+//! Run with
+//!
+//! ```not_rust
+//! cargo run
+//! ```
 
 use clap::Parser;
 use router::create_router;
