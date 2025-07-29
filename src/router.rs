@@ -5,12 +5,14 @@ use tower_http::trace::TraceLayer;
 
 use crate::handlers::*;
 
+/// Top level router setup function
 pub async fn create_router(dbpool: sqlx::Pool<sqlx::Sqlite>) -> axum::Router {
     let origins = [
         "http://localhost".parse().unwrap(),
         "http://127.0.0.1".parse().unwrap(),
     ];
 
+    // Add admin routes under /admin
     let admin_routes = Router::new()
         .nest(
             "/admin",
@@ -31,6 +33,7 @@ pub async fn create_router(dbpool: sqlx::Pool<sqlx::Sqlite>) -> axum::Router {
                 .allow_origin(origins.clone()),
         );
 
+    // Add public routes under /
     let public_routes = Router::new()
         .route("/alive", get(|| async { "ok" }))
         .route("/ready", get(ping))
@@ -42,6 +45,7 @@ pub async fn create_router(dbpool: sqlx::Pool<sqlx::Sqlite>) -> axum::Router {
                 .allow_origin(origins.clone()),
         );
 
+    // Setup top-level router
     Router::new()
         .merge(admin_routes)
         .merge(public_routes)

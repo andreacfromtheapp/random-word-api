@@ -1,3 +1,4 @@
+// API handler for hero management
 use axum::extract::{Path, State};
 use axum::Json;
 use sqlx::SqlitePool;
@@ -5,6 +6,7 @@ use sqlx::SqlitePool;
 use crate::error::Error;
 use crate::word::{UpsertWord, Word};
 
+/// Test the database connection from /ready
 pub async fn ping(State(dbpool): State<SqlitePool>) -> Result<String, Error> {
     use sqlx::Connection;
 
@@ -15,14 +17,17 @@ pub async fn ping(State(dbpool): State<SqlitePool>) -> Result<String, Error> {
         .map_err(Into::into)
 }
 
+/// List all words (admin only)
 pub async fn word_list(State(dbpool): State<SqlitePool>) -> Result<Json<Vec<Word>>, Error> {
     Word::list(dbpool).await.map(Json::from)
 }
 
+/// Return a random word from /word
 pub async fn word_random(State(dbpool): State<SqlitePool>) -> Result<Json<Word>, Error> {
     Word::random(dbpool).await.map(Json::from)
 }
 
+/// Add a new word to the database (admin only)
 pub async fn word_create(
     State(dbpool): State<SqlitePool>,
     Json(new_word): Json<UpsertWord>,
@@ -30,6 +35,7 @@ pub async fn word_create(
     Word::create(dbpool, new_word).await.map(Json::from)
 }
 
+/// Get a single word by id (admin only)
 pub async fn word_read(
     State(dbpool): State<SqlitePool>,
     Path(id): Path<u32>,
@@ -37,6 +43,7 @@ pub async fn word_read(
     Word::read(dbpool, id).await.map(Json::from)
 }
 
+/// Update an existing word (admin only)
 pub async fn word_update(
     State(dbpool): State<SqlitePool>,
     Path(id): Path<u32>,
@@ -45,6 +52,7 @@ pub async fn word_update(
     Word::update(dbpool, id, updated_word).await.map(Json::from)
 }
 
+/// Delete a word from the database (admin only)
 pub async fn word_delete(
     State(dbpool): State<SqlitePool>,
     Path(id): Path<u32>,
