@@ -1,8 +1,8 @@
 # TODO
 
-- [ ] Documentation:
-  - [ ] <https://doc.rust-lang.org/rustdoc/index.html>
-  - [ ] Improve read me
+- [x] Documentation:
+  - [x] <https://doc.rust-lang.org/rustdoc/index.html>
+  - [x] Improve read me
 - [ ] Split logic and Axum
 - [x] Improve tracing:
   - [x] <https://crates.io/crates/tracing-subscriber>

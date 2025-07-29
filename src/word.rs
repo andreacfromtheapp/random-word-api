@@ -1,9 +1,26 @@
 use chrono::NaiveDateTime;
+use clap::ValueEnum;
 use serde::{Deserialize, Serialize};
 use sqlx::{query, query_as, SqlitePool};
 
 use crate::error::Error;
 
+/// Environments configurations
+#[derive(Clone, ValueEnum, Debug, Serialize, PartialEq, Eq)]
+pub enum Environment {
+    Development,
+    Test,
+    Production,
+}
+
+/// Application configuration
+#[derive(Clone)]
+pub struct AppConfiguration {
+    pub version: &'static str,
+    pub env: Environment,
+}
+
+/// Represents a word
 #[derive(Serialize, Clone, sqlx::FromRow)]
 pub struct Word {
     id: u32,
@@ -75,6 +92,7 @@ impl Word {
     }
 }
 
+/// Represents a word with create and update
 #[derive(Deserialize)]
 pub struct UpsertWord {
     word: String,

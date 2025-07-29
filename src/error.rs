@@ -1,8 +1,10 @@
+// Helpers for error handling
 use axum::{
     http::StatusCode,
     response::{IntoResponse, Response},
 };
 
+/// Represents an application-level error
 #[derive(Debug)]
 pub enum Error {
     Sqlx(StatusCode, String),
