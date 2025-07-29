@@ -7,7 +7,7 @@
 - [x] Improve tracing:
   - [x] <https://crates.io/crates/tracing-subscriber>
 - [ ] Improve errors:
-  - [ ] <https://docs.rs/sqlx/latest/sqlx/enum.Error.html>
+  - [x] <https://docs.rs/sqlx/latest/sqlx/enum.Error.html>
   - [ ] <https://docs.rs/http/latest/http/status/struct.StatusCode.html>
   - [ ] <https://crates.io/crates/anyhow>
   - [ ] <https://github.com/tokio-rs/axum/tree/main/examples/anyhow-error-response>
