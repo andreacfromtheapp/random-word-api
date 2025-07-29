@@ -1,25 +1,27 @@
 # TODO
 
-- Split logic and Axum
-- Improve types and lifetimes (use patterns?)
-- Improve tracing:
-  - <https://crates.io/crates/tracing-subscriber>
-  - <https://crates.io/search?q=opentelemetry>
-  - <https://crates.io/crates/axum-tracing-opentelemetry>
-- Improve errors:
-  - <https://docs.rs/sqlx/latest/sqlx/enum.Error.html>
-  - <https://docs.rs/http/latest/http/status/struct.StatusCode.html>
-  - <https://crates.io/crates/anyhow>
-  - <https://github.com/tokio-rs/axum/tree/main/examples/anyhow-error-response>
-- Testing
-- Documentation:
-  - <https://doc.rust-lang.org/rustdoc/index.html>
-  - improve read me
-- TLS:
-  - <https://github.com/rustls/rustls/>
-  - <https://github.com/rustls/rcgen>
-- Authentication
-- Open API:
-  - <https://github.com/juhaku/utoipa>
-  - <https://github.com/juhaku/utoipa/blob/master/utoipa-axum/README.md>
-  - <https://github.com/juhaku/utoipa/tree/master/examples/todo-axum>
+- [ ] Documentation:
+  - [ ] <https://doc.rust-lang.org/rustdoc/index.html>
+  - [ ] Improve read me
+- [ ] Split logic and Axum
+- [x] Improve tracing:
+  - [x] <https://crates.io/crates/tracing-subscriber>
+- [ ] Improve errors:
+  - [ ] <https://docs.rs/sqlx/latest/sqlx/enum.Error.html>
+  - [ ] <https://docs.rs/http/latest/http/status/struct.StatusCode.html>
+  - [ ] <https://crates.io/crates/anyhow>
+  - [ ] <https://github.com/tokio-rs/axum/tree/main/examples/anyhow-error-response>
+- [ ] Improve types and lifetimes (use patterns?)
+- [ ] Add Testing
+- [ ] Add health checks
+- [ ] TLS:
+  - [ ] <https://github.com/rustls/rustls/>
+  - [ ] <https://github.com/rustls/rcgen>
+- [ ] Authentication
+- [ ] Open API:
+  - [ ] <https://github.com/juhaku/utoipa>
+  - [ ] <https://github.com/juhaku/utoipa/blob/master/utoipa-axum/README.md>
+  - [ ] <https://github.com/juhaku/utoipa/tree/master/examples/todo-axum>
+- [ ] Add Open Telemetry
+  - [ ] <https://crates.io/search?q=opentelemetry>
+  - [ ] <https://crates.io/crates/axum-tracing-opentelemetry>
