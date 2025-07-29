@@ -1,0 +1,58 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-added-large-files
+      - id: check-case-conflict
+      - id: check-merge-conflict
+        args: [--assume-in-merge]
+      - id: check-symlinks
+      - id: check-yaml
+      - id: check-toml
+      - id: check-json
+      - id: pretty-format-json
+        args: [--autofix, --no-sort-keys]
+
+  - repo: https://github.com/DavidAnson/markdownlint-cli2
+    rev: v0.18.1
+    hooks:
+      - id: markdownlint-cli2
+        args: ["--config", ".markdownlint-cli2.yaml"]
+
+  - repo: https://github.com/opensource-nepal/commitlint
+    rev: v1.3.0
+    hooks:
+      - id: commitlint
+
+  - repo: https://github.com/AndrejOrsula/pre-commit-cargo
+    rev: 0.4.0
+    hooks:
+      - id: cargo-fmt
+      - id: cargo-update
+      - id: cargo-clippy
+        args: ["--all-targets", "--all-features"]
+      - id: cargo-check
+        args: ["--all-targets", "--all-features"]
+      - id: cargo-test
+        args: ["--all-targets", "--all-features"]
+      # - id: cargo-test-doc
+      #   args: ["--all-features"]
+      - id: cargo-doc
+        args:
+          [
+            "--no-deps",
+            "--document-private-items",
+            "--all-features",
+            "--workspace",
+            "--examples",
+          ]
+      # - id: cargo-deny-check
+
+  - repo: local
+    hooks:
+      - id: trufflehog
+        name: TruffleHog
+        description: Detect secrets in your data.
+        entry: bash -c 'trufflehog git file://. --since-commit HEAD --results=verified,unknown --no-update'
+        language: system
+        stages: ["pre-commit", "pre-push"]
