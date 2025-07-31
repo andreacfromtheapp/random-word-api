@@ -18,10 +18,10 @@
 - [x] Improve tracing:
   - [x] <https://crates.io/crates/tracing-subscriber>
 - [x] Errors:
-  - [x] Improve errors (deprecated in favor of anyhow and thiserror):
+  - [x] Improve errors (deprecated in favor of anyhow and `thiserror`):
     - [x] <https://docs.rs/sqlx/latest/sqlx/enum.Error.html>
     - [x] <https://docs.rs/http/latest/http/status/struct.StatusCode.html>
-  - [x] Use Anyhow:
+  - [x] Use `anyhow`:
     - [x] <https://crates.io/crates/anyhow>
     - [x] <https://github.com/tokio-rs/axum/tree/main/examples/anyhow-error-response>
   - [x] Use this-error:

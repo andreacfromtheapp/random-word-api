@@ -130,17 +130,17 @@ async fn main() -> Result<(), anyhow::Error> {
         let env_file_path = cli.cfg.env_file.clone().unwrap();
         let _wrong_env = std::fs::read(env_file_path.clone()).with_context(|| {
             format!(
-                "Failed to read environment from {:?}",
+                "failed to read environment from {:?}",
                 env_file_path.into_os_string().into_string().unwrap()
             )
         })?;
-        bail!("something went reallyt wrong... this was not supposed to happen!");
+        bail!("something went really wrong... this was not supposed to happen!");
     };
 
     // Setup DB connection pool
     let dbpool = init_dbpool(&database_url)
         .await
-        .context("couldn't initialize DB pool")?;
+        .context("couldn't initialize the database pool")?;
 
     // Enable tracing using Tokio's https://tokio.rs/#tk-lib-tracing
     init_tracing();
