@@ -1,10 +1,16 @@
 # TODO
 
-- [ ] Add sanity checks on endpoint data!
+- [x] Add the possibility to use `.env` file
+- [x] Add the possibility to use configuration file
+- [x] Add configuration default file generation
+- [x] Improve default config creation
+  - [ ] Improve with `XDG_FILES` and all that malarkey
+- ~~[ ] Add sanity checks on endpoint data~~ This may not work as
+  `Json<UpsertWord>` makes all given `fields a`String`
 - [x] Documentation:
   - [x] <https://doc.rust-lang.org/rustdoc/index.html>
-  - [x] Improve read me
-- [ ] Split logic and Axum
+  - [ ] Improve read me
+- [ ] Split logic and Axum?
 - [x] Improve tracing:
   - [x] <https://crates.io/crates/tracing-subscriber>
 - [ ] Improve errors:
@@ -12,7 +18,7 @@
   - [ ] <https://docs.rs/http/latest/http/status/struct.StatusCode.html>
   - [ ] <https://crates.io/crates/anyhow>
   - [ ] <https://github.com/tokio-rs/axum/tree/main/examples/anyhow-error-response>
-- [ ] Improve types and lifetimes (use patterns?)
+- [ ] Improve idiomatic code and use patterns
 - [ ] Add Testing
 - [ ] Add health checks
 - [ ] TLS:
@@ -26,4 +32,3 @@
 - [ ] Add Open Telemetry
   - [ ] <https://crates.io/search?q=opentelemetry>
   - [ ] <https://crates.io/crates/axum-tracing-opentelemetry>
-- Add the possibility to use `.env` or configuration file to clap

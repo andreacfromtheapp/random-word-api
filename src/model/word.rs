@@ -1,25 +1,9 @@
 use chrono::NaiveDateTime;
-use clap::ValueEnum;
 use serde::{Deserialize, Serialize};
 use sqlx::{query, query_as, SqlitePool};
+// use std::any::{Any, TypeId};
 
 use crate::error::Error;
-
-/// Environments configurations
-#[derive(Clone, ValueEnum, Debug, Serialize, PartialEq, Eq)]
-pub enum Environment {
-    Development,
-    Test,
-    Production,
-}
-
-/// Application configuration
-#[derive(Clone)]
-#[allow(dead_code)]
-pub struct AppConfiguration {
-    pub version: &'static str,
-    pub env: Environment,
-}
 
 /// Represents a word
 #[derive(Serialize, Clone, sqlx::FromRow)]
@@ -33,6 +17,21 @@ pub struct Word {
 }
 
 impl Word {
+    // fn check_input(check_word: &UpsertWord) -> Result<bool, Error> {
+    //     fn is_string(s: &dyn Any) -> bool {
+    //         TypeId::of::<String>() == s.type_id()
+    //     }
+
+    //     let check = is_string(&check_word.word)
+    //         && is_string(&check_word.definition)
+    //         && is_string(&check_word.pronunciation);
+
+    //     match check {
+    //         false => Err(Error::BadArgument),
+    //         true => Ok(true),
+    //     }
+    // }
+
     pub async fn list(dbpool: SqlitePool) -> Result<Vec<Self>, Error> {
         query_as("SELECT * FROM words")
             .fetch_all(&dbpool)
@@ -48,6 +47,8 @@ impl Word {
     }
 
     pub async fn create(dbpool: SqlitePool, new_word: UpsertWord) -> Result<Self, Error> {
+        // Self::check_input(&new_word)?;
+
         query_as(
             "INSERT INTO words (word, definition, pronunciation) VALUES ($1, $2, $3) RETURNING *",
         )
@@ -72,6 +73,8 @@ impl Word {
         id: u32,
         updated_word: UpsertWord,
     ) -> Result<Self, Error> {
+        // Self::check_input(&updated_word)?;
+
         query_as(
             "UPDATE words SET word = $1, definition = $2, pronunciation = $3 WHERE id = $4 RETURNING *",
         )
