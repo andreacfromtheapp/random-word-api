@@ -3,7 +3,7 @@ use http::Method;
 use tower_http::cors::CorsLayer;
 use tower_http::trace::TraceLayer;
 
-use crate::handlers::*;
+use crate::handlers::{general::ping, word::*};
 
 /// Top level router setup function
 pub async fn create_router(dbpool: sqlx::Pool<sqlx::Sqlite>) -> axum::Router {
