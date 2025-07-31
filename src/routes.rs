@@ -1,3 +1,4 @@
+// All routers configuration
 use axum::{routing::get, routing::post, Router};
 use http::Method;
 use tower_http::cors::CorsLayer;

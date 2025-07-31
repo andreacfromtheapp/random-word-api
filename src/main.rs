@@ -1,15 +1,21 @@
-//! This is my first Rust API with Axum. The proverbial itch to learn API design and development
-//! with Rust.
-//!
+//! This is my first Rust API with Axum. The proverbial itch to learn API design and development with Rust.
 //! Its main purpose it to be a simple API to use with my Speak and Spell toy project. WIP. Come back soon.
 //!
-//! Example run with custom port and SQLite db.file
+//! Example run with custom port and SQLite db.file:
 //!
 //! ```not_rust
-//! cargo run -p 5555 -d random-words.db
+//! random-word-api -p 3000 -d random-words.db
 //! ```
+//!
+//! Random Word API comes with a comprehensive help menu:
+//!
+//! ```non_rust
+//! random-word-api -h
+//! ```
+//!
 
-use crate::error::Error;
+use crate::error::AppError;
+use anyhow::{bail, Context, Result};
 use cli::Cli;
 use std::{net::IpAddr, path::PathBuf};
 
@@ -46,7 +52,7 @@ fn init_tracing() {
 }
 
 /// Helper to create the default config.toml if non-existent
-fn create_config_toml(file: &PathBuf) -> Result<(), Error> {
+fn create_config_toml(file: &PathBuf) -> Result<(), AppError> {
     use model::config_file::ConfigurationFile;
     use std::fs::File;
     use std::io::prelude::*;
@@ -60,7 +66,7 @@ fn create_config_toml(file: &PathBuf) -> Result<(), Error> {
 }
 
 /// Parse Cli arguments or ENV variables to construct needed address, port, and database-url
-fn init_arguments(cli: &Cli) -> Result<(IpAddr, u16, String), Error> {
+fn init_arguments(cli: &Cli) -> Result<(IpAddr, u16, String), AppError> {
     use model::config_file::ConfigurationFile;
     use std::fs::{self};
     use std::path::Path;
@@ -79,6 +85,8 @@ fn init_arguments(cli: &Cli) -> Result<(IpAddr, u16, String), Error> {
         database_url = dotenvy::var("DATABASE_URL")?.to_owned();
     // if --config was used, get all values from config.toml
     } else if cli.cfg.config.is_some() {
+        // FIXME TODO change this to default config_dir/config.toml?
+        // unless this is pointless....
         let config_file = &cli.cfg.config.clone().unwrap();
 
         // Create config.toml with default values, if non-existent
@@ -110,7 +118,7 @@ fn init_arguments(cli: &Cli) -> Result<(IpAddr, u16, String), Error> {
 
 /// Tokio Main. What else?!
 #[tokio::main]
-async fn main() {
+async fn main() -> Result<(), anyhow::Error> {
     use crate::state::init_dbpool;
     use clap::Parser;
     use routes::create_router;
@@ -119,13 +127,20 @@ async fn main() {
     let cli = cli::Cli::parse();
     // Either CLI or (with precedence order): ENV_FILE, CONFIG
     let Ok((address, port, database_url)) = init_arguments(&cli) else {
-        panic!("couldn't parse command line arguments");
+        let env_file_path = cli.cfg.env_file.clone().unwrap();
+        let _wrong_env = std::fs::read(env_file_path.clone()).with_context(|| {
+            format!(
+                "Failed to read environment from {:?}",
+                env_file_path.into_os_string().into_string().unwrap()
+            )
+        })?;
+        bail!("something went reallyt wrong... this was not supposed to happen!");
     };
 
     // Setup DB connection pool
     let dbpool = init_dbpool(&database_url)
         .await
-        .expect("couldn't initialize DB pool");
+        .context("couldn't initialize DB pool")?;
 
     // Enable tracing using Tokio's https://tokio.rs/#tk-lib-tracing
     init_tracing();
@@ -136,8 +151,12 @@ async fn main() {
     // Instantiate a listener on the socket address and port
     let listener = tokio::net::TcpListener::bind((address, port))
         .await
-        .expect("couldn't bind to address");
+        .context("couldn't bind to address")?;
 
     // Serve the word API
-    axum::serve(listener, router).await.expect("server failed");
+    axum::serve(listener, router)
+        .await
+        .context("couldn't start the Axum server")?;
+
+    Ok(())
 }

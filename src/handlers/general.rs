@@ -1,11 +1,11 @@
-// API handler for general routes
+// API handlers for general routes
 use axum::extract::State;
 use sqlx::SqlitePool;
 
-use crate::error::Error;
+use crate::error::AppError;
 
 /// Test the database connection from /ready
-pub async fn ping(State(dbpool): State<SqlitePool>) -> Result<String, Error> {
+pub async fn ping(State(dbpool): State<SqlitePool>) -> Result<String, AppError> {
     use sqlx::Connection;
 
     let mut conn = dbpool.acquire().await?;

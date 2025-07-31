@@ -1,9 +1,10 @@
+// Model for Word and its methods to use with handlers
 use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 use sqlx::{query, query_as, SqlitePool};
 // use std::any::{Any, TypeId};
 
-use crate::error::Error;
+use crate::error::AppError;
 
 /// Represents a word
 #[derive(Serialize, Clone, sqlx::FromRow)]
@@ -17,7 +18,7 @@ pub struct Word {
 }
 
 impl Word {
-    // fn check_input(check_word: &UpsertWord) -> Result<bool, Error> {
+    // fn check_input(check_word: &UpsertWord) -> Result<bool, AppError> {
     //     fn is_string(s: &dyn Any) -> bool {
     //         TypeId::of::<String>() == s.type_id()
     //     }
@@ -27,26 +28,26 @@ impl Word {
     //         && is_string(&check_word.pronunciation);
 
     //     match check {
-    //         false => Err(Error::BadArgument),
+    //         false => Err(AppError::BadArgument),
     //         true => Ok(true),
     //     }
     // }
 
-    pub async fn list(dbpool: SqlitePool) -> Result<Vec<Self>, Error> {
+    pub async fn list(dbpool: SqlitePool) -> Result<Vec<Self>, AppError> {
         query_as("SELECT * FROM words")
             .fetch_all(&dbpool)
             .await
             .map_err(Into::into)
     }
 
-    pub async fn random(dbpool: SqlitePool) -> Result<Self, Error> {
+    pub async fn random(dbpool: SqlitePool) -> Result<Self, AppError> {
         query_as("SELECT * FROM words ORDER BY random() LIMIT 1")
             .fetch_one(&dbpool)
             .await
             .map_err(Into::into)
     }
 
-    pub async fn create(dbpool: SqlitePool, new_word: UpsertWord) -> Result<Self, Error> {
+    pub async fn create(dbpool: SqlitePool, new_word: UpsertWord) -> Result<Self, AppError> {
         // Self::check_input(&new_word)?;
 
         query_as(
@@ -60,7 +61,7 @@ impl Word {
         .map_err(Into::into)
     }
 
-    pub async fn read(dbpool: SqlitePool, id: u32) -> Result<Self, Error> {
+    pub async fn read(dbpool: SqlitePool, id: u32) -> Result<Self, AppError> {
         query_as("SELECT * FROM words WHERE id = $1")
             .bind(id)
             .fetch_one(&dbpool)
@@ -72,7 +73,7 @@ impl Word {
         dbpool: SqlitePool,
         id: u32,
         updated_word: UpsertWord,
-    ) -> Result<Self, Error> {
+    ) -> Result<Self, AppError> {
         // Self::check_input(&updated_word)?;
 
         query_as(
@@ -87,7 +88,7 @@ impl Word {
         .map_err(Into::into)
     }
 
-    pub async fn delete(dbpool: SqlitePool, id: u32) -> Result<(), Error> {
+    pub async fn delete(dbpool: SqlitePool, id: u32) -> Result<(), AppError> {
         query("DELETE FROM words WHERE id = $1")
             .bind(id)
             .execute(&dbpool)

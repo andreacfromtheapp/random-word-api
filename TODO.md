@@ -1,23 +1,31 @@
 # TODO
 
-- [x] Add the possibility to use `.env` file
-- [x] Add the possibility to use configuration file
-- [x] Add configuration default file generation
-- [x] Improve default config creation
-  - [ ] Improve with `XDG_FILES` and all that malarkey
-- ~~[ ] Add sanity checks on endpoint data~~ This may not work as
-  `Json<UpsertWord>` makes all given `fields a`String`
+- [x] Environment file
+  - [x] Add the possibility to use `.env` file
+  - [x] Check for validity of `.env` file
+- [ ] Configuration file:
+  - [x] Add the possibility to use configuration file
+  - [x] Add configuration default file generation
+  - [ ] Improve default config creation
+  - [ ] Improve with using standard paths for all OSes
+  - [ ] Possibly add more to the config struct and file
+- ~~[ ] Add sanity checks on endpoint data~~ _this may not work as
+  `Json<UpsertWord>` makes all given `fields a`String`_
 - [x] Documentation:
   - [x] <https://doc.rust-lang.org/rustdoc/index.html>
   - [ ] Improve read me
-- [ ] Split logic and Axum?
+- ~~[ ] Split logic and Axum?~~ _may not need this after all_
 - [x] Improve tracing:
   - [x] <https://crates.io/crates/tracing-subscriber>
-- [ ] Improve errors:
-  - [x] <https://docs.rs/sqlx/latest/sqlx/enum.Error.html>
-  - [ ] <https://docs.rs/http/latest/http/status/struct.StatusCode.html>
-  - [ ] <https://crates.io/crates/anyhow>
-  - [ ] <https://github.com/tokio-rs/axum/tree/main/examples/anyhow-error-response>
+- [x] Errors:
+  - [x] Improve errors (deprecated in favor of anyhow and thiserror):
+    - [x] <https://docs.rs/sqlx/latest/sqlx/enum.Error.html>
+    - [x] <https://docs.rs/http/latest/http/status/struct.StatusCode.html>
+  - [x] Use Anyhow:
+    - [x] <https://crates.io/crates/anyhow>
+    - [x] <https://github.com/tokio-rs/axum/tree/main/examples/anyhow-error-response>
+  - [x] Use this-error:
+    - [x] <https://docs.rs/thiserror/latest/thiserror/>
 - [ ] Improve idiomatic code and use patterns
 - [ ] Add Testing
 - [ ] Add health checks

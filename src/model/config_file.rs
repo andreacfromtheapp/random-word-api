@@ -1,7 +1,8 @@
+// Application configuration
 use serde::{Deserialize, Serialize};
 use std::{net::IpAddr, str::FromStr};
 
-/// Application configuration
+/// Configuration struct defining the resulting config.toml
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ConfigurationFile {
     pub port: u16,

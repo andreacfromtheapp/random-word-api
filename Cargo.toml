@@ -13,6 +13,7 @@ description = "A simple API to use with my Speak and Spell toy project"
 keywords = ["speak-and-spell"]
 
 [dependencies]
+anyhow = "1.0.98"
 axum = { version = "0.8.4", features = ["macros"] }
 chrono = { version = "0.4.41", features = ["serde"] }
 clap = { version = "4.5.41", features = ["derive", "cargo", "env"] }
@@ -26,6 +27,7 @@ sqlx = { version = "0.8.6", features = [
   "chrono",
   "macros",
 ] }
+thiserror = "2.0.12"
 tokio = { version = "1.46.1", features = ["macros", "rt-multi-thread"] }
 toml = "0.9.4"
 tower-http = { version = "0.6.6", features = ["trace", "cors"] }
