@@ -1,18 +1,18 @@
-// API handler for word management
+// API handlers for word management
 use axum::extract::{Path, State};
 use axum::Json;
 use sqlx::SqlitePool;
 
-use crate::error::Error;
+use crate::error::AppError;
 use crate::model::word::{UpsertWord, Word};
 
 /// List all words (admin only)
-pub async fn word_list(State(dbpool): State<SqlitePool>) -> Result<Json<Vec<Word>>, Error> {
+pub async fn word_list(State(dbpool): State<SqlitePool>) -> Result<Json<Vec<Word>>, AppError> {
     Word::list(dbpool).await.map(Json::from)
 }
 
 /// Return a random word from /word
-pub async fn word_random(State(dbpool): State<SqlitePool>) -> Result<Json<Word>, Error> {
+pub async fn word_random(State(dbpool): State<SqlitePool>) -> Result<Json<Word>, AppError> {
     Word::random(dbpool).await.map(Json::from)
 }
 
@@ -20,7 +20,7 @@ pub async fn word_random(State(dbpool): State<SqlitePool>) -> Result<Json<Word>,
 pub async fn word_create(
     State(dbpool): State<SqlitePool>,
     Json(new_word): Json<UpsertWord>,
-) -> Result<Json<Word>, Error> {
+) -> Result<Json<Word>, AppError> {
     Word::create(dbpool, new_word).await.map(Json::from)
 }
 
@@ -28,7 +28,7 @@ pub async fn word_create(
 pub async fn word_read(
     State(dbpool): State<SqlitePool>,
     Path(id): Path<u32>,
-) -> Result<Json<Word>, Error> {
+) -> Result<Json<Word>, AppError> {
     Word::read(dbpool, id).await.map(Json::from)
 }
 
@@ -37,7 +37,7 @@ pub async fn word_update(
     State(dbpool): State<SqlitePool>,
     Path(id): Path<u32>,
     Json(updated_word): Json<UpsertWord>,
-) -> Result<Json<Word>, Error> {
+) -> Result<Json<Word>, AppError> {
     Word::update(dbpool, id, updated_word).await.map(Json::from)
 }
 
@@ -45,6 +45,6 @@ pub async fn word_update(
 pub async fn word_delete(
     State(dbpool): State<SqlitePool>,
     Path(id): Path<u32>,
-) -> Result<(), Error> {
+) -> Result<(), AppError> {
     Word::delete(dbpool, id).await
 }

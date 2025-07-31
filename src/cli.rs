@@ -1,3 +1,4 @@
+// Command line interface of the API
 use clap::{Args, Parser};
 use std::net::IpAddr;
 use std::ops::RangeInclusive;
