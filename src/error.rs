@@ -1,4 +1,4 @@
-// Helpers for error handling
+// Error handling helpers
 use axum::{
     http::StatusCode,
     response::{IntoResponse, Response},
@@ -19,8 +19,7 @@ impl IntoResponse for AppError {
     }
 }
 
-// This enables using `?` on functions that return `Result<_, anyhow::Error>` to turn them into
-// `Result<_, AppError>`. That way you don't need to do that manually.
+/// Enable using `?` on functions that return `Result<_, anyhow::Error>` to turn them into `Result<_, AppError>`
 impl<E> From<E> for AppError
 where
     E: Into<anyhow::Error>,
@@ -30,9 +29,9 @@ where
     }
 }
 
-/// Custom thiserror errors to pass onto Anyhow
+/// Custom `thiserror` errors to pass onto `Anyhow`
 #[derive(thiserror::Error, Debug)]
-pub enum DatabaseError {
+pub enum SqlxError {
     #[error("database error: {0}")]
     Db(#[from] sqlx::Error),
     #[error("database error: {0}")]

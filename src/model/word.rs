@@ -33,13 +33,7 @@ impl Word {
     //     }
     // }
 
-    pub async fn list(dbpool: SqlitePool) -> Result<Vec<Self>, AppError> {
-        query_as("SELECT * FROM words")
-            .fetch_all(&dbpool)
-            .await
-            .map_err(Into::into)
-    }
-
+    /// Return a random word from /word
     pub async fn random(dbpool: SqlitePool) -> Result<Self, AppError> {
         query_as("SELECT * FROM words ORDER BY random() LIMIT 1")
             .fetch_one(&dbpool)
@@ -47,6 +41,15 @@ impl Word {
             .map_err(Into::into)
     }
 
+    /// List all words (admin only)
+    pub async fn list(dbpool: SqlitePool) -> Result<Vec<Self>, AppError> {
+        query_as("SELECT * FROM words")
+            .fetch_all(&dbpool)
+            .await
+            .map_err(Into::into)
+    }
+
+    /// Add a new word to the database (admin only)
     pub async fn create(dbpool: SqlitePool, new_word: UpsertWord) -> Result<Self, AppError> {
         // Self::check_input(&new_word)?;
 
@@ -61,6 +64,7 @@ impl Word {
         .map_err(Into::into)
     }
 
+    /// Get a single word by id (admin only)
     pub async fn read(dbpool: SqlitePool, id: u32) -> Result<Self, AppError> {
         query_as("SELECT * FROM words WHERE id = $1")
             .bind(id)
@@ -69,6 +73,7 @@ impl Word {
             .map_err(Into::into)
     }
 
+    /// Update an existing word (admin only)
     pub async fn update(
         dbpool: SqlitePool,
         id: u32,
@@ -88,6 +93,7 @@ impl Word {
         .map_err(Into::into)
     }
 
+    /// Delete a word from the database (admin only)
     pub async fn delete(dbpool: SqlitePool, id: u32) -> Result<(), AppError> {
         query("DELETE FROM words WHERE id = $1")
             .bind(id)
@@ -105,6 +111,7 @@ pub struct UpsertWord {
     pronunciation: String,
 }
 
+/// Accessors (getters) helpers
 impl UpsertWord {
     pub fn word(&self) -> &str {
         self.word.as_ref()

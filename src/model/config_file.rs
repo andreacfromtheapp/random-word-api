@@ -2,7 +2,7 @@
 use serde::{Deserialize, Serialize};
 use std::{net::IpAddr, str::FromStr};
 
-/// Configuration struct defining the resulting config.toml
+/// Define config.toml
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ConfigurationFile {
     pub port: u16,
@@ -10,6 +10,7 @@ pub struct ConfigurationFile {
     pub database_url: String,
 }
 
+/// Default trait implementation
 impl ConfigurationFile {
     pub fn default() -> Self {
         ConfigurationFile {

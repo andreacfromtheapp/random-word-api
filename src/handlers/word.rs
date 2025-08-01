@@ -6,14 +6,14 @@ use sqlx::SqlitePool;
 use crate::error::AppError;
 use crate::model::word::{UpsertWord, Word};
 
-/// List all words (admin only)
-pub async fn word_list(State(dbpool): State<SqlitePool>) -> Result<Json<Vec<Word>>, AppError> {
-    Word::list(dbpool).await.map(Json::from)
-}
-
 /// Return a random word from /word
 pub async fn word_random(State(dbpool): State<SqlitePool>) -> Result<Json<Word>, AppError> {
     Word::random(dbpool).await.map(Json::from)
+}
+
+/// List all words (admin only)
+pub async fn word_list(State(dbpool): State<SqlitePool>) -> Result<Json<Vec<Word>>, AppError> {
+    Word::list(dbpool).await.map(Json::from)
 }
 
 /// Add a new word to the database (admin only)
