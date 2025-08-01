@@ -16,6 +16,9 @@
 //! ```
 //!
 
+/// Define default tracing log levels and/or to use when RUST_LOG is unset
+const TRACING_LOG_LEVELS: &str = "sqlx=info,tower_http=debug,info";
+
 use crate::error::AppError;
 use anyhow::{bail, Context, Result};
 use cli::Cli;
@@ -36,12 +39,12 @@ mod routes;
 /// Database pool
 mod state;
 
-/// Configure tracing and logging
+/// Configure tracing and logging (accepts `RUST_LOG` environment variable or uses default const above)
 fn init_tracing() {
     use tracing_subscriber::{filter::LevelFilter, fmt, prelude::*, EnvFilter};
 
-    let rust_log = std::env::var(EnvFilter::DEFAULT_ENV)
-        .unwrap_or_else(|_| "sqlx=info,tower_http=debug,info".to_string());
+    let rust_log =
+        std::env::var(EnvFilter::DEFAULT_ENV).unwrap_or_else(|_| TRACING_LOG_LEVELS.to_string());
 
     tracing_subscriber::registry()
         .with(fmt::layer())
@@ -72,6 +75,7 @@ fn create_default_config_toml(file: &PathBuf) -> Result<(), AppError> {
 }
 
 /// Parse Cli arguments to construct `address`, `port`, and `database-url`
+/// Accepts `BIND_ADDR`, `BIND_PORT`, and `DATABASE_URL` from an `.env` file.
 fn init_arguments(cli: &Cli) -> Result<(IpAddr, u16, String), AppError> {
     use model::config_file::ConfigurationFile;
     use std::fs::{self};
