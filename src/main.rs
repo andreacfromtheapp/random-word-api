@@ -1,12 +1,6 @@
 //! This is my first Rust API with Axum. The proverbial itch to learn API design and development with Rust.
 //! Its main purpose it to be a simple API to use with my Speak and Spell toy project. WIP. Come back soon.
 //!
-//! Example run with custom port and SQLite db.file:
-//!
-//! ```not_rust
-//! random-word-api -p 3000 -d random-words.db
-//! ```
-//!
 //! Random Word API comes with a comprehensive help menu:
 //!
 //! ```non_rust
@@ -54,18 +48,24 @@ fn init_tracing() {
 /// Helper to create the default config.toml if non-existent
 fn create_config_toml(file: &PathBuf) -> Result<(), AppError> {
     use model::config_file::ConfigurationFile;
-    use std::fs::File;
+    use std::fs::{self, File};
     use std::io::prelude::*;
 
+    // set default config values
     let default_configs = ConfigurationFile::default();
+    // create the default dir
+    fs::create_dir("$HOME/.config/random-api")?;
+    // create the default file
     let mut buffer = File::create(file)?;
+    // read the default values
     let toml = toml::to_string(&default_configs)?;
+    // write all lines from the above steps into config.toml
     buffer.write_all(toml.as_bytes())?;
 
     Ok(())
 }
 
-/// Parse Cli arguments or ENV variables to construct needed address, port, and database-url
+/// Parse Cli arguments to construct `address`, `port`, and `database-url`
 fn init_arguments(cli: &Cli) -> Result<(IpAddr, u16, String), AppError> {
     use model::config_file::ConfigurationFile;
     use std::fs::{self};
@@ -76,37 +76,37 @@ fn init_arguments(cli: &Cli) -> Result<(IpAddr, u16, String), AppError> {
     let port;
     let database_url;
 
-    // if --env-file was used, get all values from the `.env` file
+    // if --env-file was used
     if let Some(file) = &cli.cfg.env_file {
         // get all environment variable from the environment file
         dotenvy::from_filename_override(file)?;
+
         address = IpAddr::from_str(&dotenvy::var("BIND_ADDR")?)?;
         port = u16::from_str(&dotenvy::var("BIND_PORT")?)?;
         database_url = dotenvy::var("DATABASE_URL")?.to_owned();
-    // if --config was used, get all values from config.toml
+    // if --config was used
     } else if cli.cfg.config.is_some() {
-        // FIXME TODO change this to default config_dir/config.toml?
-        // unless this is pointless....
+        // FIXME use https://crates.io/crates/directories -- unless this is pointless...
         let config_file = &cli.cfg.config.clone().unwrap();
 
-        // Create config.toml with default values, if non-existent
+        // create config.toml with default values, if non-existent
         if !Path::new(&config_file).exists() {
             create_config_toml(config_file)?;
         };
 
-        // need to read the TOML file before we can do anything with it
+        // read the TOML file line by line in a Vec<String>
         let file = fs::read(config_file)?
             .iter()
             .map(|c| *c as char)
             .collect::<String>();
 
-        // parsing the configuration file
+        // parsing the configuration Vec<String> into model
         let my_configs: ConfigurationFile = toml::from_str(&file)?;
 
         address = my_configs.address;
         port = my_configs.port;
         database_url = my_configs.database_url.clone();
-    // otherwise, if positional parameters where used, set those
+    // if positional parameters where used
     } else {
         address = cli.args.address;
         port = cli.args.port;
@@ -125,25 +125,28 @@ async fn main() -> Result<(), anyhow::Error> {
 
     // Parse command-line args
     let cli = cli::Cli::parse();
-    // Either CLI or (with precedence order): ENV_FILE, CONFIG
+    // Either ENV_FILE, CONFIG, or CLI (with precedence order)
     let Ok((address, port, database_url)) = init_arguments(&cli) else {
+        // if the environment file doesn't exist
         let env_file_path = cli.cfg.env_file.clone().unwrap();
+        // inform the user and exit gracefully
         let _wrong_env = std::fs::read(env_file_path.clone()).with_context(|| {
             format!(
-                "failed to read environment from {:?}",
+                "couldn't read environment file {:?}",
                 env_file_path.into_os_string().into_string().unwrap()
             )
         })?;
+        // this should never be reached. here because let Ok() else requires !
         bail!("something went really wrong... this was not supposed to happen!");
     };
+
+    // Enable tracing using https://tokio.rs/#tk-lib-tracing
+    init_tracing();
 
     // Setup DB connection pool
     let dbpool = init_dbpool(&database_url)
         .await
         .context("couldn't initialize the database pool")?;
-
-    // Enable tracing using Tokio's https://tokio.rs/#tk-lib-tracing
-    init_tracing();
 
     // Setup top-level router
     let router = create_router(dbpool).await;
@@ -153,10 +156,10 @@ async fn main() -> Result<(), anyhow::Error> {
         .await
         .context("couldn't bind to address")?;
 
-    // Serve the word API
+    // Serve the API
     axum::serve(listener, router)
         .await
-        .context("couldn't start the Axum server")?;
+        .context("couldn't start the server")?;
 
     Ok(())
 }

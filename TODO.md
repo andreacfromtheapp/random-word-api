@@ -13,6 +13,7 @@
   `Json<UpsertWord>` makes all given `fields a`String`_
 - [x] Documentation:
   - [x] <https://doc.rust-lang.org/rustdoc/index.html>
+  - [x] Improve docs
   - [ ] Improve read me
 - ~~[ ] Split logic and Axum?~~ _may not need this after all_
 - [x] Improve tracing:
