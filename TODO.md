@@ -19,7 +19,7 @@
 - [x] Documentation:
   - [x] <https://doc.rust-lang.org/rustdoc/index.html>
   - [x] Improve `rustdoc` documentation
-  - [ ] Improve `README.md`
+  - [x] Improve `README.md`
 - [x] Improve tracing:
   - [x] <https://crates.io/crates/tracing-subscriber>
 - [x] Errors:
@@ -52,3 +52,4 @@
 - [ ] Add Open Telemetry
   - [ ] <https://crates.io/search?q=opentelemetry>
   - [ ] <https://crates.io/crates/axum-tracing-opentelemetry>
+- [ ] Finalize `README.md` with useful info about it all + usage
