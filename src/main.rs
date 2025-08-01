@@ -1,11 +1,12 @@
 //! This is my first Rust API with Axum. The proverbial itch to learn API design and development with Rust.
 //! Its main purpose it to be a simple API to use with my Speak and Spell toy project. WIP. Come back soon.
 //!
-//! Accepted inputs are either config/env files or single arguments for address, port, and database_url.
+//! ## Running the API
 //!
-//! Notes:
+//! Accepted cli arguments are either config/env files or single arguments for address, port, and database_url. Notes:
 //!
 //! When using --config, if no file is provided, a - local to where the bin is run - ./config.toml is created.
+//!
 //! When using --env-file (i.e: DEV.env) if no file is provided no default assumed/created for security reasons.
 //!
 //! Random Word API comes with a comprehensive help menu:

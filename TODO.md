@@ -2,13 +2,17 @@
 
 ## Part 1
 
+> [!NOTE]
+>
+> If this was a production API, I would implement proper filesystem structure
+> but...
+
 - [x] Environment file
   - [x] Add the possibility to use `.env` file
   - [x] Check if `.env` file exists
   - [x] Check for validity of `.env` file
   - [x] Check for validity of environment variable with types
-- [x] Configuration file (_if this was going to be a production API, I would
-      implement proper Linux `/etc` and `/var` structure but..._):
+- [x] Configuration file
   - [x] Add the possibility to use configuration file
   - [x] Add configuration default file generation in same directory
   - [x] Improve default config creation with default Trait
