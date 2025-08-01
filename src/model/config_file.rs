@@ -16,7 +16,7 @@ impl ConfigurationFile {
         ConfigurationFile {
             port: 3000,
             address: IpAddr::from_str("0.0.0.0").unwrap(),
-            database_url: "random-words.db".to_string(),
+            database_url: "sqlite:random-words.db".to_string(),
         }
     }
 }
