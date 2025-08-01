@@ -1,6 +1,13 @@
 //! This is my first Rust API with Axum. The proverbial itch to learn API design and development with Rust.
 //! Its main purpose it to be a simple API to use with my Speak and Spell toy project. WIP. Come back soon.
 //!
+//! Accepted inputs are either config/env files or single arguments for address, port, and database_url.
+//!
+//! Notes:
+//!
+//! When using --config, if no file is provided, a - local to where the bin is run - ./config.toml is created.
+//! When using --env-file (i.e: DEV.env) if no file is provided no default assumed/created for security reasons.
+//!
 //! Random Word API comes with a comprehensive help menu:
 //!
 //! ```non_rust
@@ -46,19 +53,17 @@ fn init_tracing() {
 }
 
 /// Helper to create the default config.toml if non-existent
-fn create_config_toml(file: &PathBuf) -> Result<(), AppError> {
+fn create_default_config_toml(file: &PathBuf) -> Result<(), AppError> {
     use model::config_file::ConfigurationFile;
-    use std::fs::{self, File};
+    use std::fs::File;
     use std::io::prelude::*;
 
     // set default config values
     let default_configs = ConfigurationFile::default();
-    // create the default dir
-    fs::create_dir("$HOME/.config/random-api")?;
-    // create the default file
-    let mut buffer = File::create(file)?;
     // read the default values
     let toml = toml::to_string(&default_configs)?;
+    // create the default file
+    let mut buffer = File::create(file)?;
     // write all lines from the above steps into config.toml
     buffer.write_all(toml.as_bytes())?;
 
@@ -81,33 +86,35 @@ fn init_arguments(cli: &Cli) -> Result<(IpAddr, u16, String), AppError> {
         // get all environment variable from the environment file
         dotenvy::from_filename_override(file)?;
 
+        // set the variables as needed
         address = IpAddr::from_str(&dotenvy::var("BIND_ADDR")?)?;
         port = u16::from_str(&dotenvy::var("BIND_PORT")?)?;
         database_url = dotenvy::var("DATABASE_URL")?.to_owned();
     // if --config was used
     } else if cli.cfg.config.is_some() {
-        // FIXME use https://crates.io/crates/directories -- unless this is pointless...
         let config_file = &cli.cfg.config.clone().unwrap();
 
-        // create config.toml with default values, if non-existent
+        // if non-existent, create fallback config.toml with default values
         if !Path::new(&config_file).exists() {
-            create_config_toml(config_file)?;
+            create_default_config_toml(config_file)?;
         };
 
-        // read the TOML file line by line in a Vec<String>
+        // read the config file line by line and store it in a String
         let file = fs::read(config_file)?
             .iter()
             .map(|c| *c as char)
             .collect::<String>();
 
-        // parsing the configuration Vec<String> into model
+        // parse the configuration String and store in model Struct
         let my_configs: ConfigurationFile = toml::from_str(&file)?;
 
+        // set the variables as needed
         address = my_configs.address;
         port = my_configs.port;
         database_url = my_configs.database_url.clone();
     // if positional parameters where used
     } else {
+        // set the variables as needed
         address = cli.args.address;
         port = cli.args.port;
         database_url = cli.args.database_url.clone();
@@ -143,10 +150,10 @@ async fn main() -> Result<(), anyhow::Error> {
     // Enable tracing using https://tokio.rs/#tk-lib-tracing
     init_tracing();
 
-    // Setup DB connection pool
+    // Setup the database connection pool
     let dbpool = init_dbpool(&database_url)
         .await
-        .context("couldn't initialize the database pool")?;
+        .context("couldn't initialize the database connection pool")?;
 
     // Setup top-level router
     let router = create_router(dbpool).await;
@@ -154,12 +161,12 @@ async fn main() -> Result<(), anyhow::Error> {
     // Instantiate a listener on the socket address and port
     let listener = tokio::net::TcpListener::bind((address, port))
         .await
-        .context("couldn't bind to address")?;
+        .context("couldn't bind to address or port")?;
 
     // Serve the API
     axum::serve(listener, router)
         .await
-        .context("couldn't start the server")?;
+        .context("couldn't start the API server")?;
 
     Ok(())
 }

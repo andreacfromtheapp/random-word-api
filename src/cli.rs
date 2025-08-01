@@ -25,7 +25,7 @@ pub struct Cli {
 #[group(id = "cfg", multiple = false, conflicts_with = "args")]
 pub struct Config {
     /// Configuration file path
-    #[arg(short, long, default_value = "$HOME/.config/random-api/config.toml")]
+    #[arg(short, long, default_value = "./config.toml")]
     pub config: Option<PathBuf>,
 
     /// Environment file path
