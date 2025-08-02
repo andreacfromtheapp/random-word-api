@@ -19,6 +19,15 @@ repos:
       - id: markdownlint-cli2
         args: ["--config", ".markdownlint-cli2.yaml"]
 
+  # - repo: https://github.com/rvben/rumdl-pre-commit
+  #   rev: v0.0.102 # Use the latest release tag
+  #   hooks:
+  #     - id: rumdl
+  #       # To only check (default):
+  #       args: []
+  #       # To automatically fix issues:
+  #       # args: [--fix]
+
   - repo: https://github.com/opensource-nepal/commitlint
     rev: v1.3.0
     hooks:
