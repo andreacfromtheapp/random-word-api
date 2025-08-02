@@ -12,10 +12,12 @@
   - [x] Check if `.env` file exists
   - [x] Check for validity of `.env` file
   - [x] Check for validity of environment variable with types
-- [x] Configuration file
+- [x] Configuration file `ConfigurationFile`
   - [x] Add the possibility to use configuration file
   - [x] Add configuration default file generation in same directory
   - [x] Improve default config creation with default Trait
+  - [ ] Add a `cli` command to generate the config on demand with a path
+- [ ] Add type checked `AppConfig` for API info/version and more
 - [x] Documentation:
   - [x] <https://doc.rust-lang.org/rustdoc/index.html>
   - [x] Improve `rustdoc` documentation
@@ -34,12 +36,11 @@
 
 ## Part 2
 
+- [ ] Split logic and `axum` and use workspace? _may not need this after all_
 - [ ] Improve idiomatic code and use patterns
-- [ ] Possibly add more to the config struct and file
-- ~~[ ] Add sanity checks on endpoint data~~ _may not need. `Json<UpsertWord>`
-  makes all given `fields` a `String` already_
-- ~~[ ] Split logic and Axum and use workspace?~~ _may not need this after all_
-- [ ] Add Testing
+- [ ] Add testing
+- [ ] Add sanity checks on `UpsertWord` data? _may not need. `Json<UpsertWord>`
+      sanitizes all given fields to `String`_
 - [ ] Add health checks
 - [ ] TLS:
   - [ ] <https://github.com/rustls/rustls/>
