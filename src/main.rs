@@ -16,13 +16,14 @@
 //! ```
 //!
 
-/// Define default tracing log levels and/or to use when RUST_LOG is unset
+/// Define default tracing log levels. Uses `RUST_LOG` when unset
 const TRACING_LOG_LEVELS: &str = "sqlx=info,tower_http=debug,info";
 
 use crate::error::AppError;
 use anyhow::{bail, Context, Result};
 use cli::Cli;
-use std::{net::IpAddr, path::PathBuf};
+use std::net::IpAddr;
+use std::path::{Path, PathBuf};
 
 /// Cli arguments and interface
 mod cli;
@@ -79,7 +80,6 @@ fn create_default_config_toml(file: &PathBuf) -> Result<(), AppError> {
 fn init_arguments(cli: &Cli) -> Result<(IpAddr, u16, String), AppError> {
     use model::config_file::ConfigurationFile;
     use std::fs::{self};
-    use std::path::Path;
     use std::str::FromStr;
 
     let address;
@@ -96,16 +96,9 @@ fn init_arguments(cli: &Cli) -> Result<(IpAddr, u16, String), AppError> {
         port = u16::from_str(&dotenvy::var("BIND_PORT")?)?;
         database_url = dotenvy::var("DATABASE_URL")?.to_owned();
     // if --config was used
-    } else if cli.cfg.config.is_some() {
-        let config_file = &cli.cfg.config.clone().unwrap();
-
-        // if non-existent, create fallback config.toml with default values
-        if !Path::new(&config_file).exists() {
-            create_default_config_toml(config_file)?;
-        };
-
+    } else if let Some(file) = &cli.cfg.config {
         // read the config file line by line and store it in a String
-        let file = fs::read(config_file)?
+        let file = fs::read(file)?
             .iter()
             .map(|c| *c as char)
             .collect::<String>();
@@ -128,6 +121,14 @@ fn init_arguments(cli: &Cli) -> Result<(IpAddr, u16, String), AppError> {
     Ok((address, port, database_url))
 }
 
+/// Check if provided env-file or config are non-existent and exit gracefully
+fn does_file_exist(file_name: &Path, file_kind: &str) -> Result<(), anyhow::Error> {
+    std::fs::read(file_name)
+        .with_context(|| format!("couldn't read {file_kind} file {file_name:?}"))?;
+
+    Ok(())
+}
+
 /// Tokio Main. What else?!
 #[tokio::main]
 async fn main() -> Result<(), anyhow::Error> {
@@ -137,17 +138,18 @@ async fn main() -> Result<(), anyhow::Error> {
 
     // Parse command-line args
     let cli = cli::Cli::parse();
-    // Either ENV_FILE, CONFIG, or CLI (with precedence order)
+    // Get values from either ENV_FILE, CONFIG, or CLI; else exit gracefully
     let Ok((address, port, database_url)) = init_arguments(&cli) else {
-        // if the environment file doesn't exist
-        let env_file_path = cli.cfg.env_file.clone().unwrap();
-        // inform the user and exit gracefully
-        let _wrong_env = std::fs::read(env_file_path.clone()).with_context(|| {
-            format!(
-                "couldn't read environment file {:?}",
-                env_file_path.into_os_string().into_string().unwrap()
-            )
-        })?;
+        // if --env-file file doesn't exist, inform the user and exit gracefully
+        if let Some(file) = &cli.cfg.env_file {
+            does_file_exist(file.as_path(), "environment")?;
+        }
+
+        // if --config file doesn't exist, inform the user and exit gracefully
+        if let Some(file) = &cli.cfg.config {
+            does_file_exist(file.as_path(), "configuration")?;
+        }
+
         // this should never be reached. here because let Ok() else requires !
         bail!("something went really wrong... this was not supposed to happen!");
     };
