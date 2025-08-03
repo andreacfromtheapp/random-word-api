@@ -74,6 +74,8 @@ fn create_default_config_toml(file: &PathBuf) -> Result<(), anyhow::Error> {
     // write all lines from the above steps into config.toml
     buffer.write_all(toml.as_bytes())?;
 
+    println!("configuration file '{file:?}' created successfully");
+
     Ok(())
 }
 
