@@ -17,7 +17,6 @@
   - [x] Add configuration default file generation in same directory
   - [x] Improve default config creation with default Trait
   - [x] Add a `cli` command to generate the config on demand with a path
-- [ ] Add type checked `AppConfig` for API info/version and more
 - [x] Documentation:
   - [x] <https://doc.rust-lang.org/rustdoc/index.html>
   - [x] Improve `rustdoc` documentation
@@ -38,6 +37,7 @@
 
 - [ ] Split logic and `axum` and use workspace? _may not need this after all_
 - [ ] Improve idiomatic code and use patterns
+- [ ] Add type checked `AppConfig` for API info/version and more
 - [ ] Add testing
 - [ ] Add sanity checks on `UpsertWord` data? _may not need. `Json<UpsertWord>`
       sanitizes all given fields to `String`_

@@ -23,9 +23,6 @@ use anyhow::{bail, Context, Result};
 use std::net::IpAddr;
 use std::path::{Path, PathBuf};
 
-use crate::cli::{Cli, Commands};
-use crate::error::AppError;
-
 /// Cli arguments and interface
 mod cli;
 /// Helpers for error handling
@@ -36,11 +33,14 @@ mod handlers;
 /// Model and business logic
 #[path = "./model/mod.rs"]
 mod model;
-use model::config_file::ConfigurationFile;
 /// Top-level router
 mod routes;
 /// Database pool
 mod state;
+
+use crate::cli::{Cli, Commands};
+use crate::error::AppError;
+use crate::model::config_file::ConfigurationFile;
 
 /// Configure tracing and logging (accepts `RUST_LOG` environment variable or uses default const above)
 fn init_tracing() {

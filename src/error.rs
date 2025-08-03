@@ -29,7 +29,7 @@ where
     }
 }
 
-/// Custom `thiserror` errors to pass onto `Anyhow`
+/// Custom `thiserror` errors for database operations
 #[derive(thiserror::Error, Debug)]
 pub enum SqlxError {
     #[error("database error: {0}")]
