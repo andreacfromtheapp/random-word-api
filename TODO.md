@@ -16,7 +16,7 @@
   - [x] Add the possibility to use configuration file
   - [x] Add configuration default file generation in same directory
   - [x] Improve default config creation with default Trait
-  - [ ] Add a `cli` command to generate the config on demand with a path
+  - [x] Add a `cli` command to generate the config on demand with a path
 - [ ] Add type checked `AppConfig` for API info/version and more
 - [x] Documentation:
   - [x] <https://doc.rust-lang.org/rustdoc/index.html>

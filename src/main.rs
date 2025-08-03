@@ -20,10 +20,10 @@
 const TRACING_LOG_LEVELS: &str = "sqlx=info,tower_http=debug,info";
 
 use anyhow::{bail, Context, Result};
-use cli::Cli;
 use std::net::IpAddr;
 use std::path::{Path, PathBuf};
 
+use crate::cli::{Cli, Commands};
 use crate::error::AppError;
 
 /// Cli arguments and interface
@@ -60,7 +60,7 @@ fn init_tracing() {
 }
 
 /// Helper to create the default config.toml if non-existent
-fn create_default_config_toml(file: &PathBuf) -> Result<(), AppError> {
+fn create_default_config_toml(file: &PathBuf) -> Result<(), anyhow::Error> {
     use model::config_file::ConfigurationFile;
     use std::fs::File;
     use std::io::prelude::*;
@@ -124,7 +124,7 @@ fn init_arguments(cli: &Cli) -> Result<(IpAddr, u16, String), AppError> {
 /// Check if provided env-file or config are non-existent and exit gracefully
 fn does_file_exist(file_name: &Path, file_kind: &str) -> Result<(), anyhow::Error> {
     std::fs::read(file_name)
-        .with_context(|| format!("couldn't read {file_kind} file {file_name:?}"))?;
+        .with_context(|| format!("couldn't read {file_kind} file '{file_name:?}'"))?;
 
     Ok(())
 }
@@ -138,6 +138,18 @@ async fn main() -> Result<(), anyhow::Error> {
 
     // Parse command-line args
     let cli = cli::Cli::parse();
+
+    // You can check for the existence of subcommands, and if found use their
+    // matches just as you would the top level cmd
+    match &cli.command {
+        Some(Commands::Setup { create_config }) => {
+            let file = &create_config.clone().unwrap();
+            create_default_config_toml(file)?;
+            std::process::exit(0x0100);
+        }
+        None => {}
+    }
+
     // Get values from either ENV_FILE, CONFIG, or CLI; else exit gracefully
     let Ok((address, port, database_url)) = init_arguments(&cli) else {
         // if --env-file file doesn't exist, inform the user and exit gracefully
