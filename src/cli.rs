@@ -17,15 +17,15 @@ pub struct Cli {
 
     #[command(flatten)]
     /// Command line argument groups. Mutually exclusive with configuration arguments
-    pub args: Arguments,
+    pub arg: Arguments,
 }
 
 /// Configuration arguments. Mutually exclusive with command line arguments
 #[derive(Args, Debug)]
-#[group(id = "cfg", multiple = false, conflicts_with = "args")]
+#[group(id = "cfg", required = false, multiple = false, conflicts_with = "arg")]
 pub struct Config {
     /// Configuration file path
-    #[arg(short, long, default_value = "./config.toml")]
+    #[arg(short, long)]
     pub config: Option<PathBuf>,
 
     /// Environment file path
@@ -35,7 +35,7 @@ pub struct Config {
 
 /// Command line arguments. Mutually exclusive with configuration arguments
 #[derive(Args, Debug)]
-#[group(id = "args", multiple = true, conflicts_with = "cfg")]
+#[group(id = "arg", multiple = true, conflicts_with = "cfg")]
 pub struct Arguments {
     /// API IP address to bind
     #[arg(short, long, default_value = "0.0.0.0")]

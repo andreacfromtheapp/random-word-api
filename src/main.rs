@@ -113,9 +113,9 @@ fn init_arguments(cli: &Cli) -> Result<(IpAddr, u16, String), AppError> {
     // if positional parameters where used
     } else {
         // set the variables as needed
-        address = cli.args.address;
-        port = cli.args.port;
-        database_url = cli.args.database_url.clone();
+        address = cli.arg.address;
+        port = cli.arg.port;
+        database_url = cli.arg.database_url.clone();
     }
 
     Ok((address, port, database_url))
