@@ -19,11 +19,12 @@
 /// Define default tracing log levels. Uses `RUST_LOG` when unset
 const TRACING_LOG_LEVELS: &str = "sqlx=info,tower_http=debug,info";
 
-use crate::error::AppError;
 use anyhow::{bail, Context, Result};
 use cli::Cli;
 use std::net::IpAddr;
 use std::path::{Path, PathBuf};
+
+use crate::error::AppError;
 
 /// Cli arguments and interface
 mod cli;
@@ -35,6 +36,7 @@ mod handlers;
 /// Model and business logic
 #[path = "./model/mod.rs"]
 mod model;
+use model::config_file::ConfigurationFile;
 /// Top-level router
 mod routes;
 /// Database pool
@@ -78,16 +80,14 @@ fn create_default_config_toml(file: &PathBuf) -> Result<(), AppError> {
 /// Parse Cli arguments to construct `address`, `port`, and `database-url`
 /// Accepts `BIND_ADDR`, `BIND_PORT`, and `DATABASE_URL` from an `.env` file.
 fn init_arguments(cli: &Cli) -> Result<(IpAddr, u16, String), AppError> {
-    use model::config_file::ConfigurationFile;
-    use std::fs::{self};
-    use std::str::FromStr;
-
     let address;
     let port;
     let database_url;
 
     // if --env-file was used
     if let Some(file) = &cli.cfg.env_file {
+        use std::str::FromStr;
+
         // get all environment variable from the environment file
         dotenvy::from_filename_override(file)?;
 
@@ -98,7 +98,7 @@ fn init_arguments(cli: &Cli) -> Result<(IpAddr, u16, String), AppError> {
     // if --config was used
     } else if let Some(file) = &cli.cfg.config {
         // read the config file line by line and store it in a String
-        let file = fs::read(file)?
+        let file = std::fs::read(file)?
             .iter()
             .map(|c| *c as char)
             .collect::<String>();
