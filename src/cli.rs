@@ -7,22 +7,24 @@ use std::path::PathBuf;
 /// Define the OS port range
 const PORT_RANGE: RangeInclusive<usize> = 1..=65535;
 
-/// Command line interface arguments
+/// Command line interface
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
 pub struct Cli {
     #[command(flatten)]
-    /// Configuration arguments group. Mutually exclusive with command line arguments
+    /// Configuration options
     pub cfg: Config,
 
     #[command(flatten)]
-    /// Command line argument groups. Mutually exclusive with configuration arguments
+    /// Argument options
     pub arg: Arguments,
 
+    /// Commands
     #[command(subcommand)]
     pub command: Option<Commands>,
 }
 
+/// Command line subcommands
 #[derive(Subcommand, Debug)]
 pub enum Commands {
     /// Generate a configuration file with default values
@@ -33,7 +35,7 @@ pub enum Commands {
     },
 }
 
-/// Configuration arguments. Mutually exclusive with command line arguments
+/// Configuration arguments
 #[derive(Args, Debug)]
 #[group(id = "cfg", required = false, multiple = false, conflicts_with = "arg")]
 pub struct Config {
@@ -46,7 +48,7 @@ pub struct Config {
     pub env_file: Option<PathBuf>,
 }
 
-/// Command line arguments. Mutually exclusive with configuration arguments
+/// Command line arguments
 #[derive(Args, Debug)]
 #[group(id = "arg", multiple = true, conflicts_with = "cfg")]
 pub struct Arguments {
