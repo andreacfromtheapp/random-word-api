@@ -25,11 +25,15 @@ pub struct Cli {
 #[group(id = "cfg", required = false, multiple = false, conflicts_with = "arg")]
 pub struct Config {
     /// Configuration file path
-    #[arg(short, long)]
+    #[arg(short, long, value_name = "FILE")]
     pub config: Option<PathBuf>,
 
+    /// Configuration file path
+    #[arg(long, value_name = "FILE")]
+    pub create_config: Option<PathBuf>,
+
     /// Environment file path
-    #[arg(short, long)]
+    #[arg(short, long, value_name = "FILE")]
     pub env_file: Option<PathBuf>,
 }
 
