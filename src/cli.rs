@@ -1,5 +1,5 @@
 // API command line interface
-use clap::{Args, Parser};
+use clap::{Args, Parser, Subcommand};
 use std::net::IpAddr;
 use std::ops::RangeInclusive;
 use std::path::PathBuf;
@@ -18,6 +18,19 @@ pub struct Cli {
     #[command(flatten)]
     /// Command line argument groups. Mutually exclusive with configuration arguments
     pub arg: Arguments,
+
+    #[command(subcommand)]
+    pub command: Option<Commands>,
+}
+
+#[derive(Subcommand, Debug)]
+pub enum Commands {
+    /// Generate a configuration file with default values
+    Setup {
+        /// Configuration file path
+        #[arg(short, long, value_name = "FILE")]
+        create_config: Option<PathBuf>,
+    },
 }
 
 /// Configuration arguments. Mutually exclusive with command line arguments
@@ -27,10 +40,6 @@ pub struct Config {
     /// Configuration file path
     #[arg(short, long, value_name = "FILE")]
     pub config: Option<PathBuf>,
-
-    /// Configuration file path
-    #[arg(long, value_name = "FILE")]
-    pub create_config: Option<PathBuf>,
 
     /// Environment file path
     #[arg(short, long, value_name = "FILE")]
