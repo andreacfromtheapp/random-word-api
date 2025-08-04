@@ -3,6 +3,7 @@ use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 use sqlx::{query, query_as, SqlitePool};
 use utoipa::ToSchema;
+use utoipauto::utoipa_ignore;
 // use std::any::{Any, TypeId};
 
 use crate::error::AppError;
@@ -18,6 +19,10 @@ pub struct Word {
     updated_at: Option<NaiveDateTime>,
 }
 
+/// Word implemnentation of actual random, list, and CRUD operations
+///
+/// These are encapusulated and not publicly available on any of the doc UIs (swagger, rapidoc, redoc, scalar)
+#[utoipa_ignore]
 impl Word {
     // fn check_input(check_word: &UpsertWord) -> Result<bool, AppError> {
     //     fn is_string(s: &dyn Any) -> bool {
@@ -113,6 +118,7 @@ pub struct UpsertWord {
 }
 
 /// Accessors (getters) helpers
+#[utoipa_ignore]
 impl UpsertWord {
     pub fn word(&self) -> &str {
         self.word.as_ref()
