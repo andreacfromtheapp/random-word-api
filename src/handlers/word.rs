@@ -6,7 +6,7 @@ use sqlx::SqlitePool;
 use crate::error::AppError;
 use crate::model::word::{UpsertWord, Word};
 
-/// Return a random word from as JSON object
+/// Return a random word as JSON object
 #[utoipa::path(
     get,
     path = "/word",
