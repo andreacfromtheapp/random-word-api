@@ -135,12 +135,8 @@ fn does_file_exist(file_name: &Path, file_kind: &str) -> Result<(), anyhow::Erro
 #[tokio::main]
 async fn main() -> Result<(), anyhow::Error> {
     use crate::state::init_dbpool;
-    use axum::Router;
     use clap::Parser;
     use routes::create_router;
-    use utoipa::OpenApi;
-    use utoipa_swagger_ui::SwaggerUi;
-    use utoipauto::utoipauto;
 
     // Parse command-line args
     let cli = cli::Cli::parse();
@@ -179,22 +175,8 @@ async fn main() -> Result<(), anyhow::Error> {
         .await
         .context("couldn't initialize the database connection pool")?;
 
-    // Setup top-level router
+    // Setup top-level router (includes SwaggerUI)
     let router = create_router(dbpool).await;
-
-    // Setup SwaggerUI router
-    #[utoipauto(paths = "./src/handlers, ./src/model")]
-    #[derive(OpenApi)]
-    #[openapi(
-        tags(
-            (name = "Random Word API", description = "Word management endpoints.")
-        ),
-    )]
-    pub struct ApiDoc;
-
-    let app = Router::new()
-        .merge(router)
-        .merge(SwaggerUi::new("/swagger-ui").url("/api-docs/openapi.json", ApiDoc::openapi()));
 
     // Instantiate a listener on the socket address and port
     let listener = tokio::net::TcpListener::bind((address, port))
@@ -202,7 +184,7 @@ async fn main() -> Result<(), anyhow::Error> {
         .context("couldn't bind to address or port")?;
 
     // Serve the API
-    axum::serve(listener, app)
+    axum::serve(listener, router)
         .await
         .context("couldn't start the API server")?;
 
