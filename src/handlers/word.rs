@@ -41,7 +41,7 @@ pub async fn word_list(State(dbpool): State<SqlitePool>) -> Result<Json<Vec<Word
 #[utoipa::path(
     post,
     context_path = "/admin",
-    path = "/words/new",
+    path = "/words",
     operation_id = "custom_post_word",
     tag = "word_handlers",
     request_body(content = UpsertWord, description = "Word to add to the database", content_type = "application/json"),

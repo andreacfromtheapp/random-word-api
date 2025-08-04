@@ -1,5 +1,5 @@
 // All routers configuration
-use axum::{routing::get, routing::post, Router};
+use axum::{routing::get, Router};
 use http::{HeaderValue, Method};
 use tower_http::cors::CorsLayer;
 use tower_http::trace::TraceLayer;
@@ -41,8 +41,7 @@ fn mk_admin_routes(dbpool: sqlx::Pool<sqlx::Sqlite>, origins: Vec<HeaderValue>) 
         .nest(
             "/admin",
             Router::new()
-                .route("/words", get(word_list))
-                .route("/words/new", post(word_create))
+                .route("/words", get(word_list).post(word_create))
                 .route(
                     "/words/{id}",
                     get(word_read).put(word_update).delete(word_delete),
