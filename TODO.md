@@ -30,7 +30,7 @@
   - [x] Use `anyhow`:
     - [x] <https://crates.io/crates/anyhow>
     - [x] <https://github.com/tokio-rs/axum/tree/main/examples/anyhow-error-response>
-  - [x] Use this-error:
+  - [x] Use `thiserror`:
     - [x] <https://docs.rs/thiserror/latest/thiserror/>
 
 ## Part 2
@@ -39,9 +39,9 @@
 - [ ] Improve idiomatic code and use patterns
 - [ ] Add type checked `AppConfig` for API info/version and more
 - [ ] Add testing
-- [ ] Add sanity checks on `UpsertWord` data? _may not need. `Json<UpsertWord>`
-      sanitizes all given fields to `String`_
-- [ ] Add health checks
+- [ ] Add sanity checks on `UpsertWord` data? _may not need. `UpsertWord`
+      already sanitizes all given fields to `String`_
+- [ ] Add better health checks (besides `/ready` and `/alive`)
 - [ ] TLS:
   - [ ] <https://github.com/rustls/rustls/>
   - [ ] <https://github.com/rustls/rcgen>
