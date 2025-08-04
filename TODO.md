@@ -47,9 +47,13 @@
   - [ ] <https://github.com/rustls/rcgen>
 - [ ] Authentication
 - [x] Open API:
-  - [x] <https://github.com/juhaku/utoipa>
-  - [x] <https://github.com/ProbablyClem/utoipauto>
-  - [x] <https://docs.rs/utoipa-swagger-ui/latest/utoipa_swagger_ui/>
+  - [x] <https://crates.io/crates/utoipa>
+  - [x] <https://crates.io/crates/utoipauto>
+  - [x] <https://crates.io/crates/utoipa-swagger-ui>
+  - [x] <https://crates.io/crates/utoipa-rapidoc>
+  - [x] <https://crates.io/crates/utoipa-redoc>
+  - [x] <https://crates.io/crates/utoipa-scalar>
+  - [ ] <https://crates.io/crates/utoipa-axum>
 - [ ] Add Open Telemetry
   - [ ] <https://crates.io/search?q=opentelemetry>
   - [ ] <https://crates.io/crates/axum-tracing-opentelemetry>
