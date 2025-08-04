@@ -46,10 +46,10 @@
   - [ ] <https://github.com/rustls/rustls/>
   - [ ] <https://github.com/rustls/rcgen>
 - [ ] Authentication
-- [ ] Open API:
-  - [ ] <https://github.com/juhaku/utoipa>
-  - [ ] <https://github.com/juhaku/utoipa/blob/master/utoipa-axum/README.md>
-  - [ ] <https://github.com/juhaku/utoipa/tree/master/examples/todo-axum>
+- [x] Open API:
+  - [x] <https://github.com/juhaku/utoipa>
+  - [x] <https://github.com/ProbablyClem/utoipauto>
+  - [x] <https://docs.rs/utoipa-swagger-ui/latest/utoipa_swagger_ui/>
 - [ ] Add Open Telemetry
   - [ ] <https://crates.io/search?q=opentelemetry>
   - [ ] <https://crates.io/crates/axum-tracing-opentelemetry>

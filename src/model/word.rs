@@ -2,12 +2,13 @@
 use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 use sqlx::{query, query_as, SqlitePool};
+use utoipa::ToSchema;
 // use std::any::{Any, TypeId};
 
 use crate::error::AppError;
 
-/// Represents a word
-#[derive(Serialize, Clone, sqlx::FromRow)]
+/// Represents a word in the database and in API responses
+#[derive(ToSchema, Serialize, Clone, sqlx::FromRow)]
 pub struct Word {
     id: u32,
     word: String,
@@ -104,7 +105,7 @@ impl Word {
 }
 
 /// Represents a word with create and update
-#[derive(Deserialize)]
+#[derive(ToSchema, Deserialize)]
 pub struct UpsertWord {
     word: String,
     definition: String,
