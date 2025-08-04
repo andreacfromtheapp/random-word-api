@@ -10,7 +10,7 @@ use crate::handlers::{general::*, word::*};
 fn mk_swagger_ui_routes(origins: Vec<HeaderValue>) -> axum::Router {
     use utoipa::OpenApi;
     use utoipa_rapidoc::RapiDoc;
-    use utoipa_redoc::{Redoc, Servable};
+    use utoipa_redoc::{Redoc, Servable as RedocServable};
     use utoipa_scalar::{Scalar, Servable as ScalarServable};
     use utoipa_swagger_ui::SwaggerUi;
     use utoipauto::utoipauto;
