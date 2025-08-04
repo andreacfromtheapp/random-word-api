@@ -41,6 +41,7 @@ utoipa = { version = "5.4.0", features = [
   "preserve_path_order",
 ] }
 utoipa-rapidoc = { version = "6.0.0", features = ["axum"] }
+utoipa-redoc = { version = "6.0.0", features = ["axum"] }
 utoipa-scalar = { version = "0.3.0", features = ["axum"] }
 utoipa-swagger-ui = { version = "9.0.2", features = ["axum"] }
 utoipauto = "0.2.0"

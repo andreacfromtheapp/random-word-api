@@ -10,6 +10,7 @@ use crate::handlers::{general::*, word::*};
 fn mk_swagger_ui_routes(origins: Vec<HeaderValue>) -> axum::Router {
     use utoipa::OpenApi;
     use utoipa_rapidoc::RapiDoc;
+    use utoipa_redoc::{Redoc, Servable};
     use utoipa_scalar::{Scalar, Servable as ScalarServable};
     use utoipa_swagger_ui::SwaggerUi;
     use utoipauto::utoipauto;
@@ -29,6 +30,7 @@ fn mk_swagger_ui_routes(origins: Vec<HeaderValue>) -> axum::Router {
         .merge(SwaggerUi::new("/swagger-ui").url("/api-docs/openapi.json", ApiDoc::openapi()))
         .merge(RapiDoc::new("/api-docs/openapi.json").path("/rapidoc"))
         .merge(Scalar::with_url("/scalar", ApiDoc::openapi()))
+        .merge(Redoc::with_url("/redoc", ApiDoc::openapi()))
         .layer(
             CorsLayer::new()
                 .allow_methods([Method::POST, Method::GET, Method::PUT, Method::DELETE])
@@ -74,6 +76,8 @@ fn mk_public_routes(dbpool: sqlx::Pool<sqlx::Sqlite>, origins: Vec<HeaderValue>)
 }
 
 /// Top level router setup function
+///
+/// Gotta try https://docs.rs/utoipa-axum/latest/utoipa_axum/ next...
 pub async fn create_router(dbpool: sqlx::Pool<sqlx::Sqlite>) -> axum::Router {
     let origins = [
         "http://localhost".parse().unwrap(),
@@ -86,7 +90,7 @@ pub async fn create_router(dbpool: sqlx::Pool<sqlx::Sqlite>) -> axum::Router {
     // Add public routes under /
     let public_routes = mk_public_routes(dbpool.clone(), origins.to_vec());
 
-    // Add SwaggerUi under /swagger-ui, RapiDoc under /rapidoc and Scalar under /scalar endpoints
+    // Add SwaggerUi under /swagger-ui, RapiDoc under /rapidoc, Scalar under /scalar, and Redoc under /redoc endpoints
     let swagger_ui = mk_swagger_ui_routes(origins.to_vec());
 
     // Setup top-level router
