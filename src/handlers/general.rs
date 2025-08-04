@@ -9,7 +9,7 @@ use crate::error::AppError;
     get,
     path = "/ready",
     operation_id = "api_db_connection_test",
-    tag = "generic_healthcheck_handlers",
+    tag = "healthcheck_endpoints",
     responses(
         (status = 200, description = "OK. The API can connect to the database", body = String),
         (status = 500, description = "Internal server error. Couldn't connect to the database"),

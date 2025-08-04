@@ -4,7 +4,7 @@ use http::{HeaderValue, Method};
 use tower_http::cors::CorsLayer;
 use tower_http::trace::TraceLayer;
 
-use crate::handlers::{general::*, word::*};
+use crate::handlers::{admin::*, general::*, word::*};
 
 /// SwaggerUI router with RapidDoc and Scalar as well
 fn create_apidocs_routes(origins: Vec<HeaderValue>) -> axum::Router {
