@@ -4,7 +4,7 @@ use http::Method;
 use tower_http::cors::CorsLayer;
 use tower_http::trace::TraceLayer;
 
-use crate::handlers::{general::ping, word::*};
+use crate::handlers::{general::*, word::*};
 
 /// Top level router setup function
 pub async fn create_router(dbpool: sqlx::Pool<sqlx::Sqlite>) -> axum::Router {
@@ -18,8 +18,6 @@ pub async fn create_router(dbpool: sqlx::Pool<sqlx::Sqlite>) -> axum::Router {
         .nest(
             "/admin",
             Router::new()
-                .route("/alive", get(|| async { "ok" }))
-                .route("/ready", get(ping))
                 .route("/words", get(word_list))
                 .route("/words/new", post(word_create))
                 .route(
@@ -36,7 +34,10 @@ pub async fn create_router(dbpool: sqlx::Pool<sqlx::Sqlite>) -> axum::Router {
 
     // Add public routes under /
     let public_routes = Router::new()
-        .route("/alive", get(|| async { "ok" }))
+        .route(
+            "/alive",
+            get(|| async { "The API is successfully running" }),
+        )
         .route("/ready", get(ping))
         .route("/word", get(word_random))
         .with_state(dbpool.clone())

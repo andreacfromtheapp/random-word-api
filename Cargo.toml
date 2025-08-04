@@ -33,3 +33,12 @@ toml = "0.9.4"
 tower-http = { version = "0.6.6", features = ["trace", "cors"] }
 tracing = "0.1.41"
 tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
+utoipa = { version = "5.4.0", features = [
+  "axum_extras",
+  "chrono",
+  "openapi_extensions",
+  "preserve_order",
+  "preserve_path_order",
+] }
+utoipa-swagger-ui = { version = "9.0.2", features = ["axum"] }
+utoipauto = "0.2.0"
