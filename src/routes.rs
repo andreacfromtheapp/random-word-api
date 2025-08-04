@@ -7,7 +7,7 @@ use tower_http::trace::TraceLayer;
 use crate::handlers::{general::*, word::*};
 
 /// SwaggerUI router with RapidDoc and Scalar as well
-fn mk_swagger_ui_routes(origins: Vec<HeaderValue>) -> axum::Router {
+fn create_apidocs_routes(origins: Vec<HeaderValue>) -> axum::Router {
     use utoipa::OpenApi;
     use utoipa_rapidoc::RapiDoc;
     use utoipa_redoc::{Redoc, Servable as RedocServable};
@@ -39,7 +39,10 @@ fn mk_swagger_ui_routes(origins: Vec<HeaderValue>) -> axum::Router {
 }
 
 /// Admin router (will have auth and more soon enough)
-fn mk_admin_routes(dbpool: sqlx::Pool<sqlx::Sqlite>, origins: Vec<HeaderValue>) -> axum::Router {
+fn create_admin_routes(
+    dbpool: sqlx::Pool<sqlx::Sqlite>,
+    origins: Vec<HeaderValue>,
+) -> axum::Router {
     Router::new()
         .nest(
             "/admin",
@@ -59,7 +62,10 @@ fn mk_admin_routes(dbpool: sqlx::Pool<sqlx::Sqlite>, origins: Vec<HeaderValue>) 
 }
 
 /// Public API router
-fn mk_public_routes(dbpool: sqlx::Pool<sqlx::Sqlite>, origins: Vec<HeaderValue>) -> axum::Router {
+fn create_public_routes(
+    dbpool: sqlx::Pool<sqlx::Sqlite>,
+    origins: Vec<HeaderValue>,
+) -> axum::Router {
     Router::new()
         .route(
             "/alive",
@@ -85,18 +91,18 @@ pub async fn create_router(dbpool: sqlx::Pool<sqlx::Sqlite>) -> axum::Router {
     ];
 
     // Add admin routes under /admin
-    let admin_routes = mk_admin_routes(dbpool.clone(), origins.to_vec());
+    let admin_routes = create_admin_routes(dbpool.clone(), origins.to_vec());
 
     // Add public routes under /
-    let public_routes = mk_public_routes(dbpool.clone(), origins.to_vec());
+    let public_routes = create_public_routes(dbpool.clone(), origins.to_vec());
 
-    // Add SwaggerUi under /swagger-ui, RapiDoc under /rapidoc, Scalar under /scalar, and Redoc under /redoc endpoints
-    let swagger_ui = mk_swagger_ui_routes(origins.to_vec());
+    // Add API Docs under /swagger-ui, /rapidoc, /scalar, and /redoc
+    let apidocs_routes = create_apidocs_routes(origins.to_vec());
 
     // Setup top-level router
     Router::new()
         .merge(admin_routes)
         .merge(public_routes)
-        .merge(swagger_ui)
+        .merge(apidocs_routes)
         .layer(TraceLayer::new_for_http())
 }
