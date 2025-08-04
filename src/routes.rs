@@ -6,10 +6,11 @@ use tower_http::trace::TraceLayer;
 
 use crate::handlers::{general::*, word::*};
 
-/// SwaggerUI router with RapidDoc too
+/// SwaggerUI router with RapidDoc and Scalar as well
 fn mk_swagger_ui_routes(origins: Vec<HeaderValue>) -> axum::Router {
     use utoipa::OpenApi;
     use utoipa_rapidoc::RapiDoc;
+    use utoipa_scalar::{Scalar, Servable as ScalarServable};
     use utoipa_swagger_ui::SwaggerUi;
     use utoipauto::utoipauto;
 
@@ -23,11 +24,11 @@ fn mk_swagger_ui_routes(origins: Vec<HeaderValue>) -> axum::Router {
     )]
     pub struct ApiDoc;
 
+    // Set up SwaggerUi, RapiDoc, and Scalar endpoints
     Router::new()
         .merge(SwaggerUi::new("/swagger-ui").url("/api-docs/openapi.json", ApiDoc::openapi()))
-        // There is no need to create `RapiDoc::with_openapi` because the OpenApi is served
-        // via SwaggerUi instead we only make rapidoc to point to the existing doc.
         .merge(RapiDoc::new("/api-docs/openapi.json").path("/rapidoc"))
+        .merge(Scalar::with_url("/scalar", ApiDoc::openapi()))
         .layer(
             CorsLayer::new()
                 .allow_methods([Method::POST, Method::GET, Method::PUT, Method::DELETE])
@@ -85,7 +86,7 @@ pub async fn create_router(dbpool: sqlx::Pool<sqlx::Sqlite>) -> axum::Router {
     // Add public routes under /
     let public_routes = mk_public_routes(dbpool.clone(), origins.to_vec());
 
-    // Add SwaggerUi under /swagger-ui
+    // Add SwaggerUi under /swagger-ui, RapiDoc under /rapidoc and Scalar under /scalar endpoints
     let swagger_ui = mk_swagger_ui_routes(origins.to_vec());
 
     // Setup top-level router
