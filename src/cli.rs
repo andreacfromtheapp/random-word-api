@@ -29,7 +29,7 @@ pub struct Cli {
 pub enum Commands {
     /// Generate a configuration file with default values
     Setup {
-        /// Configuration file path
+        /// Configuration file name
         #[arg(short, long, value_name = "FILE")]
         create_config: Option<PathBuf>,
     },
