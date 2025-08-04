@@ -141,8 +141,7 @@ async fn main() -> Result<(), anyhow::Error> {
     // Parse command-line args
     let cli = cli::Cli::parse();
 
-    // You can check for the existence of subcommands, and if found use their
-    // matches just as you would the top level cmd
+    // if setup --create-config was issued, create the file and exit
     match &cli.command {
         Some(Commands::Setup { create_config }) => {
             let file = &create_config.clone().unwrap();
