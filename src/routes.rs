@@ -6,7 +6,7 @@ use tower_http::trace::TraceLayer;
 
 use crate::handlers::{admin::*, general::*, word::*};
 
-/// SwaggerUI router with RapidDoc and Scalar as well
+/// OpenAPI Docs router with SwaggerUI, Redoc, Scalar, and RapiDoc
 fn create_apidocs_routes(origins: Vec<HeaderValue>) -> axum::Router {
     use utoipa::OpenApi;
     use utoipa_rapidoc::RapiDoc;
@@ -15,22 +15,24 @@ fn create_apidocs_routes(origins: Vec<HeaderValue>) -> axum::Router {
     use utoipa_swagger_ui::SwaggerUi;
     use utoipauto::utoipauto;
 
-    // Setup SwaggerUI router
+    // Setup SwaggerUI ApiDoc object
+    //
+    // SwaggerUI paths autodiscovery with `utoipauto`
     #[utoipauto(paths = "./src/handlers, ./src/model")]
     #[derive(OpenApi)]
     #[openapi(
-        tags(
-            (name = "Random Word API", description = "Word management endpoints.")
-        ),
+        // tags(
+        //     (name = "Random Word API", description = "Word management endpoints.")
+        // ),
     )]
     pub struct ApiDoc;
 
-    // Set up SwaggerUi, RapiDoc, and Scalar endpoints
+    // Set up SwaggerUi, Redoc, Scalar, and RapiDoc routers
     Router::new()
         .merge(SwaggerUi::new("/swagger-ui").url("/api-docs/openapi.json", ApiDoc::openapi()))
-        .merge(RapiDoc::new("/api-docs/openapi.json").path("/rapidoc"))
-        .merge(Scalar::with_url("/scalar", ApiDoc::openapi()))
         .merge(Redoc::with_url("/redoc", ApiDoc::openapi()))
+        .merge(Scalar::with_url("/scalar", ApiDoc::openapi()))
+        .merge(RapiDoc::new("/api-docs/openapi.json").path("/rapidoc"))
         .layer(
             CorsLayer::new()
                 .allow_methods([Method::POST, Method::GET, Method::PUT, Method::DELETE])
