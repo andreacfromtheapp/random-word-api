@@ -3,7 +3,7 @@ name = "random-word-api"
 version = "0.1.0"
 edition = "2021"
 license = "Apache-2.0"
-rust-version = "1.75"
+rust-version = "1.88"
 publish = false
 
 authors = ["Andrea C"]
@@ -13,6 +13,7 @@ description = "A simple API to use with my Speak and Spell toy project"
 keywords = ["speak-and-spell"]
 
 [dependencies]
+regex = "1.10.6"
 anyhow = "1.0.98"
 axum = { version = "0.8.4", features = ["macros"] }
 chrono = { version = "0.4.41", features = ["serde"] }
@@ -45,3 +46,4 @@ utoipa-redoc = { version = "6.0.0", features = ["axum"] }
 utoipa-scalar = { version = "0.3.0", features = ["axum"] }
 utoipa-swagger-ui = { version = "9.0.2", features = ["axum"] }
 utoipauto = "0.2.0"
+validator = { version = "0.20.0", features = ["derive"] }
