@@ -39,8 +39,10 @@
 - [ ] Improve idiomatic code and use patterns
 - [ ] Add type checked `AppConfig` for API info/version and more
 - [ ] Add testing
-- [ ] Add sanity checks on `UpsertWord` data? _may not need. `UpsertWord`
-      already sanitizes all given fields to `String`_
+- [x] Add data integrity checks on `UpsertWord`
+  - [x] `word`: can't contain spaces. Must be valid lemma
+  - [x] `definition`: only valid description characters
+  - [x] `pronunciation`: check for phonetic alphabet values
 - [ ] Add better health checks (besides `/ready` and `/alive`)
 - [ ] TLS:
   - [ ] <https://github.com/rustls/rustls/>
