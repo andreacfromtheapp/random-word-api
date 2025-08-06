@@ -15,7 +15,6 @@ use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 use sqlx::{query, query_as, SqlitePool};
 use utoipa::ToSchema;
-use utoipauto::utoipa_ignore;
 use validator::{Validate, ValidationError};
 
 use crate::error::AppError;
@@ -65,16 +64,11 @@ pub struct Word {
 /// words in the database. All methods are asynchronous and return Results that
 /// can be converted to appropriate HTTP responses by the handlers.
 ///
-/// These methods are marked with `#[utoipa_ignore]` to prevent them from appearing
-/// in the OpenAPI documentation, as they represent internal business logic rather
-/// than API endpoints.
-///
 /// # Error Handling
 ///
 /// All methods return `Result<T, AppError>` where `AppError` handles database
 /// errors, validation errors, and other application-specific errors that can
 /// be converted to appropriate HTTP status codes.
-#[utoipa_ignore]
 impl Word {
     /// Retrieves a random word from the database.
     ///
@@ -339,7 +333,6 @@ fn validate_pronunciation(text: &str) -> Result<(), ValidationError> {
 ///
 /// All accessor methods return `Result<&str, AppError>` to handle validation
 /// errors gracefully and convert them to appropriate HTTP responses.
-#[utoipa_ignore]
 impl UpsertWord {
     /// Returns the word field after validation.
     ///

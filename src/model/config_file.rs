@@ -1,10 +1,8 @@
 // Application configuration
 use serde::{Deserialize, Serialize};
 use std::{net::IpAddr, str::FromStr};
-use utoipauto::utoipa_ignore;
 
 /// Define config.toml
-#[utoipa_ignore]
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ConfigurationFile {
     pub port: u16,
@@ -13,7 +11,6 @@ pub struct ConfigurationFile {
 }
 
 /// Default trait implementation
-#[utoipa_ignore]
 impl ConfigurationFile {
     pub fn default() -> Self {
         ConfigurationFile {

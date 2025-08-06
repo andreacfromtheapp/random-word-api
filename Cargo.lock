@@ -1430,7 +1430,6 @@ dependencies = [
  "utoipa-redoc",
  "utoipa-scalar",
  "utoipa-swagger-ui",
- "utoipauto",
  "validator",
 ]
 
@@ -2422,38 +2421,6 @@ dependencies = [
  "url",
  "utoipa",
  "zip",
-]
-
-[[package]]
-name = "utoipauto"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cba36db2c397c614110554a60fbb4bb97d5f8c6823775c766e6f455e37377047"
-dependencies = [
- "utoipauto-macro",
-]
-
-[[package]]
-name = "utoipauto-core"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "268d76aaebb80eba79240b805972e52d7d410d4bcc52321b951318b0f440cd60"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn",
-]
-
-[[package]]
-name = "utoipauto-macro"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "382673bda1d05c85b4550d32fd4192ccd4cffe9a908543a0795d1e7682b36246"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn",
- "utoipauto-core",
 ]
 
 [[package]]
