@@ -4,7 +4,7 @@ use http::{HeaderValue, Method};
 use tower_http::cors::CorsLayer;
 use tower_http::trace::TraceLayer;
 
-use crate::handlers::{admin::*, general::*, word::*};
+use crate::handlers::{admin::*, healthcheck::*, word::*};
 
 /// OpenAPI Docs router with SwaggerUI, Redoc, Scalar, and RapiDoc
 fn create_apidocs_routes(origins: Vec<HeaderValue>) -> axum::Router {
