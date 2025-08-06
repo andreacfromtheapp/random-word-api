@@ -210,7 +210,7 @@ INSERT INTO
 VALUES
   (
     'ambiguous',
-    'open to more than one interpretation',
+    'having more than one possible meaning or interpretation',
     '/æmˈbɪɡjuəs/'
   );
 
@@ -1545,7 +1545,7 @@ INSERT INTO
 VALUES
   (
     'equivocal',
-    'open to more than one interpretation',
+    'deliberately ambiguous or unclear in order to mislead',
     '/ɪˈkwɪvəkəl/'
   );
 
