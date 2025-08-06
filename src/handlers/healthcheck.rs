@@ -35,6 +35,58 @@ use axum::extract::State;
 use sqlx::SqlitePool;
 
 use crate::error::AppError;
+/// Simple API liveness check endpoint.
+///
+/// This endpoint provides a basic liveness probe that confirms the API service
+/// is running and responsive. Unlike the readiness probe (`/ready`), this endpoint
+/// does not perform any external dependency checks and simply returns a success
+/// response to indicate the service is alive.
+///
+/// # Liveness vs Readiness
+///
+/// This endpoint differs from the `/ready` endpoint in that it:
+/// - Does not test database connectivity
+/// - Does not validate external dependencies
+/// - Provides immediate response without resource checks
+/// - Indicates only that the API process is running
+///
+/// # Use Cases
+///
+/// This endpoint is primarily designed for:
+/// - Container orchestration liveness probes
+/// - Basic service discovery health checks
+/// - Load balancer upstream validation
+/// - Simple monitoring system integration
+/// - Automated restart trigger validation
+///
+/// # Response Behavior
+///
+/// The endpoint always returns a success response when the API is running,
+/// regardless of the status of external dependencies like databases or
+/// third-party services. This makes it suitable for determining whether
+/// the service process itself needs to be restarted.
+///
+/// # Returns
+///
+/// * `200 OK` - API service is alive and responding to requests
+///
+/// # Response Format
+///
+/// Returns a plain text string message confirming the API is running,
+/// making it suitable for simple monitoring systems that expect basic
+/// text responses rather than JSON payloads.
+#[utoipa::path(
+    get,
+    path = "/alive",
+    operation_id = "api_liveness_check",
+    tag = "healthcheck_endpoints",
+    responses(
+        (status = 200, description = "OK. The API service is alive and running", body = String),
+    )
+)]
+pub async fn alive() -> String {
+    "The API is successfully running".to_string()
+}
 
 /// Tests database connectivity and returns API readiness status.
 ///

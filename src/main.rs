@@ -33,7 +33,8 @@ mod handlers;
 /// Model and business logic
 #[path = "./model/mod.rs"]
 mod model;
-/// Top-level router
+/// Routes module
+#[path = "./routes/mod.rs"]
 mod routes;
 /// Database pool
 mod state;
