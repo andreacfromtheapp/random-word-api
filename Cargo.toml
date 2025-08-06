@@ -13,15 +13,15 @@ description = "A simple API to use with my Speak and Spell toy project"
 keywords = ["speak-and-spell"]
 
 [dependencies]
-regex = "1.10.6"
+regex = "1.11.1"
 anyhow = "1.0.98"
 axum = { version = "0.8.4", features = ["macros"] }
 chrono = { version = "0.4.41", features = ["serde"] }
-clap = { version = "4.5.41", features = ["derive", "cargo", "env"] }
+clap = { version = "4.5.43", features = ["derive", "cargo", "env"] }
 dotenvy = "0.15.7"
 http = "1.3.1"
 serde = { version = "1.0.219", features = ["derive"] }
-serde_json = "1.0.141"
+serde_json = "1.0.142"
 sqlx = { version = "0.8.6", features = [
   "runtime-tokio-rustls",
   "sqlite",
@@ -29,8 +29,8 @@ sqlx = { version = "0.8.6", features = [
   "macros",
 ] }
 thiserror = "2.0.12"
-tokio = { version = "1.46.1", features = ["macros", "rt-multi-thread"] }
-toml = "0.9.4"
+tokio = { version = "1.47.1", features = ["macros", "rt-multi-thread"] }
+toml = "0.9.5"
 tower-http = { version = "0.6.6", features = ["trace", "cors"] }
 tracing = "0.1.41"
 tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
