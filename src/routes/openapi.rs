@@ -25,7 +25,7 @@ use crate::model::word::{UpsertWord, Word};
     ),
     tags(
         (name = "healthcheck_endpoints", description = "Health check and system status endpoints"),
-        (name = "publicly_exposed_endpoints", description = "Public word retrieval endpoints"),
+        (name = "public_endpoints", description = "Public word retrieval endpoints"),
         (name = "administration_endpoints", description = "Administrative word management endpoints"),
     ),
 )]

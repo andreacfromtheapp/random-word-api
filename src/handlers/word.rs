@@ -82,8 +82,8 @@ use crate::model::word::Word;
 #[utoipa::path(
     get,
     path = "/word",
-    operation_id = "custom_read_random_word",
-    tag = "publicly_exposed_endpoints",
+    operation_id = "public_word_random",
+    tag = "public_endpoints",
     responses(
         (status = 200, description = "A random word returned successfully", body = Word),
         (status = 404, description = "Couldn't return a random word. Does your database contain any?"),

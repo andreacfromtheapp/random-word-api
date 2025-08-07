@@ -64,7 +64,7 @@ use crate::model::word::{UpsertWord, Word};
     get,
     context_path = "/admin",
     path = "/words",
-    operation_id = "custom_read_all_words_listed",
+    operation_id = "admin_words_list_all",
     tag = "administration_endpoints",
     responses(
         (status = 200, description = "Listed every single word successfully", body = [Word]),
@@ -108,7 +108,7 @@ pub async fn word_list(State(dbpool): State<SqlitePool>) -> Result<Json<Vec<Word
     post,
     context_path = "/admin",
     path = "/words",
-    operation_id = "custom_post_word",
+    operation_id = "admin_words_create",
     tag = "administration_endpoints",
     request_body(content = UpsertWord, description = "Word to add to the database", content_type = "application/json"),
     responses(
@@ -154,7 +154,7 @@ pub async fn word_create(
     get,
     context_path = "/admin",
     path = "/words/{id}",
-    operation_id = "custom_read_word",
+    operation_id = "admin_words_read_by_id",
     tag = "administration_endpoints",
     responses (
         (status = 200, description = "Word with {id} returned successfully", body = Word),
@@ -211,7 +211,7 @@ pub async fn word_read(
     put,
     context_path = "/admin",
     path = "/words/{id}",
-    operation_id = "custom_put_word",
+    operation_id = "admin_words_update_by_id",
     tag = "administration_endpoints",
     request_body(content = UpsertWord, description = "Word to update in the database", content_type = "application/json"),
     responses (
@@ -265,7 +265,7 @@ pub async fn word_update(
     delete,
     context_path = "/admin",
     path = "/words/{id}",
-    operation_id = "custom_delete_word",
+    operation_id = "admin_words_delete_by_id",
     tag = "administration_endpoints",
     request_body(content = u32, description = "Word to delete from the database", content_type = "application/json"),
     responses (
