@@ -32,9 +32,9 @@
 //! Health check endpoints are designed to fail fast and provide clear status
 //! information when system components are not functioning properly.
 use axum::extract::State;
-use sqlx::SqlitePool;
 
 use crate::error::AppError;
+use crate::state::AppState;
 /// Simple API liveness check endpoint.
 ///
 /// This endpoint provides a basic liveness probe that confirms the API service
@@ -136,10 +136,10 @@ pub async fn alive() -> String {
         (status = 500, description = "Internal server error. Couldn't connect to the database"),
     )
 )]
-pub async fn ping(State(dbpool): State<SqlitePool>) -> Result<String, AppError> {
+pub async fn ping(State(state): State<AppState>) -> Result<String, AppError> {
     use sqlx::Connection;
 
-    let mut conn = dbpool.acquire().await?;
+    let mut conn = state.dbpool.acquire().await?;
     conn.ping()
         .await
         .map(|_| "OK. The API can establish a connection to the database".to_string())

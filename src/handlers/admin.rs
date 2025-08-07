@@ -34,10 +34,10 @@
 //! issues, and resource not found errors.
 use axum::extract::{Path, State};
 use axum::Json;
-use sqlx::SqlitePool;
 
 use crate::error::AppError;
 use crate::model::word::{UpsertWord, Word};
+use crate::state::AppState;
 
 /// Lists all words in the database as a JSON array.
 ///
@@ -71,8 +71,8 @@ use crate::model::word::{UpsertWord, Word};
         (status = 404, description = "Couldn't list words. Does your database contain any?"),
     )
 )]
-pub async fn word_list(State(dbpool): State<SqlitePool>) -> Result<Json<Vec<Word>>, AppError> {
-    Word::list(dbpool).await.map(Json::from)
+pub async fn word_list(State(state): State<AppState>) -> Result<Json<Vec<Word>>, AppError> {
+    Word::list(state.dbpool).await.map(Json::from)
 }
 
 /// Creates a new word entry in the database.
@@ -119,10 +119,10 @@ pub async fn word_list(State(dbpool): State<SqlitePool>) -> Result<Json<Vec<Word
     )
 )]
 pub async fn word_create(
-    State(dbpool): State<SqlitePool>,
+    State(state): State<AppState>,
     Json(new_word): Json<UpsertWord>,
 ) -> Result<Json<Word>, AppError> {
-    Word::create(dbpool, new_word).await.map(Json::from)
+    Word::create(state.dbpool, new_word).await.map(Json::from)
 }
 
 /// Retrieves a specific word by its database ID.
@@ -166,10 +166,10 @@ pub async fn word_create(
     )
 )]
 pub async fn word_read(
-    State(dbpool): State<SqlitePool>,
+    State(state): State<AppState>,
     Path(id): Path<u32>,
 ) -> Result<Json<Word>, AppError> {
-    Word::read(dbpool, id).await.map(Json::from)
+    Word::read(state.dbpool, id).await.map(Json::from)
 }
 
 /// Updates an existing word entry in the database.
@@ -224,11 +224,13 @@ pub async fn word_read(
     )
 )]
 pub async fn word_update(
-    State(dbpool): State<SqlitePool>,
+    State(state): State<AppState>,
     Path(id): Path<u32>,
     Json(updated_word): Json<UpsertWord>,
 ) -> Result<Json<Word>, AppError> {
-    Word::update(dbpool, id, updated_word).await.map(Json::from)
+    Word::update(state.dbpool, id, updated_word)
+        .await
+        .map(Json::from)
 }
 
 /// Permanently removes a word from the database.
@@ -278,8 +280,8 @@ pub async fn word_update(
     )
 )]
 pub async fn word_delete(
-    State(dbpool): State<SqlitePool>,
+    State(state): State<AppState>,
     Path(id): Path<u32>,
 ) -> Result<(), AppError> {
-    Word::delete(dbpool, id).await
+    Word::delete(state.dbpool, id).await
 }
