@@ -25,10 +25,16 @@ pub struct Cli {
 #[derive(Subcommand, Debug)]
 pub enum Commands {
     /// Generate a configuration file with default values
-    Setup {
+    GenConfig {
         /// Configuration file name
-        #[arg(short, long, value_name = "FILE")]
-        create_config: Option<PathBuf>,
+        #[arg(default_value = "config.toml")]
+        file_name: Option<PathBuf>,
+    },
+    /// Generate an environment file with default values
+    GenEnvFile {
+        /// Environment file name
+        #[arg(default_value = ".env")]
+        file_name: Option<PathBuf>,
     },
 }
 
@@ -37,11 +43,11 @@ pub enum Commands {
 #[group(id = "cfg", required = false, multiple = false, conflicts_with = "arg")]
 pub struct Config {
     /// Configuration file path
-    #[arg(short, long, value_name = "FILE")]
+    #[arg(short, long, value_name = "FILE_NAME")]
     pub config: Option<PathBuf>,
 
     /// Environment file path
-    #[arg(short, long, value_name = "FILE")]
+    #[arg(short, long, value_name = "FILE_NAME")]
     pub env_file: Option<PathBuf>,
 }
 
@@ -61,4 +67,20 @@ pub struct Arguments {
     /// API database connection URL
     #[arg(short, long, default_value = "sqlite:random-words.db")]
     pub database_url: String,
+
+    /// Enable SwaggerUI
+    #[arg(long, default_value_t = false)]
+    pub with_swagger_ui: bool,
+
+    /// Enable Redoc
+    #[arg(long, default_value_t = false)]
+    pub with_redoc: bool,
+
+    /// Enable Scalar
+    #[arg(long, default_value_t = false)]
+    pub with_scalar: bool,
+
+    /// Enable RapiDoc
+    #[arg(long, default_value_t = false)]
+    pub with_rapidoc: bool,
 }

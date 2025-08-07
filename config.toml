@@ -1,3 +1,9 @@
-port = 3000
 address = "0.0.0.0"
+port = 3000
 database_url = "sqlite:random-words.db"
+
+[openapi]
+enable_swagger_ui = false
+enable_redoc = false
+enable_scalar = false
+enable_rapidoc = false

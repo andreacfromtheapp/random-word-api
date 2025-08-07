@@ -1,2 +1,2 @@
-pub mod config_file;
+pub mod apiconfig;
 pub mod word;
