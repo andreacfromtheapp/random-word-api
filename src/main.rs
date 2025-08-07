@@ -20,8 +20,11 @@
 const TRACING_LOG_LEVELS: &str = "sqlx=info,tower_http=debug,info";
 
 use anyhow::{bail, Context, Result};
-use std::net::IpAddr;
+use sqlx::sqlite::{SqliteConnectOptions, SqlitePoolOptions};
+
 use std::path::Path;
+use std::str::FromStr;
+use std::sync::{Arc, Mutex};
 
 /// Cli arguments and interface
 mod cli;
@@ -39,8 +42,8 @@ mod routes;
 /// Database pool
 mod state;
 
-use crate::cli::{Cli, Commands};
-use crate::error::AppError;
+use crate::cli::Commands;
+use crate::error::SqlxError;
 use crate::model::apiconfig::{ApiConfig, FileKind};
 
 /// Configure tracing and logging (accepts `RUST_LOG` environment variable or uses default const above)
@@ -60,48 +63,15 @@ fn init_tracing() {
         .init();
 }
 
-/// Parse Cli arguments to construct `address`, `port`, and `database-url`
-/// Accepts `BIND_ADDR`, `BIND_PORT`, and `DATABASE_URL` from an `.env` file.
-fn init_arguments(cli: &Cli) -> Result<(IpAddr, u16, String), AppError> {
-    let address;
-    let port;
-    let database_url;
+/// Configure the database pool
+async fn init_dbpool(db_url: &str) -> Result<sqlx::Pool<sqlx::Sqlite>, SqlxError> {
+    let dbpool = SqlitePoolOptions::new()
+        .connect_with(SqliteConnectOptions::from_str(db_url)?.create_if_missing(true))
+        .await?;
 
-    // if --env-file was used
-    if let Some(file) = &cli.cfg.env_file {
-        use std::str::FromStr;
+    sqlx::migrate!("./migrations").run(&dbpool).await?;
 
-        // get all environment variable from the environment file
-        dotenvy::from_filename_override(file)?;
-
-        // set the variables as needed
-        address = IpAddr::from_str(&dotenvy::var("BIND_ADDR")?)?;
-        port = u16::from_str(&dotenvy::var("BIND_PORT")?)?;
-        database_url = dotenvy::var("DATABASE_URL")?.to_owned();
-    // if --config was used
-    } else if let Some(file) = &cli.cfg.config {
-        // read the config file line by line and store it in a String
-        let file = std::fs::read(file)?
-            .iter()
-            .map(|c| *c as char)
-            .collect::<String>();
-
-        // parse the configuration String and store in model Struct
-        let my_configs: ApiConfig = toml::from_str(&file)?;
-
-        // set the variables as needed
-        address = my_configs.address;
-        port = my_configs.port;
-        database_url = my_configs.database_url.clone();
-    // if positional parameters where used
-    } else {
-        // set the variables as needed
-        address = cli.arg.address;
-        port = cli.arg.port;
-        database_url = cli.arg.database_url.clone();
-    }
-
-    Ok((address, port, database_url))
+    Ok(dbpool)
 }
 
 /// Check if provided env-file or config are non-existent and exit gracefully
@@ -115,7 +85,6 @@ fn does_file_exist(file_name: &Path, file_kind: &str) -> Result<(), anyhow::Erro
 /// Tokio Main. What else?!
 #[tokio::main]
 async fn main() -> Result<(), anyhow::Error> {
-    use crate::state::init_dbpool;
     use clap::Parser;
     use routes::create_router;
 
@@ -138,7 +107,7 @@ async fn main() -> Result<(), anyhow::Error> {
     }
 
     // Get values from either ENV_FILE, CONFIG, or CLI; else exit gracefully
-    let Ok((address, port, database_url)) = init_arguments(&cli) else {
+    let Ok(apiconfig) = ApiConfig::from_cli(&cli) else {
         // if --env-file file doesn't exist, inform the user and exit gracefully
         if let Some(file) = &cli.cfg.env_file {
             does_file_exist(file.as_path(), "environment")?;
@@ -157,15 +126,20 @@ async fn main() -> Result<(), anyhow::Error> {
     init_tracing();
 
     // Setup the database connection pool
-    let dbpool = init_dbpool(&database_url)
+    let dbpool = init_dbpool(&apiconfig.database_url)
         .await
         .context("couldn't initialize the database connection pool")?;
 
+    let state = state::AppState {
+        config: Arc::new(Mutex::new(apiconfig.clone())),
+        dbpool: dbpool.clone(),
+    };
+
     // Setup top-level router (includes SwaggerUI)
-    let router = create_router(dbpool).await;
+    let router = create_router(state).await;
 
     // Instantiate a listener on the socket address and port
-    let listener = tokio::net::TcpListener::bind((address, port))
+    let listener = tokio::net::TcpListener::bind((apiconfig.address, apiconfig.port))
         .await
         .context("couldn't bind to address or port")?;
 

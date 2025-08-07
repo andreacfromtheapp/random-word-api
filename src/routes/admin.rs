@@ -4,9 +4,10 @@ use http::{HeaderValue, Method};
 use tower_http::cors::CorsLayer;
 
 use crate::handlers::admin::*;
+use crate::state::AppState;
 
 /// Admin router (will have auth and more soon enough)
-pub fn create_admin_routes(dbpool: sqlx::Pool<sqlx::Sqlite>, origins: Vec<HeaderValue>) -> Router {
+pub fn create_admin_routes(state: AppState, origins: Vec<HeaderValue>) -> Router {
     Router::new()
         .nest(
             "/admin",
@@ -17,7 +18,7 @@ pub fn create_admin_routes(dbpool: sqlx::Pool<sqlx::Sqlite>, origins: Vec<Header
                     get(word_read).put(word_update).delete(word_delete),
                 ),
         )
-        .with_state(dbpool.clone())
+        .with_state(state)
         .layer(
             CorsLayer::new()
                 .allow_methods([Method::POST, Method::GET, Method::PUT, Method::DELETE])

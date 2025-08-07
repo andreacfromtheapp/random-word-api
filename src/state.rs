@@ -1,16 +1,10 @@
 // App State
-use sqlx::sqlite::{SqliteConnectOptions, SqlitePoolOptions};
-use std::str::FromStr;
+use std::sync::{Arc, Mutex};
 
-use crate::error::SqlxError;
+use crate::model::apiconfig::ApiConfig;
 
-/// Configure the database pool
-pub async fn init_dbpool(db_url: &str) -> Result<sqlx::Pool<sqlx::Sqlite>, SqlxError> {
-    let dbpool = SqlitePoolOptions::new()
-        .connect_with(SqliteConnectOptions::from_str(db_url)?.create_if_missing(true))
-        .await?;
-
-    sqlx::migrate!("./migrations").run(&dbpool).await?;
-
-    Ok(dbpool)
+#[derive(Clone)]
+pub struct AppState {
+    pub config: Arc<Mutex<ApiConfig>>,
+    pub dbpool: sqlx::Pool<sqlx::Sqlite>,
 }

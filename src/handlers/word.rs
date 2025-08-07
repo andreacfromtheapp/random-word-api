@@ -32,12 +32,11 @@
 //! Endpoints handle common error scenarios including empty databases,
 //! connection failures, and other system issues with appropriate HTTP
 //! status codes and error messages.
-use axum::extract::State;
-use axum::Json;
-use sqlx::SqlitePool;
-
 use crate::error::AppError;
 use crate::model::word::Word;
+use crate::state::AppState;
+use axum::extract::State;
+use axum::Json;
 
 /// Retrieves a random word from the database as a JSON object.
 ///
@@ -89,6 +88,6 @@ use crate::model::word::Word;
         (status = 404, description = "Couldn't return a random word. Does your database contain any?"),
     ),
 )]
-pub async fn word_random(State(dbpool): State<SqlitePool>) -> Result<Json<Word>, AppError> {
-    Word::random(dbpool).await.map(Json::from)
+pub async fn word_random(State(state): State<AppState>) -> Result<Json<Word>, AppError> {
+    Word::random(state.dbpool).await.map(Json::from)
 }
