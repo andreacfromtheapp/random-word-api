@@ -21,7 +21,7 @@ const TRACING_LOG_LEVELS: &str = "sqlx=info,tower_http=debug,info";
 
 use anyhow::{bail, Context, Result};
 use std::net::IpAddr;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 /// Cli arguments and interface
 mod cli;
@@ -41,7 +41,7 @@ mod state;
 
 use crate::cli::{Cli, Commands};
 use crate::error::AppError;
-use crate::model::config_file::ConfigurationFile;
+use crate::model::apiconfig::{ApiConfig, FileKind};
 
 /// Configure tracing and logging (accepts `RUST_LOG` environment variable or uses default const above)
 fn init_tracing() {
@@ -58,26 +58,6 @@ fn init_tracing() {
                 .parse_lossy(rust_log),
         )
         .init();
-}
-
-/// Helper to create the default config.toml if non-existent
-fn create_default_config_toml(file: &PathBuf) -> Result<(), anyhow::Error> {
-    use model::config_file::ConfigurationFile;
-    use std::fs::File;
-    use std::io::prelude::*;
-
-    // set default config values
-    let default_configs = ConfigurationFile::default();
-    // read the default values
-    let toml = toml::to_string(&default_configs)?;
-    // create the default file
-    let mut buffer = File::create(file)?;
-    // write all lines from the above steps into config.toml
-    buffer.write_all(toml.as_bytes())?;
-
-    println!("configuration file '{file:?}' created successfully");
-
-    Ok(())
 }
 
 /// Parse Cli arguments to construct `address`, `port`, and `database-url`
@@ -107,7 +87,7 @@ fn init_arguments(cli: &Cli) -> Result<(IpAddr, u16, String), AppError> {
             .collect::<String>();
 
         // parse the configuration String and store in model Struct
-        let my_configs: ConfigurationFile = toml::from_str(&file)?;
+        let my_configs: ApiConfig = toml::from_str(&file)?;
 
         // set the variables as needed
         address = my_configs.address;
@@ -144,9 +124,14 @@ async fn main() -> Result<(), anyhow::Error> {
 
     // if setup --create-config was issued, create the file and exit
     match &cli.command {
-        Some(Commands::Setup { create_config }) => {
-            let file = &create_config.clone().unwrap();
-            create_default_config_toml(file)?;
+        Some(Commands::GenConfig { file_name }) => {
+            let file = &file_name.clone().unwrap();
+            ApiConfig::gen_file(file, FileKind::Toml)?;
+            std::process::exit(0x0100);
+        }
+        Some(Commands::GenEnvFile { file_name }) => {
+            let file = &file_name.clone().unwrap();
+            ApiConfig::gen_file(file, FileKind::EnvFile)?;
             std::process::exit(0x0100);
         }
         None => {}
