@@ -34,8 +34,8 @@ mod error;
 #[path = "./handlers/mod.rs"]
 mod handlers;
 /// Model and business logic
-#[path = "./model/mod.rs"]
-mod model;
+#[path = "./models/mod.rs"]
+mod models;
 /// Routes module
 #[path = "./routes/mod.rs"]
 mod routes;
@@ -44,7 +44,7 @@ mod state;
 
 use crate::cli::Commands;
 use crate::error::SqlxError;
-use crate::model::apiconfig::{ApiConfig, FileKind};
+use crate::models::apiconfig::{ApiConfig, FileKind};
 
 /// Configure tracing and logging (accepts `RUST_LOG` environment variable or uses default const above)
 fn init_tracing() {

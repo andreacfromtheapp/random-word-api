@@ -36,7 +36,7 @@ use axum::extract::{Path, State};
 use axum::Json;
 
 use crate::error::AppError;
-use crate::model::word::{UpsertWord, Word};
+use crate::models::word::{UpsertWord, Word};
 use crate::state::AppState;
 
 /// Lists all words in the database as a JSON array.

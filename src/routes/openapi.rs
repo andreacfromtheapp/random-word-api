@@ -3,7 +3,7 @@ use axum::Router;
 use utoipa::OpenApi;
 
 use crate::handlers::{admin::*, healthcheck::*, word::*};
-use crate::model::word::{UpsertWord, Word};
+use crate::models::word::{UpsertWord, Word};
 use crate::state::AppState;
 
 /// OpenAPI documentation with manual path configuration
