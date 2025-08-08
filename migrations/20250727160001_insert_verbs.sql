@@ -1255,7 +1255,6 @@ VALUES
   );
 
 INSERT INTO
-INSERT INTO
   words (word, definition, pronunciation, type)
 VALUES
   (
