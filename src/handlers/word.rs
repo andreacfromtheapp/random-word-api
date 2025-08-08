@@ -33,7 +33,7 @@
 //! connection failures, and other system issues with appropriate HTTP
 //! status codes and error messages.
 use crate::error::AppError;
-use crate::models::word::Word;
+use crate::models::word::GetWord;
 use crate::state::AppState;
 use axum::extract::State;
 use axum::Json;
@@ -84,10 +84,10 @@ use axum::Json;
     operation_id = "public_word_random",
     tag = "public_endpoints",
     responses(
-        (status = 200, description = "A random word returned successfully", body = Word),
+        (status = 200, description = "A random word returned successfully", body = GetWord),
         (status = 404, description = "Couldn't return a random word. Does your database contain any?"),
     ),
 )]
-pub async fn word_random(State(state): State<AppState>) -> Result<Json<Word>, AppError> {
-    Word::random(state.dbpool).await.map(Json::from)
+pub async fn word_random(State(state): State<AppState>) -> Result<Json<GetWord>, AppError> {
+    GetWord::random(state.dbpool).await.map(Json::from)
 }
