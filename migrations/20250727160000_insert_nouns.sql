@@ -1523,7 +1523,7 @@ INSERT INTO
 VALUES
   (
     'context',
-    'the circumstances forming a setting',
+    'the situation in which something occurs',
     '/ˈkɑntɛkst/',
     'noun'
   );
