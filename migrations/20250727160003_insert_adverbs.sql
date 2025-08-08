@@ -621,10 +621,6 @@ VALUES
 INSERT INTO
   words (word, definition, pronunciation, type)
 VALUES
-
-INSERT INTO
-  words (word, definition, pronunciation, type)
-VALUES
   (
     'literally',
     'in a literal manner or sense',

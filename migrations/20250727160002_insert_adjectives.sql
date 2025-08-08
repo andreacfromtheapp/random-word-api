@@ -1904,13 +1904,13 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)+
+  words (word, definition, pronunciation, type)
 VALUES
-+(
-+'perfect',
-+'having all the required elements',
-+'/ˈpɜrfəkt/',
-+'adjective'+
+  (
+    'perfect',
+    'having all the required elements',
+    '/ˈpɜrfəkt/',
+    'adjective'
   );
 
 INSERT INTO
