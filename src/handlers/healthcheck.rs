@@ -77,6 +77,7 @@ use crate::state::AppState;
 /// text responses rather than JSON payloads.
 #[utoipa::path(
     get,
+    context_path = "/health",
     path = "/alive",
     operation_id = "api_liveness_check",
     tag = "healthcheck_endpoints",
@@ -128,6 +129,7 @@ pub async fn alive() -> String {
 /// than JSON, making it suitable for simple health check monitoring systems.
 #[utoipa::path(
     get,
+    context_path = "/health",
     path = "/ready",
     operation_id = "api_db_connection_test",
     tag = "healthcheck_endpoints",
