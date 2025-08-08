@@ -5,7 +5,7 @@
 > [!NOTE]
 >
 > If this was a production API, I would implement proper filesystem structure
-> but...
+> (/etc /bin /var and so on) but...
 
 - [x] Environment file
   - [x] Add the possibility to use `.env` file
@@ -37,7 +37,7 @@
 
 - [ ] Split logic and `axum` and use workspace? _may not need this after all_
 - [ ] Improve idiomatic code and use patterns
-- [ ] Add type checked `AppConfig` for API info/version and more
+- [x] Add type checked `AppConfig` for API info/version and more
 - [ ] Add testing
 - [x] Add data integrity checks on `UpsertWord`
   - [x] `word`: can't contain spaces. Must be valid lemma

@@ -55,67 +55,78 @@ impl ApiConfig {
     /// Parse Cli arguments to construct `address`, `port`, and `database-url`
     /// Accepts `BIND_ADDR`, `BIND_PORT`, and `DATABASE_URL` from an `.env` file.
     pub fn from_cli(cli: &Cli) -> Result<Self, anyhow::Error> {
-        let apiconfig: Self;
-
         // if --env-file was used
         if let Some(file) = &cli.cfg.env_file {
-            use std::str::FromStr;
-
-            // get all environment variable from the environment file
-            dotenvy::from_filename_override(file)?;
-
-            // set the variables as needed
-            apiconfig = Self::new(
-                IpAddr::from_str(&dotenvy::var("BIND_ADDR")?)?,
-                u16::from_str(&dotenvy::var("BIND_PORT")?)?,
-                dotenvy::var("DATABASE_URL")?.to_owned(),
-                OpenApiDocs::new(
-                    bool::from_str(&dotenvy::var("ENABLE_SWAGGER_UI")?)?,
-                    bool::from_str(&dotenvy::var("ENABLE_REDOC")?)?,
-                    bool::from_str(&dotenvy::var("ENABLE_SCALAR")?)?,
-                    bool::from_str(&dotenvy::var("ENABLE_RAPIDOC")?)?,
-                ),
-            );
-            // if --config was used
+            Self::from_env_file(file)
+        // if --config was used
         } else if let Some(file) = &cli.cfg.config {
-            // read the config file line by line and store it in a String
-            let file = std::fs::read(file)?
-                .iter()
-                .map(|c| *c as char)
-                .collect::<String>();
-
-            // parse the configuration String and store in model Struct
-            let my_configs: Self = toml::from_str(&file)?;
-
-            // set the variables as needed
-            apiconfig = Self::new(
-                my_configs.address,
-                my_configs.port,
-                my_configs.database_url.clone(),
-                OpenApiDocs::new(
-                    my_configs.openapi.enable_swagger_ui,
-                    my_configs.openapi.enable_redoc,
-                    my_configs.openapi.enable_scalar,
-                    my_configs.openapi.enable_rapidoc,
-                ),
-            );
-        // if positional parameters where used
+            Self::from_config_file(file)
+        // if positional parameters were used
         } else {
-            // set the variables as needed
-            apiconfig = Self::new(
-                cli.arg.address,
-                cli.arg.port,
-                cli.arg.database_url.clone(),
-                OpenApiDocs::new(
-                    cli.arg.with_swagger_ui,
-                    cli.arg.with_redoc,
-                    cli.arg.with_scalar,
-                    cli.arg.with_rapidoc,
-                ),
-            );
+            Self::from_cli_args(cli)
         }
+    }
 
-        Ok(apiconfig)
+    /// Create ApiConfig from environment file
+    fn from_env_file(file: &PathBuf) -> Result<Self, anyhow::Error> {
+        use std::str::FromStr;
+
+        // get all environment variable from the environment file
+        dotenvy::from_filename_override(file)?;
+
+        // set the variables as needed
+        Ok(Self::new(
+            IpAddr::from_str(&dotenvy::var("BIND_ADDR")?)?,
+            u16::from_str(&dotenvy::var("BIND_PORT")?)?,
+            dotenvy::var("DATABASE_URL")?.to_owned(),
+            OpenApiDocs::new(
+                bool::from_str(&dotenvy::var("ENABLE_SWAGGER_UI")?)?,
+                bool::from_str(&dotenvy::var("ENABLE_REDOC")?)?,
+                bool::from_str(&dotenvy::var("ENABLE_SCALAR")?)?,
+                bool::from_str(&dotenvy::var("ENABLE_RAPIDOC")?)?,
+            ),
+        ))
+    }
+
+    /// Create ApiConfig from TOML config file
+    fn from_config_file(file: &PathBuf) -> Result<Self, anyhow::Error> {
+        // read the config file line by line and store it in a String
+        let file_content = std::fs::read(file)?
+            .iter()
+            .map(|c| *c as char)
+            .collect::<String>();
+
+        // parse the configuration String and store in model Struct
+        let my_configs: Self = toml::from_str(&file_content)?;
+
+        // set the variables as needed
+        Ok(Self::new(
+            my_configs.address,
+            my_configs.port,
+            my_configs.database_url.clone(),
+            OpenApiDocs::new(
+                my_configs.openapi.enable_swagger_ui,
+                my_configs.openapi.enable_redoc,
+                my_configs.openapi.enable_scalar,
+                my_configs.openapi.enable_rapidoc,
+            ),
+        ))
+    }
+
+    /// Create ApiConfig from CLI arguments
+    fn from_cli_args(cli: &Cli) -> Result<Self, anyhow::Error> {
+        // set the variables as needed
+        Ok(Self::new(
+            cli.arg.address,
+            cli.arg.port,
+            cli.arg.database_url.clone(),
+            OpenApiDocs::new(
+                cli.arg.with_swagger_ui,
+                cli.arg.with_redoc,
+                cli.arg.with_scalar,
+                cli.arg.with_rapidoc,
+            ),
+        ))
     }
 }
 
