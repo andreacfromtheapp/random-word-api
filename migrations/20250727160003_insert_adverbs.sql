@@ -621,7 +621,6 @@ VALUES
 INSERT INTO
   words (word, definition, pronunciation, type)
 VALUES
-  ('likely', 'probably', '/ˈlaɪkli/', 'adverb');
 
 INSERT INTO
   words (word, definition, pronunciation, type)

@@ -1255,15 +1255,6 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
-VALUES
-  (
-    'drive',
-    'to operate and control a vehicle',
-    '/draɪv/',
-    'verb'
-  );
-
 INSERT INTO
   words (word, definition, pronunciation, type)
 VALUES
