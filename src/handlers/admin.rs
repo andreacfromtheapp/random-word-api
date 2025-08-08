@@ -63,17 +63,19 @@ use crate::state::AppState;
 #[utoipa::path(
     get,
     context_path = "/admin",
-    path = "/words",
+    path = "/{lang}/words",
     operation_id = "admin_words_list_all",
     tag = "administration_endpoints",
+
     responses(
         (status = 200, description = "Listed every single word successfully", body = [Word]),
+
         (status = 404, description = "Couldn't list words. Does your database contain any?"),
+        (status = 500, description = "Internal server error")
     ),
     params(
-        ("lang" = String, Path, description = "Word language to get Word for"),
+        ("lang" = String, Path, description = "Language code for word retrieval (e.g., 'en' for English)", example = "en"),
     )
-
 )]
 pub async fn word_list(
     State(state): State<AppState>,
@@ -114,18 +116,19 @@ pub async fn word_list(
 #[utoipa::path(
     post,
     context_path = "/admin",
-    path = "/words",
+    path = "/{lang}/words",
     operation_id = "admin_words_create",
     tag = "administration_endpoints",
-    request_body(content = UpsertWord, description = "Word to add to the database", content_type = "application/json"),
+
+    request_body(content = UpsertWord, description = "Word data to add to the database with validation", content_type = "application/json"),
     responses(
-        (status = 200, description = "Word with {id} successfully added to the database", body = Word),
+        (status = 200, description = "Word successfully created and added to the database", body = Word),
         (status = 415, description = "Please provide a valid word definition in your JSON body"),
         (status = 422, description = "Please provide a valid word definition in your JSON body"),
         (status = 500, description = "Internal server error"),
     ),
     params(
-        ("lang" = String, Path, description = "Word language to get Word for"),
+        ("lang" = String, Path, description = "Language code for word creation (e.g., 'en' for English)", example = "en"),
     )
 )]
 pub async fn word_create(
@@ -166,17 +169,18 @@ pub async fn word_create(
 #[utoipa::path(
     get,
     context_path = "/admin",
-    path = "/words/{id}",
+    path = "/{lang}/words/{id}",
     operation_id = "admin_words_read_by_id",
     tag = "administration_endpoints",
+
     responses (
-        (status = 200, description = "Word with {id} returned successfully", body = Word),
+        (status = 200, description = "Word with specified ID returned successfully", body = Word),
         (status = 404, description = "Couldn't find the word with {id}"),
         (status = 500, description = "Internal server error"),
     ),
     params(
-        ("lang" = String, Path, description = "Word language to get Word for"),
-        ("id" = u32, Path, description = "Word database id to get Word for"),
+        ("lang" = String, Path, description = "Language code for word retrieval (e.g., 'en' for English)", example = "en"),
+        ("id" = u32, Path, description = "Unique database identifier of the word to retrieve", example = 1),
     )
 )]
 pub async fn word_read(
@@ -224,9 +228,10 @@ pub async fn word_read(
 #[utoipa::path(
     put,
     context_path = "/admin",
-    path = "/words/{id}",
+    path = "/{lang}/words/{id}",
     operation_id = "admin_words_update_by_id",
     tag = "administration_endpoints",
+
     request_body(content = UpsertWord, description = "Word to update in the database", content_type = "application/json"),
     responses (
         (status = 200, description = "Word with {id} updated successfully", body = Word),
@@ -234,8 +239,8 @@ pub async fn word_read(
         (status = 500, description = "Internal server error"),
     ),
     params(
-        ("lang" = String, Path, description = "Word language to get Word for"),
-        ("id" = u32, Path, description = "Word id to update Word for"),
+        ("lang" = String, Path, description = "Language code for word update (e.g., 'en' for English)", example = "en"),
+        ("id" = u32, Path, description = "Unique database identifier of the word to update", example = 1),
     )
 )]
 pub async fn word_update(
@@ -281,18 +286,18 @@ pub async fn word_update(
 #[utoipa::path(
     delete,
     context_path = "/admin",
-    path = "/words/{id}",
+    path = "/{lang}/words/{id}",
     operation_id = "admin_words_delete_by_id",
     tag = "administration_endpoints",
-    request_body(content = u32, description = "Word to delete from the database", content_type = "application/json"),
+
     responses (
-        (status = 200, description = "Word with {id} deleted successfully"),
+        (status = 200, description = "Word successfully deleted from the database"),
         (status = 404, description = "Couldn't find the word with {id}"),
         (status = 500, description = "Internal server error"),
     ),
     params(
-        ("lang" = String, Path, description = "Word language to get Word for"),
-        ("id" = u32, Path, description = "Word id to delete Word for"),
+        ("lang" = String, Path, description = "Language code for word deletion (e.g., 'en' for English)", example = "en"),
+        ("id" = u32, Path, description = "Unique database identifier of the word to delete", example = 1),
     )
 )]
 pub async fn word_delete(

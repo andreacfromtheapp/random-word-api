@@ -81,8 +81,10 @@ use crate::state::AppState;
     path = "/alive",
     operation_id = "api_liveness_check",
     tag = "healthcheck_endpoints",
+    summary = "API Liveness Check",
+    description = "Performs a basic liveness check to confirm the API service is running and responsive",
     responses(
-        (status = 200, description = "OK. The API service is alive and running", body = String),
+        (status = 200, description = "API service is alive and responding to requests", body = String),
     )
 )]
 pub async fn alive() -> String {
@@ -133,9 +135,11 @@ pub async fn alive() -> String {
     path = "/ready",
     operation_id = "api_db_connection_test",
     tag = "healthcheck_endpoints",
+    summary = "API Readiness Check",
+    description = "Performs a comprehensive readiness check including database connectivity validation",
     responses(
-        (status = 200, description = "OK. The API can establish a connection to the database", body = String),
-        (status = 500, description = "Internal server error. Couldn't connect to the database"),
+        (status = 200, description = "API is ready and database connection is successful", body = String),
+        (status = 500, description = "API is not ready - database connection failed or other critical error"),
     )
 )]
 pub async fn ping(State(state): State<AppState>) -> Result<String, AppError> {

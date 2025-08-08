@@ -48,7 +48,7 @@ use axum::Router;
 use utoipa::OpenApi;
 
 use crate::handlers::{admin::*, healthcheck::*, word::*};
-use crate::models::word::{UpsertWord, Word};
+use crate::models::word::{GetWord, UpsertWord, Word};
 use crate::state::AppState;
 
 /// OpenAPI specification structure with comprehensive endpoint documentation.
@@ -69,6 +69,7 @@ use crate::state::AppState;
 ///
 /// Includes all data transfer objects and models:
 /// - Word: Complete word structure with metadata
+/// - GetWord: Public word structure without metadata
 /// - UpsertWord: Word creation and update structure with validation
 ///
 /// # Tag Organization
@@ -87,11 +88,12 @@ use crate::state::AppState;
 #[derive(OpenApi)]
 #[openapi(
     paths(
-        // Public endpoints
+        // Health check endpoints
         alive,
         ping,
+        // Public word endpoints
         word_random,
-        // Admin endpoints
+        // Administrative endpoints
         word_list,
         word_create,
         word_read,
@@ -99,7 +101,7 @@ use crate::state::AppState;
         word_delete,
     ),
     components(
-        schemas(Word, UpsertWord)
+        schemas(Word, GetWord, UpsertWord)
     ),
     tags(
         (name = "healthcheck_endpoints", description = "Health check and system status endpoints"),

@@ -62,15 +62,14 @@ use axum::Json;
 /// # Response Content
 ///
 /// Returns a complete Word object containing:
-/// - Unique database identifier
 /// - The word text (dictionary lemma)
 /// - Full definition text
 /// - IPA pronunciation notation
-/// - Creation and update timestamps
 ///
 /// # Returns
 ///
 /// * `200 OK` - Random word successfully retrieved and returned
+/// * `400 Bad Request` - Invalid language code provided
 /// * `404 Not Found` - No words available in database (empty database)
 /// * `500 Internal Server Error` - Database connection or query error
 ///
@@ -83,13 +82,16 @@ use axum::Json;
     path = "/{lang}/word",
     operation_id = "public_word_random",
     tag = "public_endpoints",
+    summary = "Get Random Word",
+    description = "Retrieves a randomly selected word from the specified language database without requiring authentication",
     responses(
-        (status = 200, description = "A random word returned successfully", body = GetWord),
-        (status = 404, description = "Couldn't return a random word. Does your database contain any?"),
+        (status = 200, description = "Random word successfully retrieved and returned", body = GetWord),
+        (status = 400, description = "Bad Request - Invalid language code provided"),
+        (status = 404, description = "Not Found - No words available in the specified language database"),
+        (status = 500, description = "Internal Server Error - Database connection or query error"),
     ),
     params(
-        ("lang" = String, Path, description = "Word language to get Word for"),
-        ("id" = u32, Path, description = "Word id to delete Word for"),
+        ("lang" = String, Path, description = "Language code for word retrieval (currently supports 'en' for English)", example = "en"),
     )
 )]
 pub async fn word_random(
