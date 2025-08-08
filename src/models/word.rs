@@ -70,27 +70,6 @@ pub struct Word {
 /// errors, validation errors, and other application-specific errors that can
 /// be converted to appropriate HTTP status codes.
 impl Word {
-    /// Retrieves a random word from the database.
-    ///
-    /// This method uses SQLite's `RANDOM()` function to select a single word
-    /// at random from all available words in the database. This is the core
-    /// functionality for the `/word` endpoint.
-    ///
-    /// # Arguments
-    ///
-    /// * `dbpool` - SQLite connection pool for database access
-    ///
-    /// # Returns
-    ///
-    /// * `Ok(Word)` - A randomly selected word with all its fields
-    /// * `Err(AppError)` - Database connection error or empty database
-    pub async fn random(dbpool: SqlitePool) -> Result<Self, AppError> {
-        query_as("SELECT * FROM words ORDER BY random() LIMIT 1")
-            .fetch_one(&dbpool)
-            .await
-            .map_err(Into::into)
-    }
-
     /// Retrieves all words from the database.
     ///
     /// This method returns all words in the database without any filtering or
@@ -229,6 +208,37 @@ impl Word {
             .execute(&dbpool)
             .await?;
         Ok(())
+    }
+}
+
+/// dada random
+#[derive(ToSchema, Deserialize, Serialize, sqlx::FromRow)]
+pub struct GetWord {
+    word: String,
+    definition: String,
+    pronunciation: String,
+}
+
+impl GetWord {
+    /// Retrieves a random word from the database.
+    ///
+    /// This method uses SQLite's `RANDOM()` function to select a single word
+    /// at random from all available words in the database. This is the core
+    /// functionality for the `/word` endpoint.
+    ///
+    /// # Arguments
+    ///
+    /// * `dbpool` - SQLite connection pool for database access
+    ///
+    /// # Returns
+    ///
+    /// * `Ok(Word)` - A randomly selected word with all its fields
+    /// * `Err(AppError)` - Database connection error or empty database
+    pub async fn random(dbpool: SqlitePool) -> Result<Self, AppError> {
+        query_as("SELECT * FROM words ORDER BY random() LIMIT 1")
+            .fetch_one(&dbpool)
+            .await
+            .map_err(Into::into)
     }
 }
 
