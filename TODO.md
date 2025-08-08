@@ -59,5 +59,6 @@
 - [ ] Add Open Telemetry
   - [ ] <https://crates.io/search?q=opentelemetry>
   - [ ] <https://crates.io/crates/axum-tracing-opentelemetry>
-- [ ] Finalize `rustdoc`
+- [ ] Finalize `rustdoc` crate documentation
+- [ ] Finalize `openapi` documentation
 - [ ] Finalize `README.md` with useful info about it all + usage
