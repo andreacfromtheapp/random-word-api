@@ -33,7 +33,7 @@
 //! connection failures, and other system issues with appropriate HTTP
 //! status codes and error messages.
 use crate::error::AppError;
-use crate::model::word::Word;
+use crate::models::word::Word;
 use crate::state::AppState;
 use axum::extract::State;
 use axum::Json;

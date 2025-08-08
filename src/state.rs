@@ -1,7 +1,7 @@
 // App State
 use std::sync::{Arc, Mutex};
 
-use crate::model::apiconfig::ApiConfig;
+use crate::models::apiconfig::ApiConfig;
 
 #[derive(Clone)]
 pub struct AppState {
