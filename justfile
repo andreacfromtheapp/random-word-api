@@ -1,4 +1,7 @@
 help:
-    cargo run -- -h
+    watchexec cargo run -- -h
 run:
-    cargo watch -x run
+    watchexec -e rs cargo run
+swag:
+    watchexec -e rs cargo r -- --with-swagger-ui
+
