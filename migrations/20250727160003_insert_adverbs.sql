@@ -1247,7 +1247,7 @@ INSERT INTO
 VALUES
   (
     'successfully',
-    'accomplishing an aim or purpose',
+    'in a successful manner',
     '/səkˈsɛsfəli/',
     'adverb'
   );
