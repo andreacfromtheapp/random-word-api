@@ -1222,16 +1222,6 @@ INSERT INTO
   words (word, definition, pronunciation, type)
 VALUES
   (
-    'clothes',
-    'items worn to cover the body',
-    '/kloʊz/',
-    'noun'
-  );
-
-INSERT INTO
-  words (word, definition, pronunciation, type)
-VALUES
-  (
     'cloud',
     'a visible mass of water vapor',
     '/klaʊd/',
@@ -1599,7 +1589,7 @@ VALUES
   );
 
 INSERT INTO
-+words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, type)
 VALUES
   (
     'course',
