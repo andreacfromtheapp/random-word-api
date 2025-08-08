@@ -69,10 +69,17 @@ use crate::state::AppState;
     responses(
         (status = 200, description = "Listed every single word successfully", body = [Word]),
         (status = 404, description = "Couldn't list words. Does your database contain any?"),
+    ),
+    params(
+        ("lang" = String, Path, description = "Word language to get Word for"),
     )
+
 )]
-pub async fn word_list(State(state): State<AppState>) -> Result<Json<Vec<Word>>, AppError> {
-    Word::list(state.dbpool).await.map(Json::from)
+pub async fn word_list(
+    State(state): State<AppState>,
+    Path(lang): Path<String>,
+) -> Result<Json<Vec<Word>>, AppError> {
+    Word::list(state.dbpool, &lang).await.map(Json::from)
 }
 
 /// Creates a new word entry in the database.
@@ -116,13 +123,19 @@ pub async fn word_list(State(state): State<AppState>) -> Result<Json<Vec<Word>>,
         (status = 415, description = "Please provide a valid word definition in your JSON body"),
         (status = 422, description = "Please provide a valid word definition in your JSON body"),
         (status = 500, description = "Internal server error"),
+    ),
+    params(
+        ("lang" = String, Path, description = "Word language to get Word for"),
     )
 )]
 pub async fn word_create(
     State(state): State<AppState>,
+    Path(lang): Path<String>,
     Json(new_word): Json<UpsertWord>,
 ) -> Result<Json<Word>, AppError> {
-    Word::create(state.dbpool, new_word).await.map(Json::from)
+    Word::create(state.dbpool, &lang, new_word)
+        .await
+        .map(Json::from)
 }
 
 /// Retrieves a specific word by its database ID.
@@ -162,14 +175,15 @@ pub async fn word_create(
         (status = 500, description = "Internal server error"),
     ),
     params(
+        ("lang" = String, Path, description = "Word language to get Word for"),
         ("id" = u32, Path, description = "Word database id to get Word for"),
     )
 )]
 pub async fn word_read(
     State(state): State<AppState>,
-    Path(id): Path<u32>,
+    Path((lang, id)): Path<(String, u32)>,
 ) -> Result<Json<Word>, AppError> {
-    Word::read(state.dbpool, id).await.map(Json::from)
+    Word::read(state.dbpool, &lang, id).await.map(Json::from)
 }
 
 /// Updates an existing word entry in the database.
@@ -220,15 +234,16 @@ pub async fn word_read(
         (status = 500, description = "Internal server error"),
     ),
     params(
+        ("lang" = String, Path, description = "Word language to get Word for"),
         ("id" = u32, Path, description = "Word id to update Word for"),
     )
 )]
 pub async fn word_update(
     State(state): State<AppState>,
-    Path(id): Path<u32>,
+    Path((lang, id)): Path<(String, u32)>,
     Json(updated_word): Json<UpsertWord>,
 ) -> Result<Json<Word>, AppError> {
-    Word::update(state.dbpool, id, updated_word)
+    Word::update(state.dbpool, &lang, id, updated_word)
         .await
         .map(Json::from)
 }
@@ -276,12 +291,13 @@ pub async fn word_update(
         (status = 500, description = "Internal server error"),
     ),
     params(
+        ("lang" = String, Path, description = "Word language to get Word for"),
         ("id" = u32, Path, description = "Word id to delete Word for"),
     )
 )]
 pub async fn word_delete(
     State(state): State<AppState>,
-    Path(id): Path<u32>,
+    Path((lang, id)): Path<(String, u32)>,
 ) -> Result<(), AppError> {
-    Word::delete(state.dbpool, id).await
+    Word::delete(state.dbpool, &lang, id).await
 }

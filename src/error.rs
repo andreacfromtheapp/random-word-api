@@ -193,3 +193,45 @@ pub enum SqlxError {
     #[error("database error: {0}")]
     Migrate(#[from] sqlx::migrate::MigrateError),
 }
+
+/// Path validation errors for API route parameters.
+///
+/// This enum provides specific error handling for invalid path parameters
+/// in API routes, particularly for language codes and other path-based
+/// identifiers that must conform to specific formats or allowed values.
+///
+/// # Error Categories
+///
+/// The enum handles path-related validation errors that occur when:
+/// - Invalid language codes are provided in URL paths
+/// - Unsupported path parameters are used in requests
+/// - Path segments don't match expected format patterns
+///
+/// # Integration with AppError
+///
+/// These errors are automatically converted to `AppError` through the generic
+/// `From` implementation, ensuring consistent error handling throughout the
+/// application while preserving path-specific error information.
+///
+/// # HTTP Response Mapping
+///
+/// Path errors typically result in:
+/// - 400 Bad Request status codes for invalid path parameters
+/// - 404 Not Found status codes for unsupported language paths
+/// - Descriptive error messages indicating the invalid path component
+#[derive(thiserror::Error, Debug)]
+pub enum PathError {
+    /// Invalid API path parameter error.
+    ///
+    /// This variant handles errors when API path parameters don't match
+    /// expected values or formats, such as:
+    /// - Unsupported language codes in `/{lang}/` routes
+    /// - Invalid resource identifiers in path segments
+    /// - Path parameters that don't conform to validation rules
+    /// - Malformed path components that can't be processed
+    ///
+    /// The error includes the invalid path value for debugging and
+    /// client error message generation.
+    #[error("invalid API Path: {0}")]
+    InvalidPath(String),
+}

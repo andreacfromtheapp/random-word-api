@@ -35,7 +35,7 @@
 use crate::error::AppError;
 use crate::models::word::GetWord;
 use crate::state::AppState;
-use axum::extract::State;
+use axum::extract::{Path, State};
 use axum::Json;
 
 /// Retrieves a random word from the database as a JSON object.
@@ -80,14 +80,21 @@ use axum::Json;
 /// suitable for direct consumption by client applications.
 #[utoipa::path(
     get,
-    path = "/word",
+    path = "/{lang}/word",
     operation_id = "public_word_random",
     tag = "public_endpoints",
     responses(
         (status = 200, description = "A random word returned successfully", body = GetWord),
         (status = 404, description = "Couldn't return a random word. Does your database contain any?"),
     ),
+    params(
+        ("lang" = String, Path, description = "Word language to get Word for"),
+        ("id" = u32, Path, description = "Word id to delete Word for"),
+    )
 )]
-pub async fn word_random(State(state): State<AppState>) -> Result<Json<GetWord>, AppError> {
-    GetWord::random(state.dbpool).await.map(Json::from)
+pub async fn word_random(
+    State(state): State<AppState>,
+    Path(lang): Path<String>,
+) -> Result<Json<GetWord>, AppError> {
+    GetWord::random(state.dbpool, &lang).await.map(Json::from)
 }

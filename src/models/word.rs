@@ -17,7 +17,7 @@ use sqlx::{query, query_as, SqlitePool};
 use utoipa::ToSchema;
 use validator::{Validate, ValidationError};
 
-use crate::error::AppError;
+use crate::error::{AppError, PathError};
 
 /// Represents a word in the database and in API responses.
 ///
@@ -48,7 +48,7 @@ use crate::error::AppError;
 ///     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 /// );
 /// ```
-#[derive(ToSchema, Serialize, Clone, sqlx::FromRow)]
+#[derive(ToSchema, Deserialize, Serialize, Clone, sqlx::FromRow)]
 pub struct Word {
     id: u32,
     word: String,
@@ -89,11 +89,14 @@ impl Word {
     ///
     /// This endpoint should only be accessible to authenticated administrators
     /// as it exposes the entire word database.
-    pub async fn list(dbpool: SqlitePool) -> Result<Vec<Self>, AppError> {
-        query_as("SELECT * FROM words")
-            .fetch_all(&dbpool)
-            .await
-            .map_err(Into::into)
+    pub async fn list(dbpool: SqlitePool, lang: &str) -> Result<Vec<Self>, AppError> {
+        match lang {
+            "en" => query_as("SELECT * FROM words")
+                .fetch_all(&dbpool)
+                .await
+                .map_err(Into::into),
+            _ => Err(PathError::InvalidPath(lang.to_string()).into()),
+        }
     }
 
     /// Creates a new word in the database.
@@ -112,20 +115,25 @@ impl Word {
     ///
     /// * `Ok(Word)` - The newly created word with generated ID and timestamps
     /// * `Err(AppError)` - Validation error, duplicate word, or database error
-    pub async fn create(dbpool: SqlitePool, new_word: UpsertWord) -> Result<Self, AppError> {
+    pub async fn create(
+        dbpool: SqlitePool,
+        lang: &str,
+        new_word: UpsertWord,
+    ) -> Result<Self, AppError> {
         let word = new_word.word()?.to_lowercase();
         let definition = new_word.definition()?.to_lowercase();
         let pronunciation = new_word.pronunciation()?.to_lowercase();
 
-        query_as(
-            "INSERT INTO words (word, definition, pronunciation) VALUES ($1, $2, $3) RETURNING *",
-        )
-        .bind(word)
-        .bind(definition)
-        .bind(pronunciation)
-        .fetch_one(&dbpool)
-        .await
-        .map_err(Into::into)
+        match lang {
+           "en" => query_as( "INSERT INTO words (word, definition, pronunciation) VALUES ($1, $2, $3) RETURNING *", )
+               .bind(word)
+               .bind(definition)
+               .bind(pronunciation)
+               .fetch_one(&dbpool)
+               .await
+               .map_err(Into::into),
+           _ => Err(PathError::InvalidPath(lang.to_string()).into()),
+        }
     }
 
     /// Retrieves a specific word by its database ID.
@@ -143,12 +151,15 @@ impl Word {
     ///
     /// * `Ok(Word)` - The word with the specified ID
     /// * `Err(AppError)` - Word not found or database error
-    pub async fn read(dbpool: SqlitePool, id: u32) -> Result<Self, AppError> {
-        query_as("SELECT * FROM words WHERE id = $1")
-            .bind(id)
-            .fetch_one(&dbpool)
-            .await
-            .map_err(Into::into)
+    pub async fn read(dbpool: SqlitePool, lang: &str, id: u32) -> Result<Self, AppError> {
+        match lang {
+            "en" => query_as("SELECT * FROM words WHERE id = $1")
+                .bind(id)
+                .fetch_one(&dbpool)
+                .await
+                .map_err(Into::into),
+            _ => Err(PathError::InvalidPath(lang.to_string()).into()),
+        }
     }
 
     /// Updates an existing word in the database.
@@ -169,6 +180,7 @@ impl Word {
     /// * `Err(AppError)` - Word not found, validation error, or database error
     pub async fn update(
         dbpool: SqlitePool,
+        lang: &str,
         id: u32,
         updated_word: UpsertWord,
     ) -> Result<Self, AppError> {
@@ -176,16 +188,17 @@ impl Word {
         let definition = updated_word.definition()?.to_lowercase();
         let pronunciation = updated_word.pronunciation()?.to_lowercase();
 
-        query_as(
-            "UPDATE words SET word = $1, definition = $2, pronunciation = $3 WHERE id = $4 RETURNING *",
-        )
-        .bind(word)
-        .bind(definition)
-        .bind(pronunciation)
-        .bind(id)
-        .fetch_one(&dbpool)
-        .await
-        .map_err(Into::into)
+        match lang {
+            "en" => query_as( "UPDATE words SET word = $1, definition = $2, pronunciation = $3 WHERE id = $4 RETURNING *", )
+                .bind(word)
+                .bind(definition)
+                .bind(pronunciation)
+                .bind(id)
+                .fetch_one(&dbpool)
+                .await
+                .map_err(Into::into),
+            _ => Err(PathError::InvalidPath(lang.to_string()).into()),
+        }
     }
 
     /// Deletes a word from the database.
@@ -202,43 +215,127 @@ impl Word {
     ///
     /// * `Ok(())` - Word was successfully deleted
     /// * `Err(AppError)` - Word not found or database error
-    pub async fn delete(dbpool: SqlitePool, id: u32) -> Result<(), AppError> {
-        query("DELETE FROM words WHERE id = $1")
-            .bind(id)
-            .execute(&dbpool)
-            .await?;
-        Ok(())
+    pub async fn delete(dbpool: SqlitePool, lang: &str, id: u32) -> Result<(), AppError> {
+        match lang {
+            "en" => {
+                query("DELETE FROM words WHERE id = $1")
+                    .bind(id)
+                    .execute(&dbpool)
+                    .await?;
+                Ok(())
+            }
+            _ => Err(PathError::InvalidPath(lang.to_string()).into()),
+        }
     }
 }
 
-/// dada random
-#[derive(ToSchema, Deserialize, Serialize, sqlx::FromRow)]
+/// Public word response structure for API endpoints.
+///
+/// This struct represents a simplified word structure used for public API responses,
+/// containing only the essential word information without internal database metadata.
+/// It is designed for public consumption and excludes sensitive information like
+/// database IDs and timestamps that are not relevant for end users.
+///
+/// # Fields
+///
+/// - `word`: The actual word/lemma following dictionary standards
+/// - `definition`: Human-readable definition of the word
+/// - `pronunciation`: IPA phonetic notation enclosed in forward slashes
+///
+/// # Differences from Word Struct
+///
+/// Unlike the full Word struct, GetWord excludes:
+/// - Database ID for security and simplicity
+/// - Creation and update timestamps for privacy
+/// - Internal metadata not relevant to public API consumers
+///
+/// # Serialization
+///
+/// Implements comprehensive serialization support for:
+/// - JSON API responses through Serde
+/// - OpenAPI schema generation through utoipa
+/// - Database row mapping for efficient queries
+///
+/// # Usage Context
+///
+/// This struct is specifically used for public endpoints where:
+/// - Internal database information should not be exposed
+/// - Response payload should be minimal and focused
+/// - Client applications need only essential word data
+#[derive(ToSchema, Deserialize, Serialize, Clone, sqlx::FromRow)]
 pub struct GetWord {
     word: String,
     definition: String,
     pronunciation: String,
 }
 
+/// Implementation of GetWord with public database operations.
+///
+/// This implementation provides database query methods specifically designed
+/// for public API endpoints. The methods return simplified word data without
+/// internal metadata, making them suitable for public consumption while
+/// maintaining security and privacy.
+///
+/// # Security Focus
+///
+/// All methods in this implementation are designed with public access in mind:
+/// - No exposure of internal database IDs
+/// - No timestamp information in responses
+/// - Minimal data exposure for enhanced privacy
+///
+/// # Language Support
+///
+/// Methods include language parameter validation to ensure:
+/// - Only supported languages are processed
+/// - Proper error handling for unsupported language codes
+/// - Future extensibility for multi-language support
 impl GetWord {
-    /// Retrieves a random word from the database.
+    /// Retrieves a random word from the database for public consumption.
     ///
     /// This method uses SQLite's `RANDOM()` function to select a single word
-    /// at random from all available words in the database. This is the core
-    /// functionality for the `/word` endpoint.
+    /// at random from all available words in the specified language. It returns
+    /// only the essential word information without internal database metadata,
+    /// making it suitable for public API endpoints.
+    ///
+    /// # Language Validation
+    ///
+    /// The method validates the language parameter to ensure only supported
+    /// languages are processed. Currently supports:
+    /// - "en": English language words
+    /// - Future languages can be added with additional database tables
+    ///
+    /// # Database Query
+    ///
+    /// Performs an optimized query that:
+    /// - Selects only public-facing fields (word, definition, pronunciation)
+    /// - Uses SQLite's RANDOM() function for fair distribution
+    /// - Limits results to a single word for efficiency
+    /// - Excludes internal metadata for security
     ///
     /// # Arguments
     ///
     /// * `dbpool` - SQLite connection pool for database access
+    /// * `lang` - Language code for word selection validation
     ///
     /// # Returns
     ///
-    /// * `Ok(Word)` - A randomly selected word with all its fields
-    /// * `Err(AppError)` - Database connection error or empty database
-    pub async fn random(dbpool: SqlitePool) -> Result<Self, AppError> {
-        query_as("SELECT * FROM words ORDER BY random() LIMIT 1")
+    /// * `Ok(GetWord)` - A randomly selected word with public fields only
+    /// * `Err(AppError)` - Database connection error, empty database, or invalid language
+    ///
+    /// # Privacy Considerations
+    ///
+    /// This method specifically excludes internal database information to
+    /// protect system internals while providing essential word data to clients.
+    pub async fn random(dbpool: SqlitePool, lang: &str) -> Result<Self, AppError> {
+        match lang {
+            "en" => query_as(
+                "SELECT word, definition, pronunciation FROM words ORDER BY random() LIMIT 1",
+            )
             .fetch_one(&dbpool)
             .await
-            .map_err(Into::into)
+            .map_err(Into::into),
+            _ => Err(PathError::InvalidPath(lang.to_string()).into()),
+        }
     }
 }
 
