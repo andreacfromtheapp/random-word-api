@@ -85,7 +85,7 @@ use axum::Json;
     summary = "Get Random Word",
     description = "Retrieves a randomly selected word from the specified language database without requiring authentication",
     responses(
-        (status = 200, description = "Random word successfully retrieved and returned", body = GetWord),
+        (status = 200, description = "Random word successfully retrieved and returned", body = [GetWord]),
         (status = 400, description = "Bad Request - Invalid language code provided"),
         (status = 404, description = "Not Found - No words available in the specified language database"),
         (status = 500, description = "Internal Server Error - Database connection or query error"),
@@ -97,7 +97,7 @@ use axum::Json;
 pub async fn word_random(
     State(state): State<AppState>,
     Path(lang): Path<String>,
-) -> Result<Json<GetWord>, AppError> {
+) -> Result<Json<Vec<GetWord>>, AppError> {
     GetWord::random_word(state.dbpool, &lang)
         .await
         .map(Json::from)
@@ -150,7 +150,7 @@ pub async fn word_random(
     summary = "Get Random Word by Type",
     description = "Retrieves a randomly selected word of a specific grammatical type (noun, verb, adjective, or adverb) from the specified language database without requiring authentication",
     responses(
-        (status = 200, description = "Random word of specified type successfully retrieved and returned", body = GetWord),
+        (status = 200, description = "Random word of specified type successfully retrieved and returned", body = [GetWord]),
         (status = 400, description = "Bad Request - Invalid language code or unsupported word type provided"),
         (status = 404, description = "Not Found - No words of specified type available in the language database"),
         (status = 500, description = "Internal Server Error - Database connection or query error"),
@@ -163,7 +163,7 @@ pub async fn word_random(
 pub async fn word_type(
     State(state): State<AppState>,
     Path((lang, word_type)): Path<(String, String)>,
-) -> Result<Json<GetWord>, AppError> {
+) -> Result<Json<Vec<GetWord>>, AppError> {
     GetWord::random_type(state.dbpool, &lang, &word_type)
         .await
         .map(Json::from)
