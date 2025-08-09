@@ -104,7 +104,7 @@ pub async fn word_list(
 ///
 /// # Request Body
 ///
-/// Expects a JSON object with `word`, `definition`, and `pronunciation` fields.
+/// Expects a JSON object with `word`, `definition`, `pronunciation`, and `word_type` fields.
 /// All fields are required and must pass validation rules.
 ///
 /// # Returns
@@ -120,11 +120,11 @@ pub async fn word_list(
     operation_id = "admin_words_create",
     tag = "administration_endpoints",
 
-    request_body(content = UpsertWord, description = "Word data to add to the database with validation", content_type = "application/json"),
+    request_body(content = UpsertWord, description = "Word data to add to the database with validation. Must include word, definition, pronunciation, and word_type fields", content_type = "application/json"),
     responses(
         (status = 200, description = "Word successfully created and added to the database", body = Word),
-        (status = 415, description = "Please provide a valid word definition in your JSON body"),
-        (status = 422, description = "Please provide a valid word definition in your JSON body"),
+        (status = 415, description = "Please provide a valid word with all required fields (word, definition, pronunciation, word_type) in your JSON body"),
+        (status = 422, description = "Validation failed - ensure word, definition, pronunciation are properly formatted and word_type is one of: noun, verb, adjective, adverb"),
         (status = 500, description = "Internal server error"),
     ),
     params(
@@ -209,7 +209,7 @@ pub async fn word_read(
 ///
 /// # Request Body
 ///
-/// Expects a JSON object with `word`, `definition`, and `pronunciation` fields.
+/// Expects a JSON object with `word`, `definition`, `pronunciation`, and `word_type` fields.
 /// All fields are required and must pass the same validation as word creation.
 ///
 /// # Validation
@@ -218,6 +218,7 @@ pub async fn word_read(
 /// - Word format validation for lemma standards
 /// - Definition content validation for appropriate dictionary language
 /// - Pronunciation validation for proper IPA notation format
+/// - Word type validation for supported grammatical categories (noun, verb, adjective, adverb)
 ///
 /// # Returns
 ///
@@ -232,7 +233,7 @@ pub async fn word_read(
     operation_id = "admin_words_update_by_id",
     tag = "administration_endpoints",
 
-    request_body(content = UpsertWord, description = "Word to update in the database", content_type = "application/json"),
+    request_body(content = UpsertWord, description = "Word data to update in the database. Must include word, definition, pronunciation, and word_type fields", content_type = "application/json"),
     responses (
         (status = 200, description = "Word with {id} updated successfully", body = Word),
         (status = 404, description = "Couldn't find the word with {id}"),

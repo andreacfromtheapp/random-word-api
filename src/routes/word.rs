@@ -8,6 +8,7 @@
 //!
 //! All public word routes follow a language-specific pattern:
 //! - `/{lang}/word` - Random word retrieval for specified language
+//! - `/{lang}/word/{type}` - Random word of specific grammatical type
 //!
 //! # Language Support
 //!
@@ -59,6 +60,7 @@ use crate::state::AppState;
 ///
 /// Sets up language-parameterized routes for:
 /// - Random word retrieval with language specification
+/// - Random word retrieval filtered by grammatical type
 /// - Future expansion to language-specific word operations
 ///
 /// # Language Parameter
@@ -99,6 +101,7 @@ use crate::state::AppState;
 pub fn create_word_routes(state: AppState, origins: Vec<HeaderValue>) -> Router {
     Router::new()
         .route("/{lang}/word", get(word_random))
+        .route("/{lang}/word/{type}", get(word_type))
         .with_state(state)
         .layer(
             CorsLayer::new()
