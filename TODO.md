@@ -2,11 +2,6 @@
 
 ## Part 1
 
-> [!NOTE]
->
-> If this was a production API, I would implement proper filesystem structure
-> (/etc /bin /var and so on) but...
-
 - [x] Environment file
   - [x] Add the possibility to use `.env` file
   - [x] Check if `.env` file exists
@@ -17,10 +12,6 @@
   - [x] Add configuration default file generation in same directory
   - [x] Improve default config creation with default Trait
   - [x] Add a `cli` command to generate the config on demand with a path
-- [x] Documentation:
-  - [x] <https://doc.rust-lang.org/rustdoc/index.html>
-  - [x] Improve `rustdoc` documentation
-  - [x] Improve `README.md`
 - [x] Improve tracing:
   - [x] <https://crates.io/crates/tracing-subscriber>
 - [x] Errors:
@@ -32,29 +23,65 @@
     - [x] <https://github.com/tokio-rs/axum/tree/main/examples/anyhow-error-response>
   - [x] Use `thiserror`:
     - [x] <https://docs.rs/thiserror/latest/thiserror/>
-
-## Part 2
-
-- [ ] Split logic and `axum` and use workspace? _may not need this after all_
-- [ ] Improve idiomatic code and use patterns
-- [x] Add type checked `AppConfig` for API info/version and more
-- [ ] Add testing
-- [x] Add data integrity checks on `UpsertWord`
-- [ ] TLS:
-  - [ ] <https://github.com/rustls/rustls/>
-  - [ ] <https://github.com/rustls/rcgen>
-- [ ] Authentication
+- [x] Improve idiomatic code:
+  - [x] Add type checked `AppConfig` for API info/version and more
+  - [x] Add type checked `AppState` for shared mutable state
+  - [x] Add data integrity checks on `UpsertWord`
+  - [x] Add `GetWord` to display only needed data to frontends
 - [x] Open API:
   - [x] <https://crates.io/crates/utoipa>
-  - [x] <https://crates.io/crates/utoipauto>
   - [x] <https://crates.io/crates/utoipa-swagger-ui>
   - [x] <https://crates.io/crates/utoipa-rapidoc>
   - [x] <https://crates.io/crates/utoipa-redoc>
   - [x] <https://crates.io/crates/utoipa-scalar>
-  - [ ] <https://crates.io/crates/utoipa-axum>
-- [ ] Add Open Telemetry
+- [x] Add testing.
+  - Note: adding these _late_ because as I was learning Axum and most of the API
+    related tech/code, I wouldn't have known what to TDD. Now that I do, the
+    next API will take advantage of TDD as well.
+  - Disclaimer: I used Zed AI and guided the process to add all tests.
+- [x] Improve `rustdoc` documentation
+  - Disclaimer: I used Zed AI and guided the process to write all docs.
+
+## Part 2
+
+- [ ] TLS:
+  - [ ] <https://github.com/rustls/rustls/>
+  - [ ] <https://github.com/rustls/rcgen>
+- [ ] Authentication
+
+## Part 3
+
+- [ ] Split codebase and use a workspace:
+  - [ ] Add backend with `Random Word API`
+  - [ ] Add frontend with `Leptos SSR` for admin
+  - [ ] Add frontend with `Elm Speak and Spell` for fun
+
+## Part 4
+
+- [ ] Add Open Telemetry to Axum
   - [ ] <https://crates.io/search?q=opentelemetry>
   - [ ] <https://crates.io/crates/axum-tracing-opentelemetry>
-- [ ] Finalize `rustdoc` crate documentation
+- [ ] Add all necessary services to collect and display
+
+## Part 5
+
+- [ ] Docker and Compose for a demo:
+  - [ ] `Nginx` for:
+    - [ ] <https://localhost/> (a brief description and links to services)
+    - [ ] <https://admin.localhost/> (API admin of words)
+    - [ ] <https://random.localhost/> (page with random word + button)
+    - [ ] <https://play.localhost/> (Elm Speak n Spell)
+    - [ ] <https://monitor.localhost/> (Grafana UI)
+    - [ ] <https://metrics.localhost/> (Open Telemetry UI)
+  - [ ] API backend
+  - [ ] Use Postgres?
+
+## Part 6
+
+- [ ] Finalize `rustdoc` crates documentation
 - [ ] Finalize `openapi` documentation
-- [ ] Finalize `README.md` with useful info about it all + usage
+- [ ] Finalize `README.md` with useful info about it all:
+  - [ ] rationale
+  - [ ] learning
+  - [ ] deployment
+  - [ ] usage

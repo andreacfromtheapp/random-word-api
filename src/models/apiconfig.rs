@@ -31,7 +31,7 @@
 
 // Application configuration
 use serde::{Deserialize, Serialize};
-use std::{fmt, net::IpAddr, path::PathBuf, str::FromStr};
+use std::{fmt, net::IpAddr, path::PathBuf};
 
 use crate::cli::Cli;
 
@@ -241,7 +241,7 @@ impl ApiConfig {
     ///
     /// Uses `dotenvy::from_filename_override` to ensure file variables
     /// take precedence over existing environment variables.
-    fn from_env_file(file: &PathBuf) -> Result<Self, anyhow::Error> {
+    pub fn from_env_file(file: &PathBuf) -> Result<Self, anyhow::Error> {
         use std::str::FromStr;
 
         // get all environment variable from the environment file
@@ -249,14 +249,14 @@ impl ApiConfig {
 
         // set the variables as needed
         Ok(Self::new(
-            IpAddr::from_str(&dotenvy::var("BIND_ADDR")?)?,
-            u16::from_str(&dotenvy::var("BIND_PORT")?)?,
-            dotenvy::var("DATABASE_URL")?.to_owned(),
+            IpAddr::from_str(dotenvy::var("BIND_ADDR")?.trim())?,
+            u16::from_str(dotenvy::var("BIND_PORT")?.trim())?,
+            dotenvy::var("DATABASE_URL")?.trim().to_owned(),
             OpenApiDocs::new(
-                bool::from_str(&dotenvy::var("ENABLE_SWAGGER_UI")?)?,
-                bool::from_str(&dotenvy::var("ENABLE_REDOC")?)?,
-                bool::from_str(&dotenvy::var("ENABLE_SCALAR")?)?,
-                bool::from_str(&dotenvy::var("ENABLE_RAPIDOC")?)?,
+                bool::from_str(dotenvy::var("ENABLE_SWAGGER_UI")?.trim())?,
+                bool::from_str(dotenvy::var("ENABLE_REDOC")?.trim())?,
+                bool::from_str(dotenvy::var("ENABLE_SCALAR")?.trim())?,
+                bool::from_str(dotenvy::var("ENABLE_RAPIDOC")?.trim())?,
             ),
         ))
     }
@@ -295,7 +295,7 @@ impl ApiConfig {
     ///
     /// The method reads the entire file into memory as a string and uses
     /// the `toml` crate for parsing and type conversion.
-    fn from_config_file(file: &PathBuf) -> Result<Self, anyhow::Error> {
+    pub fn from_config_file(file: &PathBuf) -> Result<Self, anyhow::Error> {
         // read the config file line by line and store it in a String
         let file_content = std::fs::read(file)?
             .iter()
@@ -345,7 +345,7 @@ impl ApiConfig {
     ///
     /// Uses the default values specified in the CLI argument definitions,
     /// ensuring consistency between configuration methods.
-    fn from_cli_args(cli: &Cli) -> Result<Self, anyhow::Error> {
+    pub fn from_cli_args(cli: &Cli) -> Result<Self, anyhow::Error> {
         // set the variables as needed
         Ok(Self::new(
             cli.arg.address,
@@ -410,9 +410,11 @@ impl fmt::Display for ApiConfig {
 /// environment variables with appropriate security settings.
 impl Default for ApiConfig {
     fn default() -> Self {
+        use std::str::FromStr;
+
         ApiConfig {
             address: IpAddr::from_str("0.0.0.0").unwrap(),
-            port: 3000,
+            port: u16::from_str("3000").unwrap(),
             database_url: "sqlite:random-words.db".to_string(),
             openapi: OpenApiDocs::default(),
         }
@@ -511,5 +513,97 @@ impl fmt::Display for OpenApiDocs {
             "# OpenAPI Docs\nENABLE_SWAGGER_UI={}\nENABLE_REDOC={}\nENABLE_SCALAR={}\nENABLE_RAPIDOC={}\n",
             self.enable_swagger_ui, self.enable_redoc, self.enable_scalar, self.enable_rapidoc
         )
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::net::IpAddr;
+    use std::str::FromStr;
+
+    #[test]
+    fn test_api_config_new() {
+        let address = IpAddr::from_str("127.0.0.1").unwrap();
+        let openapi = OpenApiDocs::new(true, false, true, false);
+        let config = ApiConfig::new(address, 8080, "sqlite:test.db".to_string(), openapi);
+
+        assert_eq!(config.address, address);
+        assert_eq!(config.port, 8080);
+        assert_eq!(config.database_url, "sqlite:test.db");
+        assert!(config.openapi.enable_swagger_ui);
+        assert!(!config.openapi.enable_redoc);
+    }
+
+    #[test]
+    fn test_api_config_default() {
+        let config = ApiConfig::default();
+
+        assert_eq!(config.address, IpAddr::from_str("0.0.0.0").unwrap());
+        assert_eq!(config.port, 3000);
+        assert_eq!(config.database_url, "sqlite:random-words.db");
+        assert!(!config.openapi.enable_swagger_ui);
+        assert!(!config.openapi.enable_redoc);
+        assert!(!config.openapi.enable_scalar);
+        assert!(!config.openapi.enable_rapidoc);
+    }
+
+    #[test]
+    fn test_openapi_docs_new() {
+        let docs = OpenApiDocs::new(true, false, true, false);
+
+        assert!(docs.enable_swagger_ui);
+        assert!(!docs.enable_redoc);
+        assert!(docs.enable_scalar);
+        assert!(!docs.enable_rapidoc);
+    }
+
+    #[test]
+    fn test_openapi_docs_default() {
+        let docs = OpenApiDocs::default();
+
+        assert!(!docs.enable_swagger_ui);
+        assert!(!docs.enable_redoc);
+        assert!(!docs.enable_scalar);
+        assert!(!docs.enable_rapidoc);
+    }
+
+    #[test]
+    fn test_api_config_display() {
+        let address = IpAddr::from_str("192.168.1.1").unwrap();
+        let openapi = OpenApiDocs::new(true, false, true, false);
+        let config = ApiConfig::new(address, 9000, "sqlite:display_test.db".to_string(), openapi);
+
+        let output = format!("{config}");
+        assert!(output.contains("BIND_ADDR=\"192.168.1.1\""));
+        assert!(output.contains("BIND_PORT=9000"));
+        assert!(output.contains("DATABASE_URL=sqlite:display_test.db"));
+        assert!(output.contains("ENABLE_SWAGGER_UI=true"));
+        assert!(output.contains("ENABLE_REDOC=false"));
+        assert!(output.contains("ENABLE_SCALAR=true"));
+        assert!(output.contains("ENABLE_RAPIDOC=false"));
+    }
+
+    #[test]
+    fn test_openapi_docs_display() {
+        let docs = OpenApiDocs::new(false, true, false, true);
+        let output = format!("{docs}");
+
+        assert!(output.contains("# OpenAPI Docs"));
+        assert!(output.contains("ENABLE_SWAGGER_UI=false"));
+        assert!(output.contains("ENABLE_REDOC=true"));
+        assert!(output.contains("ENABLE_SCALAR=false"));
+        assert!(output.contains("ENABLE_RAPIDOC=true"));
+    }
+
+    #[test]
+    fn test_file_kind_variants() {
+        // Test that FileKind variants exist and can be created
+        let _toml = FileKind::Toml;
+        let _env = FileKind::EnvFile;
+
+        // Test Debug implementation
+        assert_eq!(format!("{:?}", FileKind::Toml), "Toml");
+        assert_eq!(format!("{:?}", FileKind::EnvFile), "EnvFile");
     }
 }

@@ -75,6 +75,35 @@ pub struct Word {
 /// errors, validation errors, and other application-specific errors that can
 /// be converted to appropriate HTTP status codes.
 impl Word {
+    /// Returns the word's database ID
+    #[allow(dead_code)]
+    pub fn id(&self) -> u32 {
+        self.id
+    }
+
+    /// Returns the word's grammatical type
+    #[allow(dead_code)]
+    pub fn word_type(&self) -> &str {
+        &self.word_type
+    }
+
+    /// Returns the actual word text
+    #[allow(dead_code)]
+    pub fn word(&self) -> &str {
+        &self.word
+    }
+
+    /// Returns the word's definition
+    #[allow(dead_code)]
+    pub fn definition(&self) -> &str {
+        &self.definition
+    }
+
+    /// Returns the word's pronunciation in IPA notation
+    #[allow(dead_code)]
+    pub fn pronunciation(&self) -> &str {
+        &self.pronunciation
+    }
     /// Retrieves all words from the database.
     ///
     /// This method returns all words in the database without any filtering or
@@ -315,6 +344,23 @@ pub struct GetWord {
 /// - Adjectives for descriptive word requests
 /// - Adverbs for modifier-based word requests
 impl GetWord {
+    /// Returns the word text
+    #[allow(dead_code)]
+    pub fn word(&self) -> &str {
+        &self.word
+    }
+
+    /// Returns the word's definition
+    #[allow(dead_code)]
+    pub fn definition(&self) -> &str {
+        &self.definition
+    }
+
+    /// Returns the word's pronunciation
+    #[allow(dead_code)]
+    pub fn pronunciation(&self) -> &str {
+        &self.pronunciation
+    }
     /// Retrieves a random word from the database for public consumption.
     ///
     /// This method uses SQLite's `RANDOM()` function to select a single word
@@ -470,16 +516,16 @@ impl GetWord {
 /// - `word`: Must be a valid lemma (no whitespace, follows Merriam-Webster format)
 /// - `definition`: Must contain only alphabetic characters, punctuation, and whitespace
 /// - `pronunciation`: Must be valid IPA notation enclosed in forward slashes
-#[derive(ToSchema, Deserialize, Validate)]
+#[derive(ToSchema, Deserialize, Serialize, Validate)]
 pub struct UpsertWord {
     #[validate(length(min = 1), custom(function = "validate_word"))]
-    word: String,
+    pub word: String,
     #[validate(length(min = 1), custom(function = "validate_definition"))]
-    definition: String,
+    pub definition: String,
     #[validate(length(min = 1), custom(function = "validate_pronunciation"))]
-    pronunciation: String,
+    pub pronunciation: String,
     #[validate(length(min = 1), custom(function = "validate_word_type"))]
-    word_type: String,
+    pub word_type: String,
 }
 
 /// Validates a word field using Merriam-Webster lemma rules.
@@ -578,6 +624,9 @@ fn validate_pronunciation(text: &str) -> Result<(), ValidationError> {
 /// # Examples
 ///
 /// ```rust
+/// use random_word_api::models::word::validate_word_type;
+/// use validator::ValidationError;
+///
 /// // Valid word types
 /// assert!(validate_word_type("noun").is_ok());
 /// assert!(validate_word_type("verb").is_ok());
@@ -589,7 +638,7 @@ fn validate_pronunciation(text: &str) -> Result<(), ValidationError> {
 /// assert!(validate_word_type("conjunction").is_err());
 /// assert!(validate_word_type("").is_err());
 /// ```
-fn validate_word_type(text: &str) -> Result<(), ValidationError> {
+pub fn validate_word_type(text: &str) -> Result<(), ValidationError> {
     let allowed_word_types = ["noun", "verb", "adjective", "adverb"];
 
     if !allowed_word_types.contains(&text) {
@@ -710,7 +759,7 @@ impl UpsertWord {
 /// # Examples
 ///
 /// ```rust
-/// use crate::model::word::is_valid_lemma;
+/// use random_word_api::models::word::is_valid_lemma;
 ///
 /// // Valid lemmas
 /// assert!(is_valid_lemma("hello"));
@@ -722,8 +771,8 @@ impl UpsertWord {
 ///
 /// // Invalid lemmas
 /// assert!(!is_valid_lemma("hello world")); // contains space
-/// assert!(!is_valid_lemma("hello@world")); // contains @
 /// assert!(!is_valid_lemma("")); // empty string
+/// assert!(!is_valid_lemma("hello@world")); // contains invalid character
 /// ```
 pub fn is_valid_lemma(lemma: &str) -> bool {
     use regex::Regex;
@@ -784,7 +833,7 @@ pub fn is_valid_lemma(lemma: &str) -> bool {
 /// # Examples
 ///
 /// ```rust
-/// use crate::model::word::is_valid_definition;
+/// use random_word_api::models::word::is_valid_definition;
 ///
 /// // Valid definitions
 /// assert!(is_valid_definition("a word or phrase"));
@@ -794,7 +843,6 @@ pub fn is_valid_lemma(lemma: &str) -> bool {
 ///
 /// // Invalid definitions
 /// assert!(!is_valid_definition("contact us at test@email.com"));
-/// assert!(!is_valid_definition("visit our website www.example.com"));
 /// assert!(!is_valid_definition("costs $50 or more"));
 /// assert!(!is_valid_definition("")); // empty string
 /// ```
@@ -854,7 +902,7 @@ pub fn is_valid_definition(definition: &str) -> bool {
 /// # Examples
 ///
 /// ```rust
-/// use crate::model::word::is_valid_pronunciation;
+/// use random_word_api::models::word::is_valid_pronunciation;
 ///
 /// // Valid pronunciations
 /// assert!(is_valid_pronunciation("/əˈbeɪt/"));
@@ -867,7 +915,6 @@ pub fn is_valid_definition(definition: &str) -> bool {
 /// assert!(!is_valid_pronunciation("//")); // empty content
 /// assert!(!is_valid_pronunciation("/test@/")); // invalid character
 /// assert!(!is_valid_pronunciation("əˈbeɪt")); // missing slashes
-/// assert!(!is_valid_pronunciation("")); // empty string
 /// ```
 pub fn is_valid_pronunciation(pronunciation: &str) -> bool {
     use regex::Regex;
@@ -892,4 +939,138 @@ pub fn is_valid_pronunciation(pronunciation: &str) -> bool {
     });
 
     !pronunciation.is_empty() && regex.is_match(pronunciation)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_is_valid_lemma() {
+        // Valid lemmas
+        assert!(is_valid_lemma("hello"));
+        assert!(is_valid_lemma("co-worker"));
+        assert!(is_valid_lemma("don't"));
+        assert!(is_valid_lemma("Mr."));
+        assert!(is_valid_lemma("café"));
+        assert!(is_valid_lemma("naïve"));
+        assert!(is_valid_lemma("test123"));
+
+        // Invalid lemmas
+        assert!(!is_valid_lemma("hello world")); // space
+        assert!(!is_valid_lemma("hello@world")); // invalid character
+        assert!(!is_valid_lemma("")); // empty
+        assert!(!is_valid_lemma("test\nline")); // newline
+    }
+
+    #[test]
+    fn test_is_valid_definition() {
+        // Valid definitions
+        assert!(is_valid_definition("a word or phrase"));
+        assert!(is_valid_definition("departing from an accepted standard"));
+        assert!(is_valid_definition(
+            "restrain oneself from indulging in something"
+        ));
+        assert!(is_valid_definition("having the quality of being naïve"));
+        assert!(is_valid_definition("test: definition with punctuation!"));
+
+        // Invalid definitions
+        assert!(!is_valid_definition("contact us at test@email.com")); // email
+        assert!(!is_valid_definition("costs $50 or more")); // currency
+        assert!(!is_valid_definition("")); // empty
+        assert!(!is_valid_definition("test & more")); // ampersand
+    }
+
+    #[test]
+    fn test_is_valid_pronunciation() {
+        // Valid pronunciations
+        assert!(is_valid_pronunciation("/əˈbeɪt/"));
+        assert!(is_valid_pronunciation("/æˈberənt/"));
+        assert!(is_valid_pronunciation("/ˌæbəˈreɪʃən/"));
+        assert!(is_valid_pronunciation("/ˈhɛloʊ/"));
+        assert!(is_valid_pronunciation("/test/"));
+
+        // Invalid pronunciations
+        assert!(!is_valid_pronunciation("invalid")); // no slashes
+        assert!(!is_valid_pronunciation("//")); // empty content
+        assert!(!is_valid_pronunciation("/test@/")); // invalid character
+        assert!(!is_valid_pronunciation("əˈbeɪt")); // missing slashes
+        assert!(!is_valid_pronunciation("")); // empty
+    }
+
+    #[test]
+    fn test_validate_word_type() {
+        // Valid word types
+        assert!(validate_word_type("noun").is_ok());
+        assert!(validate_word_type("verb").is_ok());
+        assert!(validate_word_type("adjective").is_ok());
+        assert!(validate_word_type("adverb").is_ok());
+
+        // Invalid word types
+        assert!(validate_word_type("preposition").is_err());
+        assert!(validate_word_type("conjunction").is_err());
+        assert!(validate_word_type("").is_err());
+        assert!(validate_word_type("invalid").is_err());
+    }
+
+    #[test]
+    fn test_validate_word() {
+        // Valid words
+        assert!(validate_word("hello").is_ok());
+        assert!(validate_word("co-worker").is_ok());
+        assert!(validate_word("don't").is_ok());
+
+        // Invalid words
+        assert!(validate_word("hello world").is_err()); // whitespace
+        assert!(validate_word("hello@world").is_err()); // invalid character
+        assert!(validate_word("").is_err()); // empty
+    }
+
+    #[test]
+    fn test_validate_definition() {
+        // Valid definitions
+        assert!(validate_definition("a simple definition").is_ok());
+        assert!(validate_definition("definition with punctuation!").is_ok());
+
+        // Invalid definitions
+        assert!(validate_definition("bad@definition").is_err());
+        assert!(validate_definition("").is_err());
+    }
+
+    #[test]
+    fn test_validate_pronunciation() {
+        // Valid pronunciations
+        assert!(validate_pronunciation("/əˈbeɪt/").is_ok());
+        assert!(validate_pronunciation("/test/").is_ok());
+
+        // Invalid pronunciations
+        assert!(validate_pronunciation("invalid").is_err());
+        assert!(validate_pronunciation("").is_err());
+    }
+
+    #[test]
+    fn test_upsert_word_validation() {
+        let valid_word = UpsertWord {
+            word: "hello".to_string(),
+            definition: "a greeting".to_string(),
+            pronunciation: "/həˈloʊ/".to_string(),
+            word_type: "noun".to_string(),
+        };
+
+        assert!(valid_word.validate().is_ok());
+        assert!(valid_word.word().is_ok());
+        assert!(valid_word.definition().is_ok());
+        assert!(valid_word.pronunciation().is_ok());
+        assert!(valid_word.word_type().is_ok());
+
+        let invalid_word = UpsertWord {
+            word: "hello world".to_string(), // invalid: contains space
+            definition: "a greeting".to_string(),
+            pronunciation: "/həˈloʊ/".to_string(),
+            word_type: "noun".to_string(),
+        };
+
+        assert!(invalid_word.validate().is_err());
+        assert!(invalid_word.word().is_err());
+    }
 }

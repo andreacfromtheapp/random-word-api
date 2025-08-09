@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS words (
-  id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+  id INTEGER PRIMARY KEY NOT NULL,
   word_type TEXT NOT NULL CHECK (
     word_type IN ("noun", "verb", "adjective", "adverb")
   ),
