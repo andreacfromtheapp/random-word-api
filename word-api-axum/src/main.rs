@@ -12,7 +12,7 @@
 //! Random Word API comes with a comprehensive help menu:
 //!
 //! ```non_rust
-//! random-word-api -h
+//! word-api-axum -h
 //! ```
 //!
 

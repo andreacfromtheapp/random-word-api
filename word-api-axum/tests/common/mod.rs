@@ -4,15 +4,15 @@
 //! test data generation, and helper functions for integration tests.
 
 use axum::Router;
-use random_word_api::models::{
-    apiconfig::{ApiConfig, OpenApiDocs},
-    word::{is_valid_definition, is_valid_lemma, is_valid_pronunciation, UpsertWord},
-};
-use random_word_api::routes::create_router;
-use random_word_api::state::AppState;
 use sqlx::{sqlite::SqlitePoolOptions, SqlitePool};
 use std::sync::Arc;
 use std::sync::Mutex;
+use word_api_axum::models::{
+    apiconfig::{ApiConfig, OpenApiDocs},
+    word::{is_valid_definition, is_valid_lemma, is_valid_pronunciation, UpsertWord},
+};
+use word_api_axum::routes::create_router;
+use word_api_axum::state::AppState;
 
 /// Creates a test database pool with only schema migrations applied (no data)
 #[allow(dead_code)]
@@ -198,7 +198,7 @@ pub fn sample_word_with_type(word_type: &str) -> UpsertWord {
 /// Uses validators to ensure all test data is valid
 #[allow(dead_code)]
 pub async fn populate_test_db(pool: &SqlitePool) {
-    use random_word_api::models::word::Word;
+    use word_api_axum::models::word::Word;
 
     let sample_words = vec![
         sample_word_with_type("verb"),

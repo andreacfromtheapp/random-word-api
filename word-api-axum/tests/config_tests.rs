@@ -10,9 +10,9 @@ use tempfile::tempdir;
 
 mod common;
 use common::test_config;
-use random_word_api::cli::{Cli, Commands};
-use random_word_api::models::apiconfig::{ApiConfig, FileKind};
 use serial_test::serial;
+use word_api_axum::cli::{Cli, Commands};
+use word_api_axum::models::apiconfig::{ApiConfig, FileKind};
 
 #[test]
 fn test_config_file_generation() {

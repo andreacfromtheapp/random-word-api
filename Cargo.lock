@@ -1439,37 +1439,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "random-word-api"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "axum",
- "chrono",
- "clap",
- "dotenvy",
- "http",
- "regex",
- "serde",
- "serde_json",
- "serial_test",
- "sqlx",
- "tempfile",
- "thiserror",
- "tokio",
- "toml",
- "tower",
- "tower-http",
- "tracing",
- "tracing-subscriber",
- "utoipa",
- "utoipa-rapidoc",
- "utoipa-redoc",
- "utoipa-scalar",
- "utoipa-swagger-ui",
- "validator",
-]
-
-[[package]]
 name = "redox_syscall"
 version = "0.5.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3009,6 +2978,37 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6f42320e61fe2cfd34354ecb597f86f413484a798ba44a8ca1165c58d42da6c1"
 dependencies = [
  "bitflags",
+]
+
+[[package]]
+name = "word-api-axum"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "axum",
+ "chrono",
+ "clap",
+ "dotenvy",
+ "http",
+ "regex",
+ "serde",
+ "serde_json",
+ "serial_test",
+ "sqlx",
+ "tempfile",
+ "thiserror",
+ "tokio",
+ "toml",
+ "tower",
+ "tower-http",
+ "tracing",
+ "tracing-subscriber",
+ "utoipa",
+ "utoipa-rapidoc",
+ "utoipa-redoc",
+ "utoipa-scalar",
+ "utoipa-swagger-ui",
+ "validator",
 ]
 
 [[package]]

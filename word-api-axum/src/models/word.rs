@@ -624,7 +624,7 @@ fn validate_pronunciation(text: &str) -> Result<(), ValidationError> {
 /// # Examples
 ///
 /// ```rust
-/// use random_word_api::models::word::validate_word_type;
+/// use word_api_axum::models::word::validate_word_type;
 /// use validator::ValidationError;
 ///
 /// // Valid word types
@@ -759,7 +759,7 @@ impl UpsertWord {
 /// # Examples
 ///
 /// ```rust
-/// use random_word_api::models::word::is_valid_lemma;
+/// use word_api_axum::models::word::is_valid_lemma;
 ///
 /// // Valid lemmas
 /// assert!(is_valid_lemma("hello"));
@@ -833,7 +833,7 @@ pub fn is_valid_lemma(lemma: &str) -> bool {
 /// # Examples
 ///
 /// ```rust
-/// use random_word_api::models::word::is_valid_definition;
+/// use word_api_axum::models::word::is_valid_definition;
 ///
 /// // Valid definitions
 /// assert!(is_valid_definition("a word or phrase"));
@@ -902,7 +902,7 @@ pub fn is_valid_definition(definition: &str) -> bool {
 /// # Examples
 ///
 /// ```rust
-/// use random_word_api::models::word::is_valid_pronunciation;
+/// use word_api_axum::models::word::is_valid_pronunciation;
 ///
 /// // Valid pronunciations
 /// assert!(is_valid_pronunciation("/əˈbeɪt/"));

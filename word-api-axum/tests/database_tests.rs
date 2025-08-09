@@ -9,7 +9,7 @@ use common::{
     invalid_word_type_field, populate_test_db, sample_word, sample_word_with_type,
     validate_test_word,
 };
-use random_word_api::models::word::{
+use word_api_axum::models::word::{
     is_valid_definition, is_valid_lemma, is_valid_pronunciation, GetWord, UpsertWord, Word,
 };
 
@@ -195,7 +195,7 @@ async fn test_get_word_random() {
     );
 
     // Verify it's a valid word using our validators
-    use random_word_api::models::word::{
+    use word_api_axum::models::word::{
         is_valid_definition, is_valid_lemma, is_valid_pronunciation,
     };
     assert!(is_valid_lemma(word.word()));

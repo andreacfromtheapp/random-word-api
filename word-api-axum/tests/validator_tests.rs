@@ -10,7 +10,7 @@ use common::{
     invalid_word_field, invalid_word_type_field, sample_word, sample_word_with_type,
     validate_test_word,
 };
-use random_word_api::models::word::{
+use word_api_axum::models::word::{
     is_valid_definition, is_valid_lemma, is_valid_pronunciation, UpsertWord, Word,
 };
 
