@@ -122,7 +122,7 @@ pub async fn word_list(
 
     request_body(content = UpsertWord, description = "Word data to add to the database with validation. Must include word, definition, pronunciation, and word_type fields", content_type = "application/json"),
     responses(
-        (status = 200, description = "Word successfully created and added to the database", body = Word),
+        (status = 200, description = "Word successfully created and added to the database", body = [Word]),
         (status = 415, description = "Please provide a valid word with all required fields (word, definition, pronunciation, word_type) in your JSON body"),
         (status = 422, description = "Validation failed - ensure word, definition, pronunciation are properly formatted and word_type is one of: noun, verb, adjective, adverb"),
         (status = 500, description = "Internal server error"),
@@ -135,7 +135,7 @@ pub async fn word_create(
     State(state): State<AppState>,
     Path(lang): Path<String>,
     Json(new_word): Json<UpsertWord>,
-) -> Result<Json<Word>, AppError> {
+) -> Result<Json<Vec<Word>>, AppError> {
     Word::create(state.dbpool, &lang, new_word)
         .await
         .map(Json::from)
@@ -174,7 +174,7 @@ pub async fn word_create(
     tag = "administration_endpoints",
 
     responses (
-        (status = 200, description = "Word with specified ID returned successfully", body = Word),
+        (status = 200, description = "Word with specified ID returned successfully", body = [Word]),
         (status = 404, description = "Couldn't find the word with {id}"),
         (status = 500, description = "Internal server error"),
     ),
@@ -186,7 +186,7 @@ pub async fn word_create(
 pub async fn word_read(
     State(state): State<AppState>,
     Path((lang, id)): Path<(String, u32)>,
-) -> Result<Json<Word>, AppError> {
+) -> Result<Json<Vec<Word>>, AppError> {
     Word::read(state.dbpool, &lang, id).await.map(Json::from)
 }
 
@@ -235,7 +235,7 @@ pub async fn word_read(
 
     request_body(content = UpsertWord, description = "Word data to update in the database. Must include word, definition, pronunciation, and word_type fields", content_type = "application/json"),
     responses (
-        (status = 200, description = "Word with {id} updated successfully", body = Word),
+        (status = 200, description = "Word with {id} updated successfully", body = [Word]),
         (status = 404, description = "Couldn't find the word with {id}"),
         (status = 500, description = "Internal server error"),
     ),
@@ -248,7 +248,7 @@ pub async fn word_update(
     State(state): State<AppState>,
     Path((lang, id)): Path<(String, u32)>,
     Json(updated_word): Json<UpsertWord>,
-) -> Result<Json<Word>, AppError> {
+) -> Result<Json<Vec<Word>>, AppError> {
     Word::update(state.dbpool, &lang, id, updated_word)
         .await
         .map(Json::from)

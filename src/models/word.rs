@@ -125,7 +125,7 @@ impl Word {
         dbpool: SqlitePool,
         lang: &str,
         new_word: UpsertWord,
-    ) -> Result<Self, AppError> {
+    ) -> Result<Vec<Self>, AppError> {
         let word = new_word.word()?.to_lowercase();
         let definition = new_word.definition()?.to_lowercase();
         let pronunciation = new_word.pronunciation()?.to_lowercase();
@@ -137,7 +137,7 @@ impl Word {
                .bind(definition)
                .bind(pronunciation)
                .bind(word_type)
-               .fetch_one(&dbpool)
+               .fetch_all(&dbpool)
                .await
                .map_err(Into::into),
            _ => Err(PathError::InvalidPath(lang.to_string()).into()),
@@ -159,11 +159,11 @@ impl Word {
     ///
     /// * `Ok(Word)` - The word with the specified ID
     /// * `Err(AppError)` - Word not found or database error
-    pub async fn read(dbpool: SqlitePool, lang: &str, id: u32) -> Result<Self, AppError> {
+    pub async fn read(dbpool: SqlitePool, lang: &str, id: u32) -> Result<Vec<Self>, AppError> {
         match lang {
             "en" => query_as("SELECT * FROM words WHERE id = $1")
                 .bind(id)
-                .fetch_one(&dbpool)
+                .fetch_all(&dbpool)
                 .await
                 .map_err(Into::into),
             _ => Err(PathError::InvalidPath(lang.to_string()).into()),
@@ -192,7 +192,7 @@ impl Word {
         lang: &str,
         id: u32,
         updated_word: UpsertWord,
-    ) -> Result<Self, AppError> {
+    ) -> Result<Vec<Self>, AppError> {
         let word = updated_word.word()?.to_lowercase();
         let definition = updated_word.definition()?.to_lowercase();
         let pronunciation = updated_word.pronunciation()?.to_lowercase();
@@ -205,7 +205,7 @@ impl Word {
                 .bind(pronunciation)
                 .bind(word_type)
                 .bind(id)
-                .fetch_one(&dbpool)
+                .fetch_all(&dbpool)
                 .await
                 .map_err(Into::into),
             _ => Err(PathError::InvalidPath(lang.to_string()).into()),
@@ -387,12 +387,12 @@ impl GetWord {
     ///
     /// This method specifically excludes internal database information to
     /// protect system internals while providing essential word data to clients.
-    pub async fn random_word(dbpool: SqlitePool, lang: &str) -> Result<Self, AppError> {
+    pub async fn random_word(dbpool: SqlitePool, lang: &str) -> Result<Vec<Self>, AppError> {
         match lang {
             "en" => query_as(
                 "SELECT word, definition, pronunciation FROM words ORDER BY random() LIMIT 1",
             )
-            .fetch_one(&dbpool)
+            .fetch_all(&dbpool)
             .await
             .map_err(Into::into),
             _ => Err(PathError::InvalidPath(lang.to_string()).into()),
@@ -444,13 +444,13 @@ impl GetWord {
         dbpool: SqlitePool,
         lang: &str,
         word_type: &str,
-    ) -> Result<Self, AppError> {
+    ) -> Result<Vec<Self>, AppError> {
         match lang {
             "en" => query_as(
                 "SELECT word, definition, pronunciation FROM words WHERE word_type = $1 ORDER BY random() LIMIT 1",
             )
             .bind(word_type)
-            .fetch_one(&dbpool)
+            .fetch_all(&dbpool)
             .await
             .map_err(Into::into),
             _ => Err(PathError::InvalidPath(lang.to_string()).into()),
