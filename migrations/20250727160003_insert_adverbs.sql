@@ -1,5 +1,5 @@
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'absolutely',
@@ -9,7 +9,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'accidentally',
@@ -19,7 +19,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'accordingly',
@@ -29,7 +29,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'accurately',
@@ -39,7 +39,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'actively',
@@ -49,7 +49,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'actually',
@@ -59,7 +59,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'additionally',
@@ -69,7 +69,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'adequately',
@@ -79,7 +79,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'admittedly',
@@ -89,7 +89,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'aggressively',
@@ -99,7 +99,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'amazingly',
@@ -109,12 +109,12 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   ('annually', 'once a year', '/ˈænjuəli/', 'adverb');
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'apparently',
@@ -124,7 +124,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'approximately',
@@ -134,7 +134,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'automatically',
@@ -144,7 +144,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'basically',
@@ -154,7 +154,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'beautifully',
@@ -164,7 +164,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'brilliantly',
@@ -174,7 +174,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'carefully',
@@ -184,7 +184,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'certainly',
@@ -194,7 +194,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'clearly',
@@ -204,7 +204,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'comfortably',
@@ -214,7 +214,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'commonly',
@@ -224,7 +224,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'completely',
@@ -234,7 +234,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'considerably',
@@ -244,7 +244,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'constantly',
@@ -254,7 +254,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'correctly',
@@ -264,7 +264,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'definitely',
@@ -274,7 +274,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'differently',
@@ -284,7 +284,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'directly',
@@ -294,7 +294,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'dramatically',
@@ -304,7 +304,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'easily',
@@ -314,7 +314,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'effectively',
@@ -324,7 +324,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'efficiently',
@@ -334,7 +334,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'entirely',
@@ -344,7 +344,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'especially',
@@ -354,7 +354,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'essentially',
@@ -364,7 +364,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'eventually',
@@ -374,7 +374,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'exactly',
@@ -384,7 +384,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'extremely',
@@ -394,7 +394,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'fairly',
@@ -404,7 +404,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'finally',
@@ -414,7 +414,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'formally',
@@ -424,7 +424,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'frequently',
@@ -434,7 +434,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'fully',
@@ -444,7 +444,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'generally',
@@ -454,7 +454,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'gradually',
@@ -464,7 +464,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'greatly',
@@ -474,12 +474,12 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   ('hardly', 'scarcely', '/ˈhɑrdli/', 'adverb');
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'heavily',
@@ -489,7 +489,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'highly',
@@ -499,7 +499,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'hopefully',
@@ -509,7 +509,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'however',
@@ -519,7 +519,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'immediately',
@@ -529,7 +529,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'importantly',
@@ -539,7 +539,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'increasingly',
@@ -549,7 +549,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'indeed',
@@ -559,7 +559,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'individually',
@@ -569,12 +569,12 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   ('initially', 'at first', '/ɪˈnɪʃəli/', 'adverb');
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'instead',
@@ -584,7 +584,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'internationally',
@@ -594,7 +594,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'largely',
@@ -604,12 +604,12 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   ('lately', 'recently', '/ˈleɪtli/', 'adverb');
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'legally',
@@ -619,7 +619,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'literally',
@@ -629,7 +629,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'locally',
@@ -639,7 +639,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'mainly',
@@ -649,12 +649,12 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   ('maybe', 'perhaps', '/ˈmeɪbi/', 'adverb');
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'meanwhile',
@@ -664,7 +664,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'mostly',
@@ -674,7 +674,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'naturally',
@@ -684,7 +684,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'nearly',
@@ -694,7 +694,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'necessarily',
@@ -704,7 +704,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'normally',
@@ -714,7 +714,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'obviously',
@@ -724,7 +724,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'occasionally',
@@ -734,7 +734,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'officially',
@@ -744,7 +744,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'often',
@@ -754,7 +754,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'originally',
@@ -764,7 +764,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'otherwise',
@@ -774,7 +774,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'particularly',
@@ -784,7 +784,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'perfectly',
@@ -794,7 +794,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'perhaps',
@@ -804,7 +804,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'personally',
@@ -814,7 +814,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'physically',
@@ -824,7 +824,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'politically',
@@ -834,7 +834,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'possibly',
@@ -844,7 +844,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'potentially',
@@ -854,7 +854,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'previously',
@@ -864,7 +864,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'primarily',
@@ -874,7 +874,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'probably',
@@ -884,7 +884,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'professionally',
@@ -894,7 +894,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'properly',
@@ -904,7 +904,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'publicly',
@@ -914,7 +914,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'purely',
@@ -924,7 +924,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'quickly',
@@ -934,7 +934,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'quietly',
@@ -944,7 +944,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'quite',
@@ -954,7 +954,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'rarely',
@@ -964,7 +964,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'rather',
@@ -974,12 +974,12 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   ('really', 'in actual fact', '/ˈrili/', 'adverb');
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'recently',
@@ -989,7 +989,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'regularly',
@@ -999,7 +999,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'relatively',
@@ -1009,7 +1009,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'remarkably',
@@ -1019,7 +1019,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'repeatedly',
@@ -1029,7 +1029,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'respectively',
@@ -1039,12 +1039,12 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   ('sadly', 'in a sad manner', '/ˈsædli/', 'adverb');
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'safely',
@@ -1054,7 +1054,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'scientifically',
@@ -1064,7 +1064,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'secondly',
@@ -1074,7 +1074,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'secretly',
@@ -1084,7 +1084,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'seriously',
@@ -1094,7 +1094,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'significantly',
@@ -1104,7 +1104,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'similarly',
@@ -1114,7 +1114,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'simply',
@@ -1124,7 +1124,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'slightly',
@@ -1134,7 +1134,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'slowly',
@@ -1144,7 +1144,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'smoothly',
@@ -1154,7 +1154,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'socially',
@@ -1164,7 +1164,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'softly',
@@ -1174,12 +1174,12 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   ('somehow', 'in some way', '/ˈsʌmˌhaʊ/', 'adverb');
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'sometimes',
@@ -1189,7 +1189,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'somewhat',
@@ -1199,7 +1199,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'somewhere',
@@ -1209,7 +1209,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'specifically',
@@ -1219,7 +1219,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'still',
@@ -1229,7 +1229,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'strongly',
@@ -1239,7 +1239,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'successfully',
@@ -1249,7 +1249,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'suddenly',
@@ -1259,7 +1259,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'sufficiently',
@@ -1269,7 +1269,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'surely',
@@ -1279,7 +1279,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'technically',
@@ -1289,7 +1289,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'temporarily',
@@ -1299,7 +1299,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'therefore',
@@ -1309,7 +1309,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'thoroughly',
@@ -1319,12 +1319,12 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   ('though', 'however', '/ðoʊ/', 'adverb');
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'thus',
@@ -1334,12 +1334,12 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   ('today', 'on this day', '/təˈdeɪ/', 'adverb');
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'together',
@@ -1349,7 +1349,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'tomorrow',
@@ -1359,7 +1359,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'tonight',
@@ -1369,7 +1369,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'totally',
@@ -1379,7 +1379,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'truly',
@@ -1389,7 +1389,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'typically',
@@ -1399,7 +1399,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'ultimately',
@@ -1409,7 +1409,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'unfortunately',
@@ -1419,7 +1419,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'unless',
@@ -1429,7 +1429,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'upward',
@@ -1439,7 +1439,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'urgently',
@@ -1449,7 +1449,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'usually',
@@ -1459,7 +1459,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'utterly',
@@ -1469,7 +1469,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'vastly',
@@ -1479,7 +1479,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'verbally',
@@ -1489,7 +1489,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'vertically',
@@ -1499,7 +1499,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'vigorously',
@@ -1509,7 +1509,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'virtually',
@@ -1519,7 +1519,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'visually',
@@ -1529,7 +1529,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'voluntarily',
@@ -1539,7 +1539,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'warmly',
@@ -1549,7 +1549,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'weekly',
@@ -1559,7 +1559,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'wherever',
@@ -1569,7 +1569,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'widely',
@@ -1579,7 +1579,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'willingly',
@@ -1589,7 +1589,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'wisely',
@@ -1599,7 +1599,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'wonderfully',
@@ -1609,7 +1609,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'yearly',
@@ -1619,7 +1619,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'yesterday',
@@ -1629,7 +1629,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'youthfully',
@@ -1639,7 +1639,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'zealously',
@@ -1649,7 +1649,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'abruptly',
@@ -1659,7 +1659,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'aimlessly',
@@ -1669,7 +1669,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'carelessly',
@@ -1679,7 +1679,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'backwards',
@@ -1689,7 +1689,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'blindly',
@@ -1699,7 +1699,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'boldly',
@@ -1709,7 +1709,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'briefly',
@@ -1719,7 +1719,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'casually',
@@ -1729,7 +1729,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'cleverly',
@@ -1739,7 +1739,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'confidently',
@@ -1749,7 +1749,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'curiously',
@@ -1759,7 +1759,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'deliberately',
@@ -1769,7 +1769,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'desperately',
@@ -1779,7 +1779,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'eagerly',
@@ -1789,7 +1789,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'patiently',
@@ -1799,7 +1799,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'firmly',
@@ -1809,7 +1809,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'fortunately',
@@ -1819,7 +1819,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'freely',
@@ -1829,7 +1829,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'generously',
@@ -1839,7 +1839,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'gracefully',
@@ -1849,7 +1849,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'hastily',
@@ -1859,7 +1859,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'honestly',
@@ -1869,7 +1869,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'peacefully',
@@ -1879,7 +1879,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'joyfully',
@@ -1889,7 +1889,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'kindly',
@@ -1899,7 +1899,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'loudly',
@@ -1909,7 +1909,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'manually',
@@ -1919,7 +1919,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'mysteriously',
@@ -1929,7 +1929,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'nervously',
@@ -1939,7 +1939,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'optimistically',
