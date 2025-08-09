@@ -76,31 +76,26 @@ pub struct Word {
 /// be converted to appropriate HTTP status codes.
 impl Word {
     /// Returns the word's database ID
-    #[allow(dead_code)]
     pub fn id(&self) -> u32 {
         self.id
     }
 
     /// Returns the word's grammatical type
-    #[allow(dead_code)]
     pub fn word_type(&self) -> &str {
         &self.word_type
     }
 
     /// Returns the actual word text
-    #[allow(dead_code)]
     pub fn word(&self) -> &str {
         &self.word
     }
 
     /// Returns the word's definition
-    #[allow(dead_code)]
     pub fn definition(&self) -> &str {
         &self.definition
     }
 
     /// Returns the word's pronunciation in IPA notation
-    #[allow(dead_code)]
     pub fn pronunciation(&self) -> &str {
         &self.pronunciation
     }
@@ -345,19 +340,16 @@ pub struct GetWord {
 /// - Adverbs for modifier-based word requests
 impl GetWord {
     /// Returns the word text
-    #[allow(dead_code)]
     pub fn word(&self) -> &str {
         &self.word
     }
 
     /// Returns the word's definition
-    #[allow(dead_code)]
     pub fn definition(&self) -> &str {
         &self.definition
     }
 
     /// Returns the word's pronunciation
-    #[allow(dead_code)]
     pub fn pronunciation(&self) -> &str {
         &self.pronunciation
     }
