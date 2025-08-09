@@ -235,3 +235,67 @@ pub enum PathError {
     #[error("invalid API Path: {0}")]
     InvalidPath(String),
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use axum::http::StatusCode;
+    use axum::response::IntoResponse;
+
+    #[test]
+    fn test_app_error_into_response() {
+        let error = AppError(anyhow::anyhow!("test error"));
+        let response = error.into_response();
+
+        assert_eq!(response.status(), StatusCode::INTERNAL_SERVER_ERROR);
+    }
+
+    #[test]
+    fn test_app_error_from_various_types() {
+        // Test conversion from anyhow::Error
+        let anyhow_error = anyhow::anyhow!("anyhow error");
+        let app_error = AppError::from(anyhow_error);
+        assert_eq!(format!("{}", app_error.0), "anyhow error");
+
+        // Test conversion from std::io::Error
+        let io_error = std::io::Error::new(std::io::ErrorKind::NotFound, "file not found");
+        let app_error = AppError::from(io_error);
+        assert!(format!("{}", app_error.0).contains("file not found"));
+    }
+
+    #[test]
+    fn test_sqlx_error_variants() {
+        use sqlx::Error as SqlxDbError;
+
+        // Test database error conversion
+        let db_error = SqlxDbError::RowNotFound;
+        let sqlx_error = SqlxError::Db(db_error);
+        assert!(format!("{sqlx_error}").contains("database error"));
+
+        // Test that SqlxError can be converted to AppError
+        let app_error = AppError::from(sqlx_error);
+        assert!(format!("{}", app_error.0).contains("database error"));
+    }
+
+    #[test]
+    fn test_path_error_variants() {
+        let path_error = PathError::InvalidPath("invalid_lang".to_string());
+        assert_eq!(format!("{path_error}"), "invalid API Path: invalid_lang");
+
+        // Test conversion to AppError
+        let app_error = AppError::from(path_error);
+        assert!(format!("{}", app_error.0).contains("invalid API Path"));
+    }
+
+    #[test]
+    fn test_error_chain_preservation() {
+        // Create a chain of errors
+        let root_cause = std::io::Error::new(std::io::ErrorKind::PermissionDenied, "access denied");
+        let context_error = anyhow::Error::from(root_cause).context("failed to read file");
+        let app_error = AppError::from(context_error);
+
+        let error_string = format!("{}", app_error.0);
+        // Just check that the context is preserved
+        assert!(error_string.contains("failed to read file"));
+    }
+}
