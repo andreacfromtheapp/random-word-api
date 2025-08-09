@@ -1,5 +1,5 @@
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'abundance',
@@ -9,7 +9,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'acceptance',
@@ -19,7 +19,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'accident',
@@ -29,7 +29,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'accomplishment',
@@ -39,7 +39,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'account',
@@ -49,7 +49,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'accuracy',
@@ -59,7 +59,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'achievement',
@@ -69,7 +69,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'action',
@@ -79,7 +79,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'activity',
@@ -89,7 +89,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'addition',
@@ -99,7 +99,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'administration',
@@ -109,7 +109,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'advantage',
@@ -119,7 +119,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'adventure',
@@ -129,7 +129,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'advice',
@@ -139,7 +139,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'afternoon',
@@ -149,7 +149,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'age',
@@ -159,7 +159,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'agency',
@@ -169,7 +169,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'agreement',
@@ -179,7 +179,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'agriculture',
@@ -189,7 +189,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'airport',
@@ -199,7 +199,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'album',
@@ -209,7 +209,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'ambition',
@@ -219,7 +219,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'amount',
@@ -229,7 +229,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'analysis',
@@ -239,7 +239,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'anger',
@@ -249,7 +249,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'animal',
@@ -259,7 +259,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'anniversary',
@@ -269,7 +269,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'answer',
@@ -279,7 +279,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'anxiety',
@@ -289,7 +289,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'apartment',
@@ -299,7 +299,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'application',
@@ -309,7 +309,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'appointment',
@@ -319,7 +319,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'appreciation',
@@ -329,7 +329,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'approach',
@@ -339,7 +339,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'area',
@@ -349,7 +349,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'argument',
@@ -359,7 +359,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'army',
@@ -369,7 +369,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'art',
@@ -379,7 +379,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'article',
@@ -389,7 +389,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'artist',
@@ -399,7 +399,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'association',
@@ -409,7 +409,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'atmosphere',
@@ -419,7 +419,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'attack',
@@ -429,7 +429,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'attempt',
@@ -439,7 +439,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'attention',
@@ -449,7 +449,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'attitude',
@@ -459,7 +459,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'audience',
@@ -469,7 +469,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'author',
@@ -479,7 +479,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'authority',
@@ -489,7 +489,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'award',
@@ -499,7 +499,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'background',
@@ -509,7 +509,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'balance',
@@ -519,7 +519,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'bank',
@@ -529,7 +529,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'barrier',
@@ -539,7 +539,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'battle',
@@ -549,7 +549,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'beach',
@@ -559,7 +559,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'beauty',
@@ -569,7 +569,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'behavior',
@@ -579,7 +579,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'belief',
@@ -589,7 +589,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'benefit',
@@ -599,7 +599,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'bicycle',
@@ -609,7 +609,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'bird',
@@ -619,7 +619,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'birth',
@@ -629,7 +629,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'birthday',
@@ -639,7 +639,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'block',
@@ -649,7 +649,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'blood',
@@ -659,7 +659,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'board',
@@ -669,7 +669,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'boat',
@@ -679,7 +679,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'body',
@@ -689,7 +689,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'book',
@@ -699,7 +699,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'border',
@@ -709,7 +709,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'bottle',
@@ -719,7 +719,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'box',
@@ -729,7 +729,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'brain',
@@ -739,7 +739,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'branch',
@@ -749,7 +749,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'bread',
@@ -759,7 +759,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'breakfast',
@@ -769,7 +769,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'bridge',
@@ -779,12 +779,12 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   ('brother', 'a male sibling', '/ˈbrʌðər/', 'noun');
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'budget',
@@ -794,7 +794,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'building',
@@ -804,7 +804,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'business',
@@ -814,7 +814,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'camera',
@@ -824,7 +824,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'campaign',
@@ -834,7 +834,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'campus',
@@ -844,7 +844,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'cancer',
@@ -854,7 +854,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'candidate',
@@ -864,7 +864,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'capacity',
@@ -874,7 +874,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'capital',
@@ -884,7 +884,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'car',
@@ -894,7 +894,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'card',
@@ -904,7 +904,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'care',
@@ -914,7 +914,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'career',
@@ -924,7 +924,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'case',
@@ -934,7 +934,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'cash',
@@ -944,7 +944,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'cat',
@@ -954,7 +954,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'category',
@@ -964,7 +964,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'cause',
@@ -974,7 +974,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'celebration',
@@ -984,7 +984,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'cell',
@@ -994,7 +994,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'center',
@@ -1004,7 +1004,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'century',
@@ -1014,7 +1014,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'ceremony',
@@ -1024,7 +1024,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'chair',
@@ -1034,7 +1034,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'challenge',
@@ -1044,7 +1044,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'champion',
@@ -1054,7 +1054,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'chance',
@@ -1064,7 +1064,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'change',
@@ -1074,7 +1074,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'channel',
@@ -1084,7 +1084,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'chapter',
@@ -1094,7 +1094,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'character',
@@ -1104,7 +1104,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'charity',
@@ -1114,7 +1114,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'check',
@@ -1124,7 +1124,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'child',
@@ -1134,7 +1134,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'choice',
@@ -1144,7 +1144,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'church',
@@ -1154,7 +1154,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'citizen',
@@ -1164,12 +1164,12 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   ('city', 'a large town', '/ˈsɪti/', 'noun');
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'class',
@@ -1179,7 +1179,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'classroom',
@@ -1189,7 +1189,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'client',
@@ -1199,7 +1199,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'climate',
@@ -1209,7 +1209,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'clock',
@@ -1219,7 +1219,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'cloud',
@@ -1229,7 +1229,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'club',
@@ -1239,7 +1239,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'coach',
@@ -1249,7 +1249,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'coast',
@@ -1259,7 +1259,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'code',
@@ -1269,7 +1269,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'coffee',
@@ -1279,7 +1279,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'college',
@@ -1289,7 +1289,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'color',
@@ -1299,7 +1299,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'combination',
@@ -1309,7 +1309,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'committee',
@@ -1319,7 +1319,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'communication',
@@ -1329,7 +1329,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'community',
@@ -1339,7 +1339,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'company',
@@ -1349,7 +1349,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'comparison',
@@ -1359,7 +1359,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'competition',
@@ -1369,7 +1369,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'computer',
@@ -1379,7 +1379,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'concept',
@@ -1389,7 +1389,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'concern',
@@ -1399,7 +1399,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'concert',
@@ -1409,7 +1409,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'condition',
@@ -1419,7 +1419,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'conference',
@@ -1429,7 +1429,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'confidence',
@@ -1439,7 +1439,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'conflict',
@@ -1449,7 +1449,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'connection',
@@ -1459,7 +1459,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'consequence',
@@ -1469,7 +1469,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'consideration',
@@ -1479,7 +1479,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'construction',
@@ -1489,7 +1489,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'contact',
@@ -1499,7 +1499,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'contest',
@@ -1509,7 +1509,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'context',
@@ -1519,7 +1519,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'contract',
@@ -1529,7 +1529,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'control',
@@ -1539,7 +1539,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'conversation',
@@ -1549,7 +1549,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'corner',
@@ -1559,7 +1559,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'cost',
@@ -1569,7 +1569,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'country',
@@ -1579,7 +1579,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'couple',
@@ -1589,7 +1589,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'course',
@@ -1599,7 +1599,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'court',
@@ -1609,7 +1609,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'cover',
@@ -1619,12 +1619,12 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   ('crash', 'a violent collision', '/kræʃ/', 'noun');
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'credit',
@@ -1634,7 +1634,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'crime',
@@ -1644,7 +1644,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'crisis',
@@ -1654,7 +1654,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'criticism',
@@ -1664,7 +1664,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'crowd',
@@ -1674,7 +1674,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'culture',
@@ -1684,7 +1684,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'customer',
@@ -1694,7 +1694,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'damage',
@@ -1704,7 +1704,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'dance',
@@ -1714,7 +1714,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'danger',
@@ -1724,7 +1724,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'data',
@@ -1734,7 +1734,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'date',
@@ -1744,7 +1744,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'daughter',
@@ -1754,7 +1754,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'day',
@@ -1764,7 +1764,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'deal',
@@ -1774,12 +1774,12 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   ('death', 'the action of dying', '/dɛθ/', 'noun');
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'debate',
@@ -1789,12 +1789,12 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   ('debt', 'a sum of money owed', '/dɛt/', 'noun');
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'decision',
@@ -1804,7 +1804,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'degree',
@@ -1814,7 +1814,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'delivery',
@@ -1824,7 +1824,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'demand',
@@ -1834,7 +1834,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'democracy',
@@ -1844,7 +1844,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'department',
@@ -1854,7 +1854,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'description',
@@ -1864,7 +1864,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'design',
@@ -1874,7 +1874,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'desk',
@@ -1884,7 +1884,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'detail',
@@ -1894,7 +1894,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'development',
@@ -1904,7 +1904,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'device',
@@ -1914,7 +1914,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'difference',
@@ -1924,7 +1924,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'difficulty',
@@ -1934,7 +1934,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'dinner',
@@ -1944,7 +1944,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'direction',
@@ -1954,7 +1954,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'director',
@@ -1964,7 +1964,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'discussion',
@@ -1974,7 +1974,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'disease',
@@ -1984,7 +1984,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'distance',
@@ -1994,7 +1994,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'distribution',
@@ -2004,7 +2004,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'doctor',
@@ -2014,7 +2014,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'document',
@@ -2024,7 +2024,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'dog',
@@ -2034,7 +2034,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'door',
@@ -2044,7 +2044,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'doubt',
@@ -2054,7 +2054,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'dream',
@@ -2064,12 +2064,12 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   ('drive', 'a trip by car', '/draɪv/', 'noun');
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'driver',
@@ -2079,7 +2079,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'drug',
@@ -2089,7 +2089,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'economy',
@@ -2099,7 +2099,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'education',
@@ -2109,7 +2109,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'effect',
@@ -2119,7 +2119,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'effort',
@@ -2129,7 +2129,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'election',
@@ -2139,7 +2139,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'element',
@@ -2149,7 +2149,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'employee',

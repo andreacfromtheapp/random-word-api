@@ -1,5 +1,5 @@
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'abandon',
@@ -9,7 +9,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'abbreviate',
@@ -19,7 +19,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'abolish',
@@ -29,7 +29,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'absorb',
@@ -39,7 +39,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'accelerate',
@@ -49,7 +49,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'accept',
@@ -59,7 +59,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'accomplish',
@@ -69,7 +69,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'achieve',
@@ -79,7 +79,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'acknowledge',
@@ -89,7 +89,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'acquire',
@@ -99,7 +99,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'activate',
@@ -109,7 +109,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'adapt',
@@ -119,7 +119,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'address',
@@ -129,7 +129,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'adjust',
@@ -139,7 +139,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'admire',
@@ -149,7 +149,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'admit',
@@ -159,7 +159,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'adopt',
@@ -169,7 +169,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'advance',
@@ -179,7 +179,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'advertise',
@@ -189,7 +189,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'advise',
@@ -199,7 +199,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'afford',
@@ -209,7 +209,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'agree',
@@ -219,7 +219,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'allow',
@@ -229,7 +229,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'analyze',
@@ -239,7 +239,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'announce',
@@ -248,9 +248,8 @@ VALUES
     'verb'
   );
 
-
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'apologize',
@@ -260,7 +259,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'appear',
@@ -270,7 +269,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'apply',
@@ -280,7 +279,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'appreciate',
@@ -289,9 +288,8 @@ VALUES
     'verb'
   );
 
-
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'approve',
@@ -301,7 +299,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'argue',
@@ -311,7 +309,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'arrange',
@@ -321,7 +319,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'arrive',
@@ -331,7 +329,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'ask',
@@ -341,7 +339,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'assess',
@@ -351,7 +349,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'assign',
@@ -361,17 +359,12 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'assist',
-    'to help someone',
-    '/əˈsɪst/',
-    'verb'
-  );
+  ('assist', 'to help someone', '/əˈsɪst/', 'verb');
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'associate',
@@ -381,7 +374,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'assume',
@@ -390,10 +383,8 @@ VALUES
     'verb'
   );
 
-
-
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'attend',
@@ -403,7 +394,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'attract',
@@ -413,7 +404,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'avoid',
@@ -422,9 +413,8 @@ VALUES
     'verb'
   );
 
-
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'become',
@@ -434,7 +424,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'begin',
@@ -444,7 +434,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'behave',
@@ -454,7 +444,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'believe',
@@ -464,7 +454,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'belong',
@@ -473,9 +463,8 @@ VALUES
     'verb'
   );
 
-
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'blame',
@@ -484,9 +473,8 @@ VALUES
     'verb'
   );
 
-
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'blow',
@@ -495,9 +483,8 @@ VALUES
     'verb'
   );
 
-
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'borrow',
@@ -507,7 +494,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'break',
@@ -517,7 +504,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'breathe',
@@ -527,7 +514,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'bring',
@@ -537,7 +524,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'build',
@@ -547,7 +534,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'burn',
@@ -557,7 +544,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'buy',
@@ -567,7 +554,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'calculate',
@@ -577,7 +564,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'call',
@@ -587,7 +574,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'cancel',
@@ -597,7 +584,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'capture',
@@ -606,9 +593,8 @@ VALUES
     'verb'
   );
 
-
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'carry',
@@ -618,7 +604,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'catch',
@@ -627,9 +613,8 @@ VALUES
     'verb'
   );
 
-
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'celebrate',
@@ -638,10 +623,8 @@ VALUES
     'verb'
   );
 
-
-
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'charge',
@@ -650,9 +633,8 @@ VALUES
     'verb'
   );
 
-
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'choose',
@@ -662,7 +644,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'claim',
@@ -672,7 +654,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'clean',
@@ -682,7 +664,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'clear',
@@ -692,7 +674,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'climb',
@@ -702,7 +684,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'close',
@@ -712,7 +694,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'collect',
@@ -722,7 +704,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'combine',
@@ -732,7 +714,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'come',
@@ -742,7 +724,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'commit',
@@ -752,7 +734,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'communicate',
@@ -762,7 +744,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'compare',
@@ -772,7 +754,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'compete',
@@ -782,7 +764,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'complain',
@@ -792,7 +774,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'complete',
@@ -802,7 +784,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'concentrate',
@@ -811,9 +793,8 @@ VALUES
     'verb'
   );
 
-
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'conduct',
@@ -823,7 +804,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'confirm',
@@ -833,7 +814,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'connect',
@@ -843,7 +824,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'consider',
@@ -853,7 +834,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'consist',
@@ -863,7 +844,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'construct',
@@ -872,9 +853,8 @@ VALUES
     'verb'
   );
 
-
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'contain',
@@ -884,7 +864,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'continue',
@@ -894,7 +874,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'contribute',
@@ -903,9 +883,8 @@ VALUES
     'verb'
   );
 
-
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'convince',
@@ -915,7 +894,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'cook',
@@ -925,7 +904,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'copy',
@@ -935,7 +914,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'correct',
@@ -944,9 +923,8 @@ VALUES
     'verb'
   );
 
-
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'count',
@@ -955,9 +933,8 @@ VALUES
     'verb'
   );
 
-
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'create',
@@ -967,7 +944,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'cross',
@@ -977,7 +954,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'cry',
@@ -987,7 +964,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'cut',
@@ -996,12 +973,8 @@ VALUES
     'verb'
   );
 
-
-
-
-
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'decide',
@@ -1011,7 +984,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'declare',
@@ -1021,7 +994,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'decrease',
@@ -1031,7 +1004,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'deliver',
@@ -1040,9 +1013,8 @@ VALUES
     'verb'
   );
 
-
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'demonstrate',
@@ -1052,7 +1024,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'deny',
@@ -1062,7 +1034,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'depend',
@@ -1072,7 +1044,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'describe',
@@ -1081,9 +1053,8 @@ VALUES
     'verb'
   );
 
-
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'destroy',
@@ -1093,7 +1064,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'determine',
@@ -1103,7 +1074,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'develop',
@@ -1113,17 +1084,12 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'die',
-    'to stop living',
-    '/daɪ/',
-    'verb'
-  );
+  ('die', 'to stop living', '/daɪ/', 'verb');
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'differ',
@@ -1133,7 +1099,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'direct',
@@ -1143,7 +1109,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'disappear',
@@ -1153,7 +1119,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'discover',
@@ -1163,7 +1129,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'discuss',
@@ -1173,7 +1139,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'distribute',
@@ -1183,7 +1149,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'divide',
@@ -1193,7 +1159,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'do',
@@ -1203,7 +1169,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'double',
@@ -1212,9 +1178,8 @@ VALUES
     'verb'
   );
 
-
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'download',
@@ -1224,7 +1189,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'draw',
@@ -1233,19 +1198,13 @@ VALUES
     'verb'
   );
 
-
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'dress',
-    'to put on clothes',
-    '/drɛs/',
-    'verb'
-  );
+  ('dress', 'to put on clothes', '/drɛs/', 'verb');
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'drink',
@@ -1255,17 +1214,12 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'drop',
-    'to let something fall',
-    '/drɑp/',
-    'verb'
-  );
+  ('drop', 'to let something fall', '/drɑp/', 'verb');
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'earn',
@@ -1275,7 +1229,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'eat',
@@ -1285,7 +1239,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'edit',
@@ -1295,7 +1249,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'elect',
@@ -1305,7 +1259,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'employ',
@@ -1315,7 +1269,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'enable',
@@ -1325,7 +1279,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'encourage',
@@ -1335,7 +1289,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'end',
@@ -1345,7 +1299,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'engage',
@@ -1355,7 +1309,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'enjoy',
@@ -1365,7 +1319,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'ensure',
@@ -1375,7 +1329,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'enter',
@@ -1385,7 +1339,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'establish',
@@ -1395,7 +1349,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'evaluate',
@@ -1405,7 +1359,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'examine',
@@ -1415,7 +1369,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'exceed',
@@ -1425,7 +1379,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'exchange',
@@ -1435,7 +1389,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'exclude',
@@ -1445,7 +1399,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'excuse',
@@ -1455,7 +1409,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'execute',
@@ -1465,7 +1419,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'exercise',
@@ -1475,7 +1429,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'exist',
@@ -1485,7 +1439,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'expand',
@@ -1495,7 +1449,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'expect',
@@ -1505,7 +1459,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'experience',
@@ -1515,7 +1469,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'explain',
@@ -1525,7 +1479,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'explore',
@@ -1535,7 +1489,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'express',
@@ -1545,7 +1499,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'extend',
@@ -1555,7 +1509,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'face',
@@ -1565,7 +1519,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'fail',
@@ -1575,7 +1529,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'fall',
@@ -1585,7 +1539,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'fear',
@@ -1595,7 +1549,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'feature',
@@ -1605,7 +1559,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'feed',
@@ -1615,7 +1569,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'feel',
@@ -1625,7 +1579,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'fight',
@@ -1635,17 +1589,12 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'fill',
-    'to make or become full',
-    '/fɪl/',
-    'verb'
-  );
+  ('fill', 'to make or become full', '/fɪl/', 'verb');
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'find',
@@ -1655,7 +1604,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'finish',
@@ -1665,7 +1614,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'fire',
@@ -1675,7 +1624,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'fit',
@@ -1685,7 +1634,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'fix',
@@ -1695,7 +1644,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'fly',
@@ -1705,7 +1654,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'focus',
@@ -1715,7 +1664,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'follow',
@@ -1725,7 +1674,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'force',
@@ -1735,7 +1684,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'forget',
@@ -1745,7 +1694,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'form',
@@ -1755,7 +1704,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'found',
@@ -1765,7 +1714,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'gain',
@@ -1775,7 +1724,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'generate',
@@ -1785,17 +1734,12 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'get',
-    'to come to have or hold',
-    '/ɡɛt/',
-    'verb'
-  );
+  ('get', 'to come to have or hold', '/ɡɛt/', 'verb');
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'give',
@@ -1805,7 +1749,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'go',
@@ -1815,7 +1759,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'grab',
@@ -1825,7 +1769,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'grow',
@@ -1835,7 +1779,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'guarantee',
@@ -1845,7 +1789,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'guess',
@@ -1855,7 +1799,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'guide',
@@ -1865,7 +1809,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'handle',
@@ -1875,7 +1819,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'hang',
@@ -1885,7 +1829,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'happen',
@@ -1895,7 +1839,7 @@ VALUES
   );
 
 INSERT INTO
-  words (word, definition, pronunciation, type)
+  words (word, definition, pronunciation, word_type)
 VALUES
   (
     'have',
@@ -1903,4 +1847,3 @@ VALUES
     '/hæv/',
     'verb'
   );
-
