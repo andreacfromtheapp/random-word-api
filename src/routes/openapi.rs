@@ -93,6 +93,7 @@ use crate::state::AppState;
         ping,
         // Public word endpoints
         word_random,
+        word_type,
         // Administrative endpoints
         word_list,
         word_create,
