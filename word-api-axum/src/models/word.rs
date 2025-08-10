@@ -20,6 +20,7 @@ use utoipa::ToSchema;
 use validator::{Validate, ValidationError};
 
 use crate::error::{AppError, PathError};
+use crate::{ALLOWED_LANG_CODES, ALLOWED_WORD_TYPES};
 
 /// Represents a word in the database and in API responses.
 ///
@@ -75,30 +76,6 @@ pub struct Word {
 /// errors, validation errors, and other application-specific errors that can
 /// be converted to appropriate HTTP status codes.
 impl Word {
-    /// Returns the word's database ID
-    pub fn id(&self) -> u32 {
-        self.id
-    }
-
-    /// Returns the word's grammatical type
-    pub fn word_type(&self) -> &str {
-        &self.word_type
-    }
-
-    /// Returns the actual word text
-    pub fn word(&self) -> &str {
-        &self.word
-    }
-
-    /// Returns the word's definition
-    pub fn definition(&self) -> &str {
-        &self.definition
-    }
-
-    /// Returns the word's pronunciation in IPA notation
-    pub fn pronunciation(&self) -> &str {
-        &self.pronunciation
-    }
     /// Retrieves all words from the database.
     ///
     /// This method returns all words in the database without any filtering or
@@ -119,12 +96,24 @@ impl Word {
     /// This endpoint should only be accessible to authenticated administrators
     /// as it exposes the entire word database.
     pub async fn list(dbpool: SqlitePool, lang: &str) -> Result<Vec<Self>, AppError> {
-        match lang {
-            "en" => query_as("SELECT * FROM words")
+        if ALLOWED_LANG_CODES.contains(&lang) {
+            let my_query = match lang {
+                // match allowed lang to set table or default to words
+                "en" => "SELECT * FROM words",
+                "de" => "SELECT * FROM words_de", // this is an example
+                "fr" => "SELECT * FROM words_fr", // this is an example
+                "es" => "SELECT * FROM words_es", // this is an example
+                "it" => "SELECT * FROM words_it", // this is an example
+                "nl" => "SELECT * FROM words_nl", // this is an example
+                _ => "SELECT * FROM words",
+            };
+
+            query_as(my_query)
                 .fetch_all(&dbpool)
                 .await
-                .map_err(Into::into),
-            _ => Err(PathError::InvalidPath(lang.to_string()).into()),
+                .map_err(Into::into)
+        } else {
+            Err(PathError::InvalidPath(lang.to_string()).into())
         }
     }
 
@@ -155,16 +144,23 @@ impl Word {
         let pronunciation = new_word.pronunciation()?.to_lowercase();
         let word_type = new_word.word_type()?.to_lowercase();
 
-        match lang {
-           "en" => query_as( "INSERT INTO words (word, definition, pronunciation, word_type) VALUES ($1, $2, $3, $4) RETURNING *", )
-               .bind(word)
-               .bind(definition)
-               .bind(pronunciation)
-               .bind(word_type)
-               .fetch_all(&dbpool)
-               .await
-               .map_err(Into::into),
-           _ => Err(PathError::InvalidPath(lang.to_string()).into()),
+        if ALLOWED_LANG_CODES.contains(&lang) {
+            let my_query = match lang {
+                // match allowed lang to set table or default to words
+                "en" => "INSERT INTO words (word, definition, pronunciation, word_type) VALUES ($1, $2, $3, $4) RETURNING *",
+                _ => "INSERT INTO words (word, definition, pronunciation, word_type) VALUES ($1, $2, $3, $4) RETURNING *",
+            };
+
+            query_as(my_query)
+                .bind(word)
+                .bind(definition)
+                .bind(pronunciation)
+                .bind(word_type)
+                .fetch_all(&dbpool)
+                .await
+                .map_err(Into::into)
+        } else {
+            Err(PathError::InvalidPath(lang.to_string()).into())
         }
     }
 
@@ -184,13 +180,20 @@ impl Word {
     /// * `Ok(Word)` - The word with the specified ID
     /// * `Err(AppError)` - Word not found or database error
     pub async fn read(dbpool: SqlitePool, lang: &str, id: u32) -> Result<Vec<Self>, AppError> {
-        match lang {
-            "en" => query_as("SELECT * FROM words WHERE id = $1")
+        if ALLOWED_LANG_CODES.contains(&lang) {
+            let my_query = match lang {
+                // match allowed lang to set table or default to words
+                "en" => "SELECT * FROM words WHERE id = $1",
+                _ => "SELECT * FROM words WHERE id = $1",
+            };
+
+            query_as(my_query)
                 .bind(id)
                 .fetch_all(&dbpool)
                 .await
-                .map_err(Into::into),
-            _ => Err(PathError::InvalidPath(lang.to_string()).into()),
+                .map_err(Into::into)
+        } else {
+            Err(PathError::InvalidPath(lang.to_string()).into())
         }
     }
 
@@ -222,8 +225,14 @@ impl Word {
         let pronunciation = updated_word.pronunciation()?.to_lowercase();
         let word_type = updated_word.word_type()?.to_lowercase();
 
-        match lang {
-            "en" => query_as( "UPDATE words SET word = $1, definition = $2, pronunciation = $3, word_type = $4 WHERE id = $5 RETURNING *", )
+        if ALLOWED_LANG_CODES.contains(&lang) {
+            let my_query = match lang {
+                // match allowed lang to set table or default to words
+                "en" => "UPDATE words SET word = $1, definition = $2, pronunciation = $3, word_type = $4 WHERE id = $5 RETURNING *",
+                _ => "UPDATE words SET word = $1, definition = $2, pronunciation = $3, word_type = $4 WHERE id = $5 RETURNING *",
+            };
+
+            query_as(my_query)
                 .bind(word)
                 .bind(definition)
                 .bind(pronunciation)
@@ -231,8 +240,9 @@ impl Word {
                 .bind(id)
                 .fetch_all(&dbpool)
                 .await
-                .map_err(Into::into),
-            _ => Err(PathError::InvalidPath(lang.to_string()).into()),
+                .map_err(Into::into)
+        } else {
+            Err(PathError::InvalidPath(lang.to_string()).into())
         }
     }
 
@@ -251,15 +261,17 @@ impl Word {
     /// * `Ok(())` - Word was successfully deleted
     /// * `Err(AppError)` - Word not found or database error
     pub async fn delete(dbpool: SqlitePool, lang: &str, id: u32) -> Result<(), AppError> {
-        match lang {
-            "en" => {
-                query("DELETE FROM words WHERE id = $1")
-                    .bind(id)
-                    .execute(&dbpool)
-                    .await?;
-                Ok(())
-            }
-            _ => Err(PathError::InvalidPath(lang.to_string()).into()),
+        if ALLOWED_LANG_CODES.contains(&lang) {
+            let my_query = match lang {
+                // match allowed lang to set table or default to words
+                "en" => "DELETE FROM words WHERE id = $1",
+                _ => "DELETE FROM words WHERE id = $1",
+            };
+
+            query(my_query).bind(id).execute(&dbpool).await?;
+            Ok(())
+        } else {
+            Err(PathError::InvalidPath(lang.to_string()).into())
         }
     }
 }
@@ -339,20 +351,6 @@ pub struct GetWord {
 /// - Adjectives for descriptive word requests
 /// - Adverbs for modifier-based word requests
 impl GetWord {
-    /// Returns the word text
-    pub fn word(&self) -> &str {
-        &self.word
-    }
-
-    /// Returns the word's definition
-    pub fn definition(&self) -> &str {
-        &self.definition
-    }
-
-    /// Returns the word's pronunciation
-    pub fn pronunciation(&self) -> &str {
-        &self.pronunciation
-    }
     /// Retrieves a random word from the database for public consumption.
     ///
     /// This method uses SQLite's `RANDOM()` function to select a single word
@@ -426,14 +424,21 @@ impl GetWord {
     /// This method specifically excludes internal database information to
     /// protect system internals while providing essential word data to clients.
     pub async fn random_word(dbpool: SqlitePool, lang: &str) -> Result<Vec<Self>, AppError> {
-        match lang {
-            "en" => query_as(
-                "SELECT word, definition, pronunciation FROM words ORDER BY random() LIMIT 1",
-            )
-            .fetch_all(&dbpool)
-            .await
-            .map_err(Into::into),
-            _ => Err(PathError::InvalidPath(lang.to_string()).into()),
+        if ALLOWED_LANG_CODES.contains(&lang) {
+            let my_query = match lang {
+                // match allowed lang to set table or default to words
+                "en" => {
+                    "SELECT word, definition, pronunciation FROM words ORDER BY random() LIMIT 1"
+                }
+                _ => "SELECT word, definition, pronunciation FROM words ORDER BY random() LIMIT 1",
+            };
+
+            query_as(my_query)
+                .fetch_all(&dbpool)
+                .await
+                .map_err(Into::into)
+        } else {
+            Err(PathError::InvalidPath(lang.to_string()).into())
         }
     }
 
@@ -483,15 +488,26 @@ impl GetWord {
         lang: &str,
         word_type: &str,
     ) -> Result<Vec<Self>, AppError> {
-        match lang {
-            "en" => query_as(
-                "SELECT word, definition, pronunciation FROM words WHERE word_type = $1 ORDER BY random() LIMIT 1",
-            )
-            .bind(word_type)
-            .fetch_all(&dbpool)
-            .await
-            .map_err(Into::into),
-            _ => Err(PathError::InvalidPath(lang.to_string()).into()),
+        if ALLOWED_LANG_CODES.contains(&lang) {
+            let my_query = match lang {
+                // match allowed lang to set table or default to words
+                "en" => {
+                    "SELECT word, definition, pronunciation FROM words WHERE word_type = $1 ORDER BY random() LIMIT 1"
+                }
+                _ => "SELECT word, definition, pronunciation FROM words WHERE word_type = $1 ORDER BY random() LIMIT 1",
+            };
+
+            if ALLOWED_WORD_TYPES.contains(&word_type) {
+                query_as(my_query)
+                    .bind(word_type)
+                    .fetch_all(&dbpool)
+                    .await
+                    .map_err(Into::into)
+            } else {
+                Err(PathError::InvalidWordType(word_type.to_string()).into())
+            }
+        } else {
+            Err(PathError::InvalidPath(lang.to_string()).into())
         }
     }
 }

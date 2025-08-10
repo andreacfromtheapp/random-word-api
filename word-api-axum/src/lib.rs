@@ -18,6 +18,12 @@ use std::sync::{Arc, Mutex};
 /// Define default tracing log levels. Uses `RUST_LOG` when unset
 pub const TRACING_LOG_LEVELS: &str = "sqlx=info,tower_http=debug,info";
 
+/// Define allowed language codes to use with models/word.rs checks.
+///
+/// this is kept here for visibility
+pub const ALLOWED_LANG_CODES: [&str; 1] = ["en"];
+pub const ALLOWED_WORD_TYPES: [&str; 4] = ["noun", "verb", "adjective", "adverb"];
+
 /// CLI argument parsing and configuration
 pub mod cli;
 

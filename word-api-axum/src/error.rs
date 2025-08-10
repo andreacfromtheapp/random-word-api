@@ -87,11 +87,24 @@ pub struct AppError(anyhow::Error);
 /// from error messages to prevent information disclosure.
 impl IntoResponse for AppError {
     fn into_response(self) -> Response {
-        (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            format!("Something went wrong: {}", self.0),
-        )
-            .into_response()
+        // Check if the underlying error is a PathError
+        if let Some(path_error) = self.0.downcast_ref::<PathError>() {
+            // PathError should return 400 Bad Request
+            let message = match path_error {
+                PathError::InvalidPath(path) => format!("Invalid language code: {path}"),
+                PathError::InvalidWordType(word_type) => {
+                    format!("Invalid word type: {word_type}")
+                }
+            };
+            (StatusCode::BAD_REQUEST, message).into_response()
+        } else {
+            // All other errors return 500 Internal Server Error
+            (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                format!("Something went wrong: {}", self.0),
+            )
+                .into_response()
+        }
     }
 }
 
@@ -234,6 +247,8 @@ pub enum PathError {
     /// client error message generation.
     #[error("invalid API Path: {0}")]
     InvalidPath(String),
+    #[error("invalid word type: {0}")]
+    InvalidWordType(String),
 }
 
 #[cfg(test)]

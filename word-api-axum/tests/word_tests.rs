@@ -216,16 +216,16 @@ async fn test_invalid_word_type() -> Result<()> {
 
     assert_eq!(
         response.status_code(),
-        StatusCode::OK,
-        "Invalid word type should return 200 with empty array, got: {}",
+        StatusCode::BAD_REQUEST,
+        "Invalid word type should return 400 Bad Request, got: {}",
         response.status_code()
     );
 
-    let json: serde_json::Value = response.json();
-    assert!(json.is_array(), "Response should be an array");
+    let body = response.text();
+    assert!(!body.is_empty(), "Error response should have a message");
     assert!(
-        json.as_array().unwrap().is_empty(),
-        "Response should be empty array for invalid word type"
+        body.to_lowercase().contains("invalid word type"),
+        "Error message should mention invalid word type"
     );
 
     Ok(())
