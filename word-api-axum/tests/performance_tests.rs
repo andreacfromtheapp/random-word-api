@@ -69,7 +69,7 @@ async fn test_api_response_time_consistency() -> Result<()> {
     // Make multiple requests to measure consistency
     for i in 0..10 {
         let (response, metrics) =
-            measure_test_performance(&format!("consistency_test_{}", i), async {
+            measure_test_performance(&format!("consistency_test_{i}"), async {
                 Ok(server.get("/en/word").await)
             })
             .await?;
@@ -94,18 +94,11 @@ async fn test_api_response_time_consistency() -> Result<()> {
     let max_variance = Duration::from_millis(200);
 
     for (i, duration) in response_times.iter().enumerate() {
-        let variance = if *duration > avg_time {
-            *duration - avg_time
-        } else {
-            avg_time - *duration
-        };
+        let variance = (*duration).abs_diff(avg_time);
 
         assert!(
             variance <= max_variance,
-            "Request {} variance {:?} exceeds max variance {:?}",
-            i,
-            variance,
-            max_variance
+            "Request {i} variance {variance:?} exceeds max variance {max_variance:?}"
         );
     }
 
@@ -127,7 +120,7 @@ async fn test_api_load_performance() -> Result<()> {
     // Launch sequential requests to test load handling
     let mut all_metrics = Vec::new();
     for i in 0..load_requests {
-        let (response, metrics) = measure_test_performance(&format!("load_request_{}", i), async {
+        let (response, metrics) = measure_test_performance(&format!("load_request_{i}"), async {
             Ok(server.get("/en/word").await)
         })
         .await?;
@@ -147,14 +140,10 @@ async fn test_api_load_performance() -> Result<()> {
     // Validate overall load handling performance
     assert!(
         total_time <= Duration::from_millis(2000),
-        "Load requests took {:?}, expected <= 2000ms",
-        total_time
+        "Load requests took {total_time:?}, expected <= 2000ms"
     );
 
-    println!(
-        "Completed {} load requests in {:?}",
-        load_requests, total_time
-    );
+    println!("Completed {load_requests} load requests in {total_time:?}");
 
     cleanup_test_data(&pool).await?;
     Ok(())
@@ -171,7 +160,7 @@ async fn test_database_reliability_under_load() -> Result<()> {
     // Simulate load with sequential operations for reliability testing
     let mut counts = Vec::new();
     for i in 0..5 {
-        let suffix = format!("load{}", i);
+        let suffix = format!("load{i}");
         populate_test_data(&pool, &suffix).await?;
         let count = count_words(&pool).await?;
         counts.push(count);
@@ -181,9 +170,7 @@ async fn test_database_reliability_under_load() -> Result<()> {
     for (i, count) in counts.iter().enumerate() {
         assert!(
             *count > 0,
-            "Load operation {} should have inserted data, got count: {}",
-            i,
-            count
+            "Load operation {i} should have inserted data, got count: {count}"
         );
     }
 
@@ -205,7 +192,7 @@ async fn test_memory_usage_monitoring() -> Result<()> {
             let word = helpers::fixtures::WordFactory::create_with_suffix(
                 "memory",
                 "noun",
-                &format!("test{}", i),
+                &format!("test{i}"),
             );
             let _ = word_api_axum::models::word::Word::create(pool.clone(), "en", word).await;
         }
@@ -319,11 +306,11 @@ async fn test_bulk_data_insertion_performance() -> Result<()> {
             "/bʌlkɜ/",
         ];
 
-        for i in 0..10 {
+        for (i, e) in valid_pronunciations.iter().enumerate() {
             let word = word_api_axum::models::word::UpsertWord {
-                word: format!("bulkword{}", i),
-                definition: format!("Bulk test word number {}", i),
-                pronunciation: valid_pronunciations[i].to_string(),
+                word: format!("bulkword{i}"),
+                definition: format!("Bulk test word number {i}"),
+                pronunciation: e.to_string(),
                 word_type: "noun".to_string(),
             };
             let _ = word_api_axum::models::word::Word::create(pool.clone(), "en", word)

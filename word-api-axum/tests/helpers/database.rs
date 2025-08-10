@@ -23,7 +23,7 @@ pub async fn count_words(pool: &Pool<Sqlite>) -> Result<i64> {
 pub async fn cleanup_test_data(pool: &Pool<Sqlite>) -> Result<()> {
     // Clean up test data with numeric suffixes (1-9)
     for i in 1..=9 {
-        let pattern = format!("%{}", i);
+        let pattern = format!("%{i}");
         sqlx::query!("DELETE FROM words WHERE word LIKE ?", pattern)
             .execute(pool)
             .await
@@ -104,9 +104,7 @@ pub fn assert_memory_usage(metrics: &PerformanceMetrics, max_memory_increase: us
     let memory_increase = metrics.memory_after.saturating_sub(metrics.memory_before);
     assert!(
         memory_increase <= max_memory_increase,
-        "Memory increased by {} bytes, expected <= {}",
-        memory_increase,
-        max_memory_increase
+        "Memory increased by {memory_increase} bytes, expected <= {max_memory_increase}"
     );
 }
 

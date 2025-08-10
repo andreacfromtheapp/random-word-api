@@ -431,7 +431,7 @@ async fn test_api_performance_under_load() -> Result<()> {
 
     // Test multiple sequential requests (simplified for reliability)
     for i in 0..10 {
-        let (response, metrics) = measure_test_performance(&format!("load_request_{}", i), async {
+        let (response, metrics) = measure_test_performance(&format!("load_request_{i}"), async {
             Ok(server.get("/en/word").await)
         })
         .await?;
