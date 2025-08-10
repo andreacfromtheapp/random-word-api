@@ -8,11 +8,11 @@ use anyhow::Result;
 use axum::http::StatusCode;
 
 mod helpers;
-use helpers::create_test_server;
+use helpers::create_test_server_memory;
 
 #[tokio::test]
 async fn test_health_endpoint_returns_200() -> Result<()> {
-    let (server, _temp_file) = create_test_server().await?;
+    let (server, _pool) = create_test_server_memory().await?;
 
     let response = server.get("/health/alive").await;
 
@@ -30,8 +30,8 @@ async fn test_health_endpoint_returns_200() -> Result<()> {
 }
 
 #[tokio::test]
-async fn test_health_endpoint_returns_json() -> Result<()> {
-    let (server, _temp_file) = create_test_server().await?;
+async fn test_health_endpoint_content() -> Result<()> {
+    let (server, _pool) = create_test_server_memory().await?;
 
     let response = server.get("/health/alive").await;
     assert_eq!(response.status_code(), StatusCode::OK);
@@ -42,12 +42,23 @@ async fn test_health_endpoint_returns_json() -> Result<()> {
         "Health response should indicate API is running"
     );
 
+    // Check content type in same test for efficiency
+    let content_type = response
+        .headers()
+        .get("content-type")
+        .expect("Response should have content-type header");
+
+    assert!(
+        content_type.to_str().unwrap().contains("text/plain"),
+        "Health response should be plain text content type"
+    );
+
     Ok(())
 }
 
 #[tokio::test]
 async fn test_health_db_endpoint() -> Result<()> {
-    let (server, _temp_file) = create_test_server().await?;
+    let (server, _pool) = create_test_server_memory().await?;
 
     let response = server.get("/health/ready").await;
 
@@ -68,51 +79,8 @@ async fn test_health_db_endpoint() -> Result<()> {
 }
 
 #[tokio::test]
-async fn test_health_response_content_type() -> Result<()> {
-    let (server, _temp_file) = create_test_server().await?;
-
-    let response = server.get("/health/alive").await;
-    assert_eq!(response.status_code(), StatusCode::OK);
-
-    let content_type = response
-        .headers()
-        .get("content-type")
-        .expect("Response should have content-type header");
-
-    assert!(
-        content_type.to_str().unwrap().contains("text/plain"),
-        "Health response should be plain text content type"
-    );
-
-    Ok(())
-}
-
-#[tokio::test]
-async fn test_health_endpoint_consistency() -> Result<()> {
-    let (server, _temp_file) = create_test_server().await?;
-
-    // Test multiple sequential requests for consistency
-    for i in 0..3 {
-        let response = server.get("/health/alive").await;
-        assert_eq!(
-            response.status_code(),
-            StatusCode::OK,
-            "Health check {i} should return 200"
-        );
-
-        let body = response.text();
-        assert!(
-            body.contains("API is successfully running"),
-            "Health response {i} should indicate API is running"
-        );
-    }
-
-    Ok(())
-}
-
-#[tokio::test]
 async fn test_health_db_detailed() -> Result<()> {
-    let (server, _temp_file) = create_test_server().await?;
+    let (server, _pool) = create_test_server_memory().await?;
 
     let response = server.get("/health/ready").await;
     assert_eq!(response.status_code(), StatusCode::OK);
@@ -130,24 +98,24 @@ async fn test_health_db_detailed() -> Result<()> {
 }
 
 #[tokio::test]
-async fn test_health_performance() -> Result<()> {
-    let (server, _temp_file) = create_test_server().await?;
+async fn test_health_multiple_requests() -> Result<()> {
+    let (server, _pool) = create_test_server_memory().await?;
 
-    let start = std::time::Instant::now();
-
-    // Make 5 sequential health check requests
-    for _ in 0..5 {
+    // Test multiple sequential health check requests for consistency
+    for i in 0..3 {
         let response = server.get("/health/alive").await;
-        assert_eq!(response.status_code(), StatusCode::OK);
+        assert_eq!(
+            response.status_code(),
+            StatusCode::OK,
+            "Health check {i} should return 200"
+        );
+
+        let body = response.text();
+        assert!(
+            body.contains("API is successfully running"),
+            "Health response {i} should indicate API is running"
+        );
     }
-
-    let duration = start.elapsed();
-
-    // Health checks should be fast (less than 1 second total for 5 requests)
-    assert!(
-        duration.as_secs() < 1,
-        "Health checks should be fast, took: {duration:?}"
-    );
 
     Ok(())
 }

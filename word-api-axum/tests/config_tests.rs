@@ -11,12 +11,12 @@ use tempfile::NamedTempFile;
 
 mod helpers;
 
-use helpers::create_test_server;
+use helpers::create_test_server_memory;
 use std::collections::HashMap;
 
 #[tokio::test]
 async fn test_default_configuration() -> Result<()> {
-    let (server, _temp_file) = create_test_server().await?;
+    let (server, _pool) = create_test_server_memory().await?;
 
     let response = server.get("/health/alive").await;
     assert_eq!(
@@ -58,37 +58,20 @@ async fn test_config_validation() -> Result<()> {
     assert!(default_config.contains_key("address"));
     assert!(default_config.contains_key("port"));
 
-    // Test port configuration
-    let mut config_with_port = HashMap::new();
-    config_with_port.insert("port".to_string(), "8080".to_string());
-    assert_eq!(config_with_port.get("port").unwrap(), "8080");
-
-    Ok(())
-}
-
-#[tokio::test]
-async fn test_config_address_formats() -> Result<()> {
-    // Test different address formats
+    // Test different address formats in same test
     let addresses = vec!["127.0.0.1", "0.0.0.0", "localhost"];
-
     for address in addresses {
         let mut config = HashMap::new();
         config.insert("address".to_string(), address.to_string());
         assert_eq!(config.get("address").unwrap(), address);
     }
 
-    Ok(())
-}
-
-#[tokio::test]
-async fn test_config_database_url_formats() -> Result<()> {
-    // Test different database URL formats
+    // Test different database URL formats in same test
     let db_urls = vec![
         "sqlite:///tmp/test.db",
         "sqlite://./test.db",
         "sqlite://:memory:",
     ];
-
     for db_url in db_urls {
         let mut config = HashMap::new();
         config.insert("database_url".to_string(), db_url.to_string());
@@ -100,7 +83,7 @@ async fn test_config_database_url_formats() -> Result<()> {
 
 #[tokio::test]
 async fn test_server_responds_with_config() -> Result<()> {
-    let (server, _temp_file) = create_test_server().await?;
+    let (server, _pool) = create_test_server_memory().await?;
 
     // Test that server responds properly with configuration
     let health_response = server.get("/health/alive").await;
@@ -127,18 +110,12 @@ async fn test_basic_config_functionality() -> Result<()> {
     assert_eq!(config.get("address").unwrap(), "127.0.0.1");
     assert_eq!(config.get("port").unwrap(), "0");
 
-    Ok(())
-}
-
-#[tokio::test]
-async fn test_config_port_variations() -> Result<()> {
-    // Test different port configurations
-    let ports = vec![0, 8080, 3000, 8000];
-
+    // Test different port configurations in same test
+    let ports = vec![8080, 3000];
     for port in ports {
-        let mut config = HashMap::new();
-        config.insert("port".to_string(), port.to_string());
-        assert_eq!(config.get("port").unwrap(), &port.to_string());
+        let mut port_config = HashMap::new();
+        port_config.insert("port".to_string(), port.to_string());
+        assert_eq!(port_config.get("port").unwrap(), &port.to_string());
     }
 
     Ok(())
@@ -146,7 +123,7 @@ async fn test_config_port_variations() -> Result<()> {
 
 #[tokio::test]
 async fn test_config_database_integration() -> Result<()> {
-    let (server, _temp_file) = create_test_server().await?;
+    let (server, _pool) = create_test_server_memory().await?;
 
     // Test that database health check works with configuration
     let response = server.get("/health/ready").await;

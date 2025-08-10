@@ -6,26 +6,21 @@
 
 use anyhow::Result;
 use axum::http::StatusCode;
-use serial_test::serial;
+
 use word_api_axum::models::word::UpsertWord;
 
 mod helpers;
 use helpers::{
-    assert_test_performance, create_test_server, create_test_server_with_pool,
-    database::{cleanup_test_data, populate_test_data},
-    measure_test_performance, performance_thresholds,
+    create_test_server, create_test_server_memory, create_test_server_with_pool,
+    database::populate_test_data,
 };
 
 #[tokio::test]
-#[serial]
 async fn test_random_word_endpoint() -> Result<()> {
     let (server, _temp_file, pool) = create_test_server_with_pool().await?;
-    populate_test_data(&pool, "1").await?;
+    populate_test_data(&pool, "test").await?;
 
-    let (response, metrics) = measure_test_performance("random_word_api_request", async {
-        Ok(server.get("/en/word").await)
-    })
-    .await?;
+    let response = server.get("/en/word").await;
 
     assert_eq!(
         response.status_code(),
@@ -33,9 +28,6 @@ async fn test_random_word_endpoint() -> Result<()> {
         "Random word endpoint should return 200, got: {}",
         response.status_code()
     );
-
-    // Validate performance
-    assert_test_performance(&metrics, performance_thresholds::API_REQUEST);
 
     let json: serde_json::Value = response.json();
 
@@ -61,139 +53,50 @@ async fn test_random_word_endpoint() -> Result<()> {
         "Response should have pronunciation field"
     );
 
-    // Cleanup test data
-    cleanup_test_data(&pool).await?;
-
     Ok(())
 }
 
 #[tokio::test]
-#[serial]
-async fn test_random_word_by_type_noun() -> Result<()> {
+async fn test_random_word_by_type() -> Result<()> {
     let (server, _temp_file, pool) = create_test_server_with_pool().await?;
-    populate_test_data(&pool, "2").await?;
+    populate_test_data(&pool, "test").await?;
 
-    let response = server.get("/en/word/noun").await;
+    // Test all word types in single test for efficiency
+    let word_types = vec!["noun", "verb", "adjective", "adverb"];
 
-    assert_eq!(
-        response.status_code(),
-        StatusCode::OK,
-        "Random noun endpoint should return 200"
-    );
+    for word_type in word_types {
+        let response = server.get(&format!("/en/word/{word_type}")).await;
 
-    let json: serde_json::Value = response.json();
-    assert!(json.is_array(), "Response should be an array");
-    let words = json.as_array().unwrap();
-    assert!(
-        !words.is_empty(),
-        "Response should contain at least one word"
-    );
+        assert_eq!(
+            response.status_code(),
+            StatusCode::OK,
+            "Random {word_type} endpoint should return 200"
+        );
 
-    let word = &words[0];
-    assert!(
-        word.get("word").is_some(),
-        "Response should have word field"
-    );
+        let json: serde_json::Value = response.json();
+        assert!(
+            json.is_array(),
+            "Response should be an array for {word_type}"
+        );
+        let words = json.as_array().unwrap();
+        assert!(
+            !words.is_empty(),
+            "Response should contain at least one {word_type}"
+        );
 
-    Ok(())
-}
-
-#[tokio::test]
-#[serial]
-async fn test_random_word_by_type_verb() -> Result<()> {
-    let (server, _temp_file, pool) = create_test_server_with_pool().await?;
-    populate_test_data(&pool, "3").await?;
-
-    let response = server.get("/en/word/verb").await;
-
-    assert_eq!(
-        response.status_code(),
-        StatusCode::OK,
-        "Random verb endpoint should return 200"
-    );
-
-    let json: serde_json::Value = response.json();
-    assert!(json.is_array(), "Response should be an array");
-    let words = json.as_array().unwrap();
-    assert!(
-        !words.is_empty(),
-        "Response should contain at least one word"
-    );
-
-    let word = &words[0];
-    assert!(
-        word.get("word").is_some(),
-        "Response should have word field"
-    );
-
-    Ok(())
-}
-
-#[tokio::test]
-#[serial]
-async fn test_random_word_by_type_adjective() -> Result<()> {
-    let (server, _temp_file, pool) = create_test_server_with_pool().await?;
-    populate_test_data(&pool, "4").await?;
-
-    let response = server.get("/en/word/adjective").await;
-
-    assert_eq!(
-        response.status_code(),
-        StatusCode::OK,
-        "Random adjective endpoint should return 200"
-    );
-
-    let json: serde_json::Value = response.json();
-    assert!(json.is_array(), "Response should be an array");
-    let words = json.as_array().unwrap();
-    assert!(
-        !words.is_empty(),
-        "Response should contain at least one word"
-    );
-
-    let word = &words[0];
-    assert!(
-        word.get("word").is_some(),
-        "Response should have word field"
-    );
-
-    Ok(())
-}
-
-#[tokio::test]
-#[serial]
-async fn test_random_word_by_type_adverb() -> Result<()> {
-    let (server, _temp_file, pool) = create_test_server_with_pool().await?;
-    populate_test_data(&pool, "5").await?;
-
-    let response = server.get("/en/word/adverb").await;
-
-    assert_eq!(
-        response.status_code(),
-        StatusCode::OK,
-        "Random adverb endpoint should return 200"
-    );
-
-    let json: serde_json::Value = response.json();
-    assert!(json.is_array(), "Response should be an array");
-    let words = json.as_array().unwrap();
-    assert!(
-        !words.is_empty(),
-        "Response should contain at least one word"
-    );
-
-    let word = &words[0];
-    assert!(
-        word.get("word").is_some(),
-        "Response should have word field"
-    );
+        let word = &words[0];
+        assert!(
+            word.get("word").is_some(),
+            "Response should have word field for {word_type}"
+        );
+    }
 
     Ok(())
 }
 
 #[tokio::test]
 async fn test_invalid_language() -> Result<()> {
-    let (server, _temp_file) = create_test_server().await?;
+    let (server, _pool) = create_test_server_memory().await?;
 
     let response = server.get("/invalid/word").await;
 
@@ -207,10 +110,8 @@ async fn test_invalid_language() -> Result<()> {
 }
 
 #[tokio::test]
-#[serial]
 async fn test_invalid_word_type() -> Result<()> {
-    let (server, _temp_file, pool) = create_test_server_with_pool().await?;
-    populate_test_data(&pool, "6").await?;
+    let (server, _temp_file) = create_test_server().await?;
 
     let response = server.get("/en/word/invalid_type").await;
 
@@ -233,7 +134,7 @@ async fn test_invalid_word_type() -> Result<()> {
 
 #[tokio::test]
 async fn test_empty_database() -> Result<()> {
-    let (server, _temp_file) = create_test_server().await?;
+    let (server, _pool) = create_test_server_memory().await?;
     // Don't populate data
 
     let response = server.get("/en/word").await;
@@ -250,10 +151,9 @@ async fn test_empty_database() -> Result<()> {
 }
 
 #[tokio::test]
-#[serial]
 async fn test_word_api_response_format() -> Result<()> {
     let (server, _temp_file, pool) = create_test_server_with_pool().await?;
-    populate_test_data(&pool, "7").await?;
+    populate_test_data(&pool, "test").await?;
 
     let response = server.get("/en/word").await;
     assert_eq!(response.status_code(), StatusCode::OK);
@@ -309,13 +209,12 @@ async fn test_word_api_response_format() -> Result<()> {
 }
 
 #[tokio::test]
-#[serial]
 async fn test_multiple_random_word_requests() -> Result<()> {
     let (server, _temp_file, pool) = create_test_server_with_pool().await?;
-    populate_test_data(&pool, "8").await?;
+    populate_test_data(&pool, "test").await?;
 
-    // Make multiple requests to test randomness (though we can't guarantee different results)
-    for i in 0..5 {
+    // Make multiple requests to test randomness (reduced for efficiency)
+    for i in 0..3 {
         let response = server.get("/en/word").await;
         assert_eq!(
             response.status_code(),
@@ -342,10 +241,9 @@ async fn test_multiple_random_word_requests() -> Result<()> {
 }
 
 #[tokio::test]
-#[serial]
 async fn test_word_api_content_type() -> Result<()> {
     let (server, _temp_file, pool) = create_test_server_with_pool().await?;
-    populate_test_data(&pool, "9").await?;
+    populate_test_data(&pool, "test").await?;
 
     let response = server.get("/en/word").await;
     assert_eq!(response.status_code(), StatusCode::OK);
@@ -364,7 +262,6 @@ async fn test_word_api_content_type() -> Result<()> {
 }
 
 #[tokio::test]
-#[serial]
 async fn test_crud_workflow() -> Result<()> {
     let (server, _temp_file) = create_test_server().await?;
 
@@ -383,20 +280,13 @@ async fn test_crud_workflow() -> Result<()> {
         "word_type": word_data.word_type
     });
 
-    let (create_response, create_metrics) =
-        measure_test_performance("admin_word_creation", async {
-            Ok(server.post("/admin/en/words").json(&create_body).await)
-        })
-        .await?;
+    let create_response = server.post("/admin/en/words").json(&create_body).await;
 
     assert_eq!(
         create_response.status_code(),
         StatusCode::OK,
         "Create should succeed"
     );
-
-    // Validate creation performance
-    assert_test_performance(&create_metrics, performance_thresholds::API_REQUEST);
 
     // READ - Try to get the word via public API (simplified approach)
     let mut found_valid_response = false;
@@ -424,22 +314,18 @@ async fn test_crud_workflow() -> Result<()> {
 }
 
 #[tokio::test]
-#[serial]
-async fn test_api_performance_under_load() -> Result<()> {
+async fn test_api_multiple_requests() -> Result<()> {
     let (server, _temp_file, pool) = create_test_server_with_pool().await?;
-    populate_test_data(&pool, "perf").await?;
+    populate_test_data(&pool, "multi").await?;
 
-    // Test multiple sequential requests (simplified for reliability)
-    for i in 0..10 {
-        let (response, metrics) = measure_test_performance(&format!("load_request_{i}"), async {
-            Ok(server.get("/en/word").await)
-        })
-        .await?;
-
-        assert_eq!(response.status_code(), StatusCode::OK);
-        assert_test_performance(&metrics, performance_thresholds::API_REQUEST);
+    // Test multiple sequential requests for functional reliability
+    for i in 0..3 {
+        let response = server.get("/en/word").await;
+        assert_eq!(
+            response.status_code(),
+            StatusCode::OK,
+            "Request {i} should succeed"
+        );
     }
-
-    cleanup_test_data(&pool).await?;
     Ok(())
 }

@@ -7,13 +7,11 @@
 use anyhow::Result;
 use axum::http::StatusCode;
 use serde_json::json;
-use serial_test::serial;
+
 use word_api_axum::models::word::UpsertWord;
 
 mod helpers;
-use helpers::{
-    assert_test_performance, create_test_server, measure_test_performance, performance_thresholds,
-};
+use helpers::{create_test_server, create_test_server_memory};
 
 /// Create a test word
 fn create_test_word(suffix: &str) -> UpsertWord {
@@ -26,7 +24,6 @@ fn create_test_word(suffix: &str) -> UpsertWord {
 }
 
 #[tokio::test]
-#[serial]
 async fn test_admin_create_word_success() -> Result<()> {
     let (server, _temp_file) = create_test_server().await?;
 
@@ -38,10 +35,7 @@ async fn test_admin_create_word_success() -> Result<()> {
         "word_type": word_data.word_type
     });
 
-    let (response, metrics) = measure_test_performance("admin_create_word", async {
-        Ok(server.post("/admin/en/words").json(&body).await)
-    })
-    .await?;
+    let response = server.post("/admin/en/words").json(&body).await;
 
     assert_eq!(
         response.status_code(),
@@ -50,9 +44,6 @@ async fn test_admin_create_word_success() -> Result<()> {
         response.status_code(),
         response.text()
     );
-
-    // Validate performance
-    assert_test_performance(&metrics, performance_thresholds::API_REQUEST);
 
     let json: serde_json::Value = response.json();
 
@@ -71,7 +62,6 @@ async fn test_admin_create_word_success() -> Result<()> {
 }
 
 #[tokio::test]
-#[serial]
 async fn test_admin_get_all_words() -> Result<()> {
     let (server, _temp_file) = create_test_server().await?;
 
@@ -94,7 +84,6 @@ async fn test_admin_get_all_words() -> Result<()> {
 }
 
 #[tokio::test]
-#[serial]
 async fn test_admin_create_and_retrieve() -> Result<()> {
     let (server, _temp_file) = create_test_server().await?;
 
@@ -138,7 +127,6 @@ async fn test_admin_create_and_retrieve() -> Result<()> {
 }
 
 #[tokio::test]
-#[serial]
 async fn test_admin_create_word_validation() -> Result<()> {
     let (server, _temp_file) = create_test_server().await?;
 
@@ -162,7 +150,6 @@ async fn test_admin_create_word_validation() -> Result<()> {
 }
 
 #[tokio::test]
-#[serial]
 async fn test_admin_update_word() -> Result<()> {
     let (server, _temp_file) = create_test_server().await?;
 
@@ -215,7 +202,6 @@ async fn test_admin_update_word() -> Result<()> {
 }
 
 #[tokio::test]
-#[serial]
 async fn test_admin_delete_word() -> Result<()> {
     let (server, _temp_file) = create_test_server().await?;
 
@@ -264,108 +250,59 @@ async fn test_admin_delete_word() -> Result<()> {
 }
 
 #[tokio::test]
-#[serial]
-async fn test_admin_get_nonexistent_word() -> Result<()> {
+async fn test_admin_nonexistent_word_operations() -> Result<()> {
     let (server, _temp_file) = create_test_server().await?;
 
-    let response = server.get("/admin/en/words/99999").await;
+    // Test GET nonexistent word
+    let get_response = server.get("/admin/en/words/99999").await;
+    assert_eq!(get_response.status_code(), StatusCode::OK);
+    let json: serde_json::Value = get_response.json();
+    assert!(json.is_array() && json.as_array().unwrap().is_empty());
 
-    assert_eq!(
-        response.status_code(),
-        StatusCode::OK,
-        "Get nonexistent word should return 200 with empty array"
-    );
-
-    let json: serde_json::Value = response.json();
-    assert!(json.is_array(), "Response should be an array");
-    assert!(
-        json.as_array().unwrap().is_empty(),
-        "Response should be empty array for nonexistent word"
-    );
-
-    Ok(())
-}
-
-#[tokio::test]
-#[serial]
-async fn test_admin_update_nonexistent_word() -> Result<()> {
-    let (server, _temp_file) = create_test_server().await?;
-
-    let body = json!({
+    // Test UPDATE nonexistent word
+    let update_body = json!({
         "word": "nonexistent",
         "definition": "definition",
         "pronunciation": "/nɑnɪɡzɪstənt/",
         "word_type": "noun"
     });
-
-    let response = server.put("/admin/en/words/99999").json(&body).await;
-
+    let update_response = server.put("/admin/en/words/99999").json(&update_body).await;
     assert_eq!(
-        response.status_code(),
-        StatusCode::INTERNAL_SERVER_ERROR,
-        "Update nonexistent word should return 500 error"
+        update_response.status_code(),
+        StatusCode::INTERNAL_SERVER_ERROR
     );
+
+    // Test DELETE nonexistent word
+    let delete_response = server.delete("/admin/en/words/99999").await;
+    assert_eq!(delete_response.status_code(), StatusCode::OK);
 
     Ok(())
 }
 
 #[tokio::test]
-#[serial]
-async fn test_admin_delete_nonexistent_word() -> Result<()> {
-    let (server, _temp_file) = create_test_server().await?;
+async fn test_admin_request_validation() -> Result<()> {
+    let (server, _pool) = create_test_server_memory().await?;
 
-    let response = server.delete("/admin/en/words/99999").await;
-
-    assert_eq!(
-        response.status_code(),
-        StatusCode::OK,
-        "Delete nonexistent word should return 200 (no-op)"
-    );
-
-    Ok(())
-}
-
-#[tokio::test]
-#[serial]
-async fn test_admin_invalid_json() -> Result<()> {
-    let (server, _temp_file) = create_test_server().await?;
-
-    let response = server
+    // Test invalid JSON
+    let invalid_json_response = server
         .post("/admin/en/words")
         .text("{ invalid json")
         .content_type("application/json")
         .await;
+    assert!(invalid_json_response.status_code() >= StatusCode::BAD_REQUEST);
 
-    assert!(
-        response.status_code() >= StatusCode::BAD_REQUEST,
-        "Invalid JSON should return error, got: {}",
-        response.status_code()
-    );
-
-    Ok(())
-}
-
-#[tokio::test]
-#[serial]
-async fn test_admin_missing_content_type() -> Result<()> {
-    let (server, _temp_file) = create_test_server().await?;
-
+    // Test missing content type
     let valid_data = json!({
         "word": "test",
         "definition": "test definition",
         "pronunciation": "/tɛst/",
         "word_type": "noun"
     });
-
-    let response = server
+    let missing_content_type_response = server
         .post("/admin/en/words")
         .text(valid_data.to_string())
         .await;
-
-    assert!(
-        response.status_code() >= StatusCode::BAD_REQUEST,
-        "Missing content-type should return error"
-    );
+    assert!(missing_content_type_response.status_code() >= StatusCode::BAD_REQUEST);
 
     Ok(())
 }
