@@ -1,16 +1,7 @@
-//! Random Word API Axum Binary
+//! Random Word API Server
 //!
-//! This is the main binary entry point for the Word API server built with Axum.
-//! The core application logic is implemented in the library crate for better
-//! testability and reusability.
-//!
-//! ## Usage
-//!
-//! Word API Axum comes with a comprehensive help menu:
-//!
-//! ```non_rust
-//! word-api-axum -h
-//! ```
+//! Main entry point for the word API server. Use `word-api-axum -h` for
+//! command-line options and configuration help.
 
 use clap::Parser;
 use word_api_axum::{cli, error::AppError, run_app};

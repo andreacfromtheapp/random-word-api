@@ -1,12 +1,11 @@
-//! Word API Axum Library
+//! Random Word API - A simple dictionary word service
 //!
-//! This library provides the complete functionality for the Word API server built with Axum.
-//! It includes models, handlers, routing, configuration management, database initialization,
-//! tracing setup, and the main application runner.
+//! Provides HTTP endpoints for retrieving random dictionary words with definitions
+//! and pronunciations. Supports filtering by grammatical type (noun, verb, etc.)
+//! and includes administrative endpoints for word management.
 //!
-//! The library is designed to be used both as a standalone binary and as a library
-//! for testing and integration purposes. All core application logic is contained
-//! here, following Rust idioms for better testability and code reuse.
+//! Built with Axum for high-performance async HTTP handling and SQLite for
+//! lightweight data storage.
 //!
 
 use anyhow::{Context, Result};
@@ -15,13 +14,31 @@ use std::path::Path;
 use std::str::FromStr;
 use std::sync::{Arc, Mutex};
 
-/// Define default tracing log levels. Uses `RUST_LOG` when unset
+/// Define default tracing log levels. Uses `RUST_LOG` when unset.
 pub const TRACING_LOG_LEVELS: &str = "sqlx=info,tower_http=debug,info";
 
-/// Define allowed language codes to use with models/word.rs checks.
+/// Languages support. Currently only supports American English.
 ///
-/// this is kept here for visibility
+/// Currently supported language codes:
+/// - en
+///
+/// Methods include language parameter validation to ensure:
+/// - Only supported languages are processed
+/// - Proper error handling for unsupported language codes
+/// - Future extensibility for multi-language support
 pub const ALLOWED_LANG_CODES: [&str; 1] = ["en"];
+
+///  Type-based retrieval supports common grammatical categories
+///
+/// - Nouns for entity-based word requests
+/// - Verbs for action-based word requests
+/// - Adjectives for descriptive word requests
+/// - Adverbs for modifier-based word requests
+///
+/// Methods include language parameter validation to ensure:
+/// - Only supported grammatical types are processed
+/// - Proper error handling for unsupported grammatical types
+/// - Future extensibility for additional grammatical types support
 pub const ALLOWED_WORD_TYPES: [&str; 4] = ["noun", "verb", "adjective", "adverb"];
 
 /// CLI argument parsing and configuration
@@ -46,7 +63,7 @@ use crate::cli::Commands;
 use crate::error::{AppError, SqlxError};
 use crate::models::apiconfig::{ApiConfig, FileKind};
 
-/// Configure tracing and logging (accepts `RUST_LOG` environment variable or uses default const above)
+/// Configure  tracing and logging using Tokio lib-tracing
 pub fn init_tracing() {
     use tracing_subscriber::{filter::LevelFilter, fmt, prelude::*, EnvFilter};
 
@@ -126,6 +143,7 @@ pub async fn run_app(cli: cli::Cli) -> Result<(), AppError> {
         .await
         .context("couldn't initialize the database connection pool")?;
 
+    // Setup the shared mutable state
     let state = state::AppState {
         apiconfig: Arc::new(Mutex::new(apiconfig.clone())),
         dbpool: dbpool.clone(),

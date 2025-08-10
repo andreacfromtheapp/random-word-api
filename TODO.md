@@ -51,10 +51,11 @@
 
 ## Part 3
 
-- [ ] Split codebase and use a workspace:
-  - [ ] Add backend with `Random Word API`
-  - [ ] Add frontend with `Leptos SSR` for admin
-  - [ ] Add frontend with `Elm Speak and Spell` for fun
+- [x] Split codebase and use a workspace:
+  - [x] Add backend with `Random Word API`
+  - [ ] Add frontend with `Leptos CSR` for random word UI + reload
+  - [ ] Add frontend with `Elm Speak and Spell` for fun UI
+  - [ ] Add frontend with `Leptos SSR` for admin with auth
 
 ## Part 4
 
@@ -71,6 +72,7 @@
     - [ ] <https://admin.localhost/> (API admin of words)
     - [ ] <https://random.localhost/> (page with random word + button)
     - [ ] <https://play.localhost/> (Elm Speak n Spell)
+    - [ ] <https://swagger.localhost/> (Swagger UI)
     - [ ] <https://monitor.localhost/> (Grafana UI)
     - [ ] <https://metrics.localhost/> (Open Telemetry UI)
   - [ ] API backend

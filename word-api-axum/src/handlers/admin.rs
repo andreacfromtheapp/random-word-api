@@ -1,37 +1,7 @@
-//! Administrative handlers module
+//! Administrative word management endpoints (authenticated)
 //!
-//! This module contains HTTP handlers for administrative word management operations.
-//! All endpoints in this module require authentication and administrative privileges
-//! to access, providing complete CRUD (Create, Read, Update, Delete) functionality
-//! for managing the word database.
-//!
-//! # Security
-//!
-//! These endpoints are protected by authentication middleware and should only be
-//! accessible to users with administrative privileges. They provide full access
-//! to the word database including the ability to view all words, modify existing
-//! entries, and permanently delete words.
-//!
-//! # Functionality
-//!
-//! - List all words in the database
-//! - Create new word entries with validation
-//! - Read individual words by ID
-//! - Update existing word entries
-//! - Delete words permanently from the database
-//!
-//! # Validation
-//!
-//! All create and update operations include comprehensive validation for:
-//! - Word format (valid lemma according to Merriam-Webster standards)
-//! - Definition content (appropriate dictionary language)
-//! - Pronunciation format (valid IPA notation)
-//!
-//! # Error Handling
-//!
-//! All handlers return appropriate HTTP status codes and error messages for
-//! various failure scenarios including validation errors, database connection
-//! issues, and resource not found errors.
+//! Provides CRUD operations for word database management. All endpoints
+//! require authentication and return JSON responses.
 use axum::extract::{Path, State};
 use axum::Json;
 
@@ -41,25 +11,19 @@ use crate::state::AppState;
 
 /// Lists all words in the database as a JSON array.
 ///
-/// This endpoint returns every word stored in the database without any filtering
-/// or pagination. It is intended for administrative oversight and should be used
-/// with caution on large datasets as it returns all records in a single response.
+/// Returns every word stored in the database without filtering or pagination.
+/// Requires authentication and administrative privileges.
 ///
-/// # Security
+/// # Parameters
 ///
-/// Requires authentication and administrative privileges. This endpoint exposes
-/// the entire word database and should only be accessible to trusted administrators.
+/// * `lang` - Language code (currently supports 'en' for English; future versions
+///   will support additional languages with separate database tables)
 ///
 /// # Returns
 ///
-/// * `200 OK` - JSON array containing all words with their complete information
+/// * `200 OK` - JSON array containing all words with complete information
 /// * `404 Not Found` - Database is empty or no words are available
 /// * `500 Internal Server Error` - Database connection or query error
-///
-/// # Response Format
-///
-/// Returns a JSON array where each element is a complete Word object containing
-/// id, word, definition, pronunciation, and timestamp information.
 #[utoipa::path(
     get,
     context_path = "/admin",
@@ -69,12 +33,11 @@ use crate::state::AppState;
 
     responses(
         (status = 200, description = "Listed every single word successfully", body = [Word]),
-
         (status = 404, description = "Couldn't list words. Does your database contain any?"),
         (status = 500, description = "Internal server error")
     ),
     params(
-        ("lang" = String, Path, description = "Language code for word retrieval (e.g., 'en' for English)", example = "en"),
+        ("lang" = String, Path, description = "Language code for word operations. Currently supports: 'en' (English). Future versions will support additional languages with separate database tables.", example = "en"),
     )
 )]
 pub async fn word_list(
@@ -86,33 +49,26 @@ pub async fn word_list(
 
 /// Creates a new word entry in the database.
 ///
-/// This endpoint accepts a JSON payload containing word data and creates a new
-/// entry in the database after comprehensive validation. All text fields are
-/// automatically converted to lowercase for consistency.
+/// Accepts a JSON payload with word data and creates a new entry after validation.
+/// All text fields are automatically converted to lowercase for consistency.
+/// Requires authentication and administrative privileges.
 ///
-/// # Security
+/// # Parameters
 ///
-/// Requires authentication and administrative privileges. Only authorized
-/// administrators should be able to add new words to the database.
-///
-/// # Validation
-///
-/// The request body is validated for:
-/// - Word format: Must be a valid lemma with no whitespace and appropriate characters
-/// - Definition: Must contain only dictionary-appropriate text and punctuation
-/// - Pronunciation: Must be valid IPA notation enclosed in forward slashes
+/// * `lang` - Language code (currently supports 'en' for English; future versions
+///   will support additional languages with separate database tables)
 ///
 /// # Request Body
 ///
-/// Expects a JSON object with `word`, `definition`, `pronunciation`, and `word_type` fields.
-/// All fields are required and must pass validation rules.
+/// JSON object with required fields: `word`, `definition`, `pronunciation`, `word_type`.
+/// All fields must pass validation (valid lemma, dictionary text, IPA notation).
 ///
 /// # Returns
 ///
-/// * `200 OK` - Word successfully created, returns the new word with generated ID
-/// * `415 Unsupported Media Type` - Invalid content type, expecting application/json
-/// * `422 Unprocessable Entity` - Validation failed for one or more fields
-/// * `500 Internal Server Error` - Database error or duplicate word constraint
+/// * `200 OK` - Word successfully created with generated ID
+/// * `415 Unsupported Media Type` - Invalid content type
+/// * `422 Unprocessable Entity` - Validation failed
+/// * `500 Internal Server Error` - Database error
 #[utoipa::path(
     post,
     context_path = "/admin",
@@ -128,7 +84,7 @@ pub async fn word_list(
         (status = 500, description = "Internal server error"),
     ),
     params(
-        ("lang" = String, Path, description = "Language code for word creation (e.g., 'en' for English)", example = "en"),
+        ("lang" = String, Path, description = "Language code for word creation. Currently supports: 'en' (English). Future versions will support additional languages with separate database tables.", example = "en"),
     )
 )]
 pub async fn word_create(
@@ -143,29 +99,21 @@ pub async fn word_create(
 
 /// Retrieves a specific word by its database ID.
 ///
-/// This endpoint fetches a single word from the database using its unique
-/// identifier. It provides administrators with the ability to inspect
-/// individual word entries including their complete metadata.
+/// Fetches a single word using its unique identifier. Provides administrators
+/// access to complete word records including metadata.
+/// Requires authentication and administrative privileges.
 ///
-/// # Security
+/// # Parameters
 ///
-/// Requires authentication and administrative privileges. This endpoint
-/// provides access to internal database IDs and complete word records.
-///
-/// # Path Parameters
-///
-/// * `id` - The unique database identifier of the word to retrieve
+/// * `lang` - Language code (currently supports 'en' for English; future versions
+///   will support additional languages with separate database tables)
+/// * `id` - Unique database identifier of the word to retrieve
 ///
 /// # Returns
 ///
 /// * `200 OK` - Word found and returned with all fields
-/// * `404 Not Found` - No word exists with the specified ID
+/// * `404 Not Found` - No word exists with specified ID
 /// * `500 Internal Server Error` - Database connection or query error
-///
-/// # Response Format
-///
-/// Returns a complete Word object including id, word text, definition,
-/// pronunciation, and creation/update timestamps.
 #[utoipa::path(
     get,
     context_path = "/admin",
@@ -179,7 +127,7 @@ pub async fn word_create(
         (status = 500, description = "Internal server error"),
     ),
     params(
-        ("lang" = String, Path, description = "Language code for word retrieval (e.g., 'en' for English)", example = "en"),
+        ("lang" = String, Path, description = "Language code for word retrieval. Currently supports: 'en' (English). Future versions will support additional languages with separate database tables.", example = "en"),
         ("id" = u32, Path, description = "Unique database identifier of the word to retrieve", example = 1),
     )
 )]
@@ -192,40 +140,27 @@ pub async fn word_read(
 
 /// Updates an existing word entry in the database.
 ///
-/// This endpoint modifies an existing word identified by its database ID.
-/// The entire word record is updated with new values, and all text fields
-/// are converted to lowercase for consistency. The updated_at timestamp
-/// is automatically set to the current time.
+/// Modifies an existing word identified by its database ID. All text fields
+/// are converted to lowercase and the updated_at timestamp is set automatically.
+/// Requires authentication and administrative privileges.
 ///
-/// # Security
+/// # Parameters
 ///
-/// Requires authentication and administrative privileges. This endpoint
-/// allows modification of existing database records and should be restricted
-/// to authorized administrators.
-///
-/// # Path Parameters
-///
-/// * `id` - The unique database identifier of the word to update
+/// * `lang` - Language code (currently supports 'en' for English; future versions
+///   will support additional languages with separate database tables)
+/// * `id` - Unique database identifier of the word to update
 ///
 /// # Request Body
 ///
-/// Expects a JSON object with `word`, `definition`, `pronunciation`, and `word_type` fields.
-/// All fields are required and must pass the same validation as word creation.
-///
-/// # Validation
-///
-/// The request body undergoes the same validation as word creation:
-/// - Word format validation for lemma standards
-/// - Definition content validation for appropriate dictionary language
-/// - Pronunciation validation for proper IPA notation format
-/// - Word type validation for supported grammatical categories (noun, verb, adjective, adverb)
+/// JSON object with required fields: `word`, `definition`, `pronunciation`, `word_type`.
+/// Must pass same validation as word creation.
 ///
 /// # Returns
 ///
-/// * `200 OK` - Word successfully updated, returns the modified word
-/// * `404 Not Found` - No word exists with the specified ID
-/// * `422 Unprocessable Entity` - Validation failed for one or more fields
-/// * `500 Internal Server Error` - Database error during update operation
+/// * `200 OK` - Word successfully updated
+/// * `404 Not Found` - No word exists with specified ID
+/// * `422 Unprocessable Entity` - Validation failed
+/// * `500 Internal Server Error` - Database error
 #[utoipa::path(
     put,
     context_path = "/admin",
@@ -240,7 +175,7 @@ pub async fn word_read(
         (status = 500, description = "Internal server error"),
     ),
     params(
-        ("lang" = String, Path, description = "Language code for word update (e.g., 'en' for English)", example = "en"),
+        ("lang" = String, Path, description = "Language code for word update. Currently supports: 'en' (English). Future versions will support additional languages with separate database tables.", example = "en"),
         ("id" = u32, Path, description = "Unique database identifier of the word to update", example = 1),
     )
 )]
@@ -256,34 +191,21 @@ pub async fn word_update(
 
 /// Permanently removes a word from the database.
 ///
-/// This endpoint deletes a word record identified by its database ID. The
-/// operation is irreversible and permanently removes all associated data
-/// including the word text, definition, pronunciation, and timestamps.
+/// Deletes a word record by its database ID. This operation is irreversible
+/// and permanently removes all associated data.
+/// Requires authentication and administrative privileges.
 ///
-/// # Security
+/// # Parameters
 ///
-/// Requires authentication and administrative privileges. This is a destructive
-/// operation that permanently removes data from the database and should only
-/// be accessible to trusted administrators.
-///
-/// # Path Parameters
-///
-/// * `id` - The unique database identifier of the word to delete
-///
-/// # Caution
-///
-/// This operation is permanent and cannot be undone. The word and all its
-/// associated data will be completely removed from the database.
+/// * `lang` - Language code (currently supports 'en' for English; future versions
+///   will support additional languages with separate database tables)
+/// * `id` - Unique database identifier of the word to delete
 ///
 /// # Returns
 ///
-/// * `200 OK` - Word successfully deleted from the database
-/// * `404 Not Found` - No word exists with the specified ID
+/// * `200 OK` - Word successfully deleted
+/// * `404 Not Found` - No word exists with specified ID
 /// * `500 Internal Server Error` - Database error during deletion
-///
-/// # Response Format
-///
-/// Returns an empty response body with a 200 status code on successful deletion.
 #[utoipa::path(
     delete,
     context_path = "/admin",
@@ -297,7 +219,7 @@ pub async fn word_update(
         (status = 500, description = "Internal server error"),
     ),
     params(
-        ("lang" = String, Path, description = "Language code for word deletion (e.g., 'en' for English)", example = "en"),
+        ("lang" = String, Path, description = "Language code for word deletion. Currently supports: 'en' (English). Future versions will support additional languages with separate database tables.", example = "en"),
         ("id" = u32, Path, description = "Unique database identifier of the word to delete", example = 1),
     )
 )]

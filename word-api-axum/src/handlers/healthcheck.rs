@@ -1,36 +1,7 @@
-//! General handlers module
+//! Health check and system status endpoints
 //!
-//! This module contains HTTP handlers for healthcheck utility endpoints that provide
-//! system health checks and API status information. These endpoints are publicly
-//! accessible and do not require authentication, serving as essential monitoring
-//! and debugging tools for the API infrastructure.
-//!
-//! # Purpose
-//!
-//! The healthcheck handlers provide fundamental operational endpoints that allow:
-//! - Health checks for monitoring systems
-//! - Database connectivity verification
-//! - API availability confirmation
-//! - System readiness validation
-//!
-//! # Endpoints
-//!
-//! All endpoints in this module are designed to be lightweight and respond quickly
-//! to support automated monitoring and health check systems. They provide essential
-//! information about the API's operational status without exposing sensitive data.
-//!
-//! # Monitoring Integration
-//!
-//! These endpoints are suitable for integration with:
-//! - Load balancer health checks
-//! - Container orchestration readiness probes
-//! - Application performance monitoring systems
-//! - Automated alerting and notification systems
-//!
-//! # Error Handling
-//!
-//! Health check endpoints are designed to fail fast and provide clear status
-//! information when system components are not functioning properly.
+//! Public endpoints for monitoring system health and database connectivity.
+//! Designed for use with load balancers and monitoring systems.
 use axum::extract::State;
 
 use crate::error::AppError;
@@ -50,39 +21,17 @@ use crate::state::AppState;
 /// - Provides immediate response without resource checks
 /// - Indicates only that the API process is running
 ///
-/// # Use Cases
-///
-/// This endpoint is primarily designed for:
-/// - Container orchestration liveness probes
-/// - Basic service discovery health checks
-/// - Load balancer upstream validation
-/// - Simple monitoring system integration
-/// - Automated restart trigger validation
-///
-/// # Response Behavior
-///
-/// The endpoint always returns a success response when the API is running,
-/// regardless of the status of external dependencies like databases or
-/// third-party services. This makes it suitable for determining whether
-/// the service process itself needs to be restarted.
-///
 /// # Returns
 ///
 /// * `200 OK` - API service is alive and responding to requests
 ///
-/// # Response Format
-///
-/// Returns a plain text string message confirming the API is running,
-/// making it suitable for simple monitoring systems that expect basic
-/// text responses rather than JSON payloads.
 #[utoipa::path(
     get,
     context_path = "/health",
     path = "/alive",
     operation_id = "api_liveness_check",
     tag = "healthcheck_endpoints",
-    summary = "API Liveness Check",
-    description = "Performs a basic liveness check to confirm the API service is running and responsive",
+
     responses(
         (status = 200, description = "API service is alive and responding to requests", body = String),
     )
@@ -105,38 +54,18 @@ pub async fn alive() -> String {
 /// - Executes a ping operation to test database responsiveness
 /// - Verifies that the database is accessible and functioning
 ///
-/// # Use Cases
-///
-/// This endpoint is primarily designed for:
-/// - Container orchestration readiness probes
-/// - Load balancer health checks
-/// - Automated monitoring system integration
-/// - Manual API status verification
-/// - Deployment validation and testing
-///
-/// # Response Behavior
-///
-/// The endpoint provides a simple text response indicating the connection status.
-/// Success responses confirm that the API can successfully communicate with the
-/// database, while error responses indicate connectivity or database issues.
-///
 /// # Returns
 ///
 /// * `200 OK` - Database connection successful, API is ready to serve requests
 /// * `500 Internal Server Error` - Database connection failed, API is not ready
 ///
-/// # Response Format
-///
-/// Returns a plain text string message indicating the connection status rather
-/// than JSON, making it suitable for simple health check monitoring systems.
 #[utoipa::path(
     get,
     context_path = "/health",
     path = "/ready",
     operation_id = "api_db_connection_test",
     tag = "healthcheck_endpoints",
-    summary = "API Readiness Check",
-    description = "Performs a comprehensive readiness check including database connectivity validation",
+
     responses(
         (status = 200, description = "API is ready and database connection is successful", body = String),
         (status = 500, description = "API is not ready - database connection failed or other critical error"),
@@ -148,6 +77,6 @@ pub async fn ready(State(state): State<AppState>) -> Result<String, AppError> {
     let mut conn = state.dbpool.acquire().await?;
     conn.ping()
         .await
-        .map(|_| "OK. The API can establish a connection to the database".to_string())
+        .map(|_| "The API can establish a connection to the database".to_string())
         .map_err(Into::into)
 }

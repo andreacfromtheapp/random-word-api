@@ -1,18 +1,8 @@
-//! Word model module
+//! Word data structure with CRUD operations and validation
 //!
-//! This module contains the core Word model and related structures for managing
-//! dictionary words in the random word API. It provides functionality for CRUD
-//! operations, validation, and database interactions.
-//!
-//! # Features
-//!
-//! - Word CRUD operations (Create, Read, Update, Delete)
-//! - Random word retrieval from database
-//! - Random word retrieval filtered by grammatical type (noun, verb, adjective, adverb)
-//! - Comprehensive validation for lemmas, definitions, pronunciations, and word types
-//! - Support for IPA phonetic notation
-//! - Word type categorization and filtering for targeted word selection
-//! - Admin-only operations for word management
+//! Provides database operations for managing dictionary words with lemmas,
+//! definitions, and IPA pronunciations. Supports random word retrieval
+//! with optional filtering by grammatical type.
 use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 use sqlx::{query, query_as, SqlitePool};
@@ -26,8 +16,6 @@ use crate::{ALLOWED_LANG_CODES, ALLOWED_WORD_TYPES};
 ///
 /// This struct contains all the information about a dictionary word including
 /// its definition, pronunciation in IPA notation, and timestamp metadata.
-/// It implements serialization for JSON responses and database row mapping
-/// for SQLite integration.
 ///
 /// # Fields
 ///
@@ -39,20 +27,6 @@ use crate::{ALLOWED_LANG_CODES, ALLOWED_WORD_TYPES};
 /// - `created_at`: Timestamp when the word was added to the database
 /// - `updated_at`: Timestamp when the word was last modified
 ///
-/// # Database Schema
-///
-/// This struct maps to the `words` table with the following structure:
-/// ```sql
-/// CREATE TABLE words (
-///     id INTEGER PRIMARY KEY,
-///     word_type TEXT NOT NULL,
-///     word TEXT NOT NULL,
-///     definition TEXT NOT NULL,
-///     pronunciation TEXT NOT NULL,
-///     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-///     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-/// );
-/// ```
 #[derive(ToSchema, Deserialize, Serialize, Clone, sqlx::FromRow)]
 pub struct Word {
     id: u32,
@@ -64,41 +38,11 @@ pub struct Word {
     updated_at: Option<NaiveDateTime>,
 }
 
-/// Implementation of Word with database operations.
-///
-/// This implementation provides all the core functionality for interacting with
-/// words in the database. All methods are asynchronous and return Results that
-/// can be converted to appropriate HTTP responses by the handlers.
-///
-/// # Error Handling
-///
-/// All methods return `Result<T, AppError>` where `AppError` handles database
-/// errors, validation errors, and other application-specific errors that can
-/// be converted to appropriate HTTP status codes.
 impl Word {
-    /// Retrieves all words from the database.
-    ///
-    /// This method returns all words in the database without any filtering or
-    /// pagination. It is intended for administrative purposes only and should
-    /// be protected by authentication middleware.
-    ///
-    /// # Arguments
-    ///
-    /// * `dbpool` - SQLite connection pool for database access
-    ///
-    /// # Returns
-    ///
-    /// * `Ok(Vec<Word>)` - Vector containing all words in the database
-    /// * `Err(AppError)` - Database connection or query error
-    ///
-    /// # Security Note
-    ///
-    /// This endpoint should only be accessible to authenticated administrators
-    /// as it exposes the entire word database.
+    /// Retrieves all words from the database (admin only)
     pub async fn list(dbpool: SqlitePool, lang: &str) -> Result<Vec<Self>, AppError> {
         if ALLOWED_LANG_CODES.contains(&lang) {
             let my_query = match lang {
-                // match allowed lang to set table or default to words
                 "en" => "SELECT * FROM words",
                 "de" => "SELECT * FROM words_de", // this is an example
                 "fr" => "SELECT * FROM words_fr", // this is an example
@@ -117,23 +61,7 @@ impl Word {
         }
     }
 
-    /// Creates a new word in the database.
-    ///
-    /// This method validates the input data and inserts a new word into the database.
-    /// All text fields are automatically converted to lowercase for consistency.
-    /// The word must pass validation for lemma format, definition content, pronunciation
-    /// IPA notation, and word type categorization.
-    ///
-    /// # Arguments
-    ///
-    /// * `dbpool` - SQLite connection pool for database access
-    /// * `lang` - Language code for word creation validation
-    /// * `new_word` - UpsertWord struct containing the word data to insert (word, definition, pronunciation, word_type)
-    ///
-    /// # Returns
-    ///
-    /// * `Ok(Word)` - The newly created word with generated ID and timestamps
-    /// * `Err(AppError)` - Validation error, duplicate word, or database error
+    /// Creates a new word in the database with validation
     pub async fn create(
         dbpool: SqlitePool,
         lang: &str,
@@ -146,7 +74,6 @@ impl Word {
 
         if ALLOWED_LANG_CODES.contains(&lang) {
             let my_query = match lang {
-                // match allowed lang to set table or default to words
                 "en" => "INSERT INTO words (word, definition, pronunciation, word_type) VALUES ($1, $2, $3, $4) RETURNING *",
                 _ => "INSERT INTO words (word, definition, pronunciation, word_type) VALUES ($1, $2, $3, $4) RETURNING *",
             };
@@ -164,25 +91,10 @@ impl Word {
         }
     }
 
-    /// Retrieves a specific word by its database ID.
-    ///
-    /// This method fetches a single word from the database using its unique
-    /// identifier. It is primarily used for administrative purposes and
-    /// detailed word inspection.
-    ///
-    /// # Arguments
-    ///
-    /// * `dbpool` - SQLite connection pool for database access
-    /// * `id` - The unique identifier of the word to retrieve
-    ///
-    /// # Returns
-    ///
-    /// * `Ok(Word)` - The word with the specified ID
-    /// * `Err(AppError)` - Word not found or database error
+    /// Retrieves a specific word by ID
     pub async fn read(dbpool: SqlitePool, lang: &str, id: u32) -> Result<Vec<Self>, AppError> {
         if ALLOWED_LANG_CODES.contains(&lang) {
             let my_query = match lang {
-                // match allowed lang to set table or default to words
                 "en" => "SELECT * FROM words WHERE id = $1",
                 _ => "SELECT * FROM words WHERE id = $1",
             };
@@ -197,23 +109,7 @@ impl Word {
         }
     }
 
-    /// Updates an existing word in the database.
-    ///
-    /// This method modifies an existing word with new data. The word is identified
-    /// by its ID, and all fields (word, definition, pronunciation, word_type) are updated
-    /// with the provided values. All text is converted to lowercase for consistency.
-    ///
-    /// # Arguments
-    ///
-    /// * `dbpool` - SQLite connection pool for database access
-    /// * `lang` - Language code for word update validation
-    /// * `id` - The unique identifier of the word to update
-    /// * `updated_word` - UpsertWord struct containing the new word data (word, definition, pronunciation, word_type)
-    ///
-    /// # Returns
-    ///
-    /// * `Ok(Word)` - The updated word with new values and updated timestamp
-    /// * `Err(AppError)` - Word not found, validation error, or database error
+    /// Updates an existing word in the database
     pub async fn update(
         dbpool: SqlitePool,
         lang: &str,
@@ -227,7 +123,6 @@ impl Word {
 
         if ALLOWED_LANG_CODES.contains(&lang) {
             let my_query = match lang {
-                // match allowed lang to set table or default to words
                 "en" => "UPDATE words SET word = $1, definition = $2, pronunciation = $3, word_type = $4 WHERE id = $5 RETURNING *",
                 _ => "UPDATE words SET word = $1, definition = $2, pronunciation = $3, word_type = $4 WHERE id = $5 RETURNING *",
             };
@@ -246,24 +141,10 @@ impl Word {
         }
     }
 
-    /// Deletes a word from the database.
-    ///
-    /// This method permanently removes a word from the database. The operation
-    /// cannot be undone, so it should be used with caution.
-    ///
-    /// # Arguments
-    ///
-    /// * `dbpool` - SQLite connection pool for database access
-    /// * `id` - The unique identifier of the word to delete
-    ///
-    /// # Returns
-    ///
-    /// * `Ok(())` - Word was successfully deleted
-    /// * `Err(AppError)` - Word not found or database error
+    /// Deletes a word from the database
     pub async fn delete(dbpool: SqlitePool, lang: &str, id: u32) -> Result<(), AppError> {
         if ALLOWED_LANG_CODES.contains(&lang) {
             let my_query = match lang {
-                // match allowed lang to set table or default to words
                 "en" => "DELETE FROM words WHERE id = $1",
                 _ => "DELETE FROM words WHERE id = $1",
             };
@@ -289,53 +170,6 @@ impl Word {
 /// - `definition`: Human-readable definition of the word
 /// - `pronunciation`: IPA phonetic notation enclosed in forward slashes
 ///
-/// # Differences from Word Struct
-///
-/// Unlike the full Word struct, GetWord excludes:
-/// - Database ID for security and simplicity
-/// - Creation and update timestamps for privacy
-/// - Internal metadata not relevant to public API consumers
-///
-/// # Serialization
-///
-/// Implements comprehensive serialization support for:
-/// - JSON API responses through Serde
-/// - OpenAPI schema generation through utoipa
-/// - Database row mapping for efficient queries
-///
-/// # Usage Context
-///
-/// This struct is specifically used for public endpoints where:
-/// - Internal database information should not be exposed
-/// - Response payload should be minimal and focused
-/// - Client applications need only essential word data
-#[derive(ToSchema, Deserialize, Serialize, Clone, sqlx::FromRow)]
-pub struct GetWord {
-    word: String,
-    definition: String,
-    pronunciation: String,
-}
-
-/// Implementation of GetWord with public database operations.
-///
-/// This implementation provides database query methods specifically designed
-/// for public API endpoints. The methods return simplified word data without
-/// internal metadata, making them suitable for public consumption while
-/// maintaining security and privacy.
-///
-/// # Available Methods
-///
-/// The implementation provides two primary query methods:
-/// - `random_word`: Retrieves any random word from the database
-/// - `random_type`: Retrieves a random word filtered by grammatical type
-///
-/// # Security Focus
-///
-/// All methods in this implementation are designed with public access in mind:
-/// - No exposure of internal database IDs
-/// - No timestamp information in responses
-/// - Minimal data exposure for enhanced privacy
-///
 /// # Language Support
 ///
 /// Methods include language parameter validation to ensure:
@@ -350,83 +184,19 @@ pub struct GetWord {
 /// - Verbs for action-based word requests
 /// - Adjectives for descriptive word requests
 /// - Adverbs for modifier-based word requests
+///
+#[derive(ToSchema, Deserialize, Serialize, Clone, sqlx::FromRow)]
+pub struct GetWord {
+    word: String,
+    definition: String,
+    pronunciation: String,
+}
+
 impl GetWord {
-    /// Retrieves a random word from the database for public consumption.
-    ///
-    /// This method uses SQLite's `RANDOM()` function to select a single word
-    /// at random from all available words in the specified language. It returns
-    /// only the essential word information without internal database metadata,
-    /// making it suitable for public API endpoints.
-    ///
-    /// # Language Validation
-    ///
-    /// The method validates the language parameter to ensure only supported
-    /// languages are processed. Currently supports:
-    /// - "en": English language words
-    /// - Future languages can be added with additional database tables
-    ///
-    /// # Database Query
-    ///
-    /// Performs an optimized query that:
-    /// - Selects only public-facing fields (word, definition, pronunciation)
-    /// - Uses SQLite's RANDOM() function for fair distribution
-    /// - Limits results to a single word for efficiency
-    /// - Excludes internal metadata for security
-    ///
-    /// # Arguments
-    ///
-    /// * `dbpool` - SQLite connection pool for database access
-    /// * `lang` - Language code for word selection validation
-    ///
-    /// # Returns
-    ///
-    /// * `Ok(GetWord)` - A randomly selected word with public fields only
-    /// * `Err(AppError)` - Database connection error, empty database, or invalid language
-    ///
-    /// # Privacy Considerations
-    ///
-    /// This method specifically excludes internal database information to
-    /// protect system internals while providing essential word data to clients.
-    /// Retrieves a random word from the database for public consumption.
-    ///
-    /// This method uses SQLite's `RANDOM()` function to select a single word
-    /// at random from all available words in the specified language. It returns
-    /// only the essential word information without internal database metadata,
-    /// making it suitable for public API endpoints.
-    ///
-    /// # Language Validation
-    ///
-    /// The method validates the language parameter to ensure only supported
-    /// languages are processed. Currently supports:
-    /// - "en": English language words
-    /// - Future languages can be added with additional database tables
-    ///
-    /// # Database Query
-    ///
-    /// Performs an optimized query that:
-    /// - Selects only public-facing fields (word, definition, pronunciation)
-    /// - Uses SQLite's RANDOM() function for fair distribution
-    /// - Limits results to a single word for efficiency
-    /// - Excludes internal metadata for security
-    ///
-    /// # Arguments
-    ///
-    /// * `dbpool` - SQLite connection pool for database access
-    /// * `lang` - Language code for word selection validation
-    ///
-    /// # Returns
-    ///
-    /// * `Ok(GetWord)` - A randomly selected word with public fields only
-    /// * `Err(AppError)` - Database connection error, empty database, or invalid language
-    ///
-    /// # Privacy Considerations
-    ///
-    /// This method specifically excludes internal database information to
-    /// protect system internals while providing essential word data to clients.
+    /// Retrieves a random word from the database
     pub async fn random_word(dbpool: SqlitePool, lang: &str) -> Result<Vec<Self>, AppError> {
         if ALLOWED_LANG_CODES.contains(&lang) {
             let my_query = match lang {
-                // match allowed lang to set table or default to words
                 "en" => {
                     "SELECT word, definition, pronunciation FROM words ORDER BY random() LIMIT 1"
                 }
@@ -442,47 +212,7 @@ impl GetWord {
         }
     }
 
-    /// Retrieves a random word of a specific type from the database for public consumption.
-    ///
-    /// This method extends the random word functionality by filtering results based on
-    /// word type (noun, verb, adjective, adverb). It uses SQLite's `RANDOM()` function
-    /// to select from words matching the specified type criteria, returning only essential
-    /// word information without internal database metadata.
-    ///
-    /// # Language and Type Validation
-    ///
-    /// The method validates both language and word type parameters:
-    /// - Language: Currently supports "en" for English
-    /// - Word Type: Supports common grammatical categories (noun, verb, adjective, adverb)
-    /// - Future expansion possible for additional languages and types
-    ///
-    /// # Database Query
-    ///
-    /// Performs a filtered query that:
-    /// - Selects only public-facing fields (word, definition, pronunciation)
-    /// - Filters by word_type field using exact match comparison
-    /// - Uses SQLite's RANDOM() function for fair distribution within type
-    /// - Limits results to a single word for efficiency
-    /// - Excludes internal metadata for security
-    ///
-    /// # Arguments
-    ///
-    /// * `dbpool` - SQLite connection pool for database access
-    /// * `lang` - Language code for word selection validation
-    /// * `word_type` - Grammatical type filter (noun, verb, adjective, adverb)
-    ///
-    /// # Returns
-    ///
-    /// * `Ok(GetWord)` - A randomly selected word of the specified type with public fields only
-    /// * `Err(AppError)` - Database connection error, empty database, invalid language, or unsupported type
-    ///
-    /// # Use Cases
-    ///
-    /// Ideal for applications that need words of specific grammatical types:
-    /// - Creative writing tools requiring specific parts of speech
-    /// - Educational applications teaching grammar
-    /// - Games requiring words of particular types
-    /// - Language learning applications with type-specific exercises
+    /// Retrieves a random word of a specific grammatical type
     pub async fn random_type(
         dbpool: SqlitePool,
         lang: &str,
@@ -490,7 +220,6 @@ impl GetWord {
     ) -> Result<Vec<Self>, AppError> {
         if ALLOWED_LANG_CODES.contains(&lang) {
             let my_query = match lang {
-                // match allowed lang to set table or default to words
                 "en" => {
                     "SELECT word, definition, pronunciation FROM words WHERE word_type = $1 ORDER BY random() LIMIT 1"
                 }
@@ -536,146 +265,42 @@ pub struct UpsertWord {
     pub word_type: String,
 }
 
-/// Validates a word field using Merriam-Webster lemma rules.
-///
-/// This function ensures that the word contains no whitespace and follows
-/// the pattern expected for dictionary lemmas. It uses the `is_valid_lemma`
-/// function to perform the actual validation.
-///
-/// # Arguments
-///
-/// * `text` - The word string to validate
-///
-/// # Returns
-///
-/// * `Ok(())` - The word is valid
-/// * `Err(ValidationError)` - The word contains whitespace or invalid characters
-///
-/// # Validation Rules
-///
-/// - No whitespace characters allowed
-/// - Must pass `is_valid_lemma` check for character composition
+/// Validates a word field using Merriam-Webster lemma rules
 fn validate_word(text: &str) -> Result<(), ValidationError> {
     if text.chars().any(char::is_whitespace) || !is_valid_lemma(text) {
         return Err(ValidationError::new("invalid_lemma"));
     }
-
     Ok(())
 }
 
-/// Validates a definition field for appropriate content.
-///
-/// This function ensures that the definition contains only characters appropriate
-/// for dictionary definitions: letters, numbers, whitespace, and common punctuation.
-/// It excludes symbols that shouldn't appear in definitions.
-///
-/// # Arguments
-///
-/// * `text` - The definition string to validate
-///
-/// # Returns
-///
-/// * `Ok(())` - The definition is valid
-/// * `Err(ValidationError)` - The definition contains invalid characters
+/// Validates a definition field for appropriate dictionary content
 fn validate_definition(text: &str) -> Result<(), ValidationError> {
     if !is_valid_definition(text) {
         return Err(ValidationError::new("invalid_definition"));
     }
-
     Ok(())
 }
 
-/// Validates a pronunciation field for IPA phonetic notation.
-///
-/// This function ensures that the pronunciation follows International Phonetic
-/// Alphabet (IPA) standards and is properly formatted with forward slash delimiters.
-///
-/// # Arguments
-///
-/// * `text` - The pronunciation string to validate
-///
-/// # Returns
-///
-/// * `Ok(())` - The pronunciation is valid IPA notation
-/// * `Err(ValidationError)` - The pronunciation is not valid IPA format
+/// Validates a pronunciation field for IPA phonetic notation
 fn validate_pronunciation(text: &str) -> Result<(), ValidationError> {
     if !is_valid_pronunciation(text) {
         return Err(ValidationError::new("invalid_pronunciation"));
     }
-
     Ok(())
 }
 
-/// Validates a word_type field for allowed grammatical types.
-///
-/// This function ensures that the word type is one of the supported grammatical
-/// categories used for word classification and filtering. The validation supports
-/// common grammatical types that are useful for language learning, creative writing,
-/// and educational applications.
-///
-/// # Allowed Word Types
-///
-/// - `noun`: Words that represent people, places, things, or ideas
-/// - `verb`: Words that express actions, states, or occurrences
-/// - `adjective`: Words that describe or modify nouns
-/// - `adverb`: Words that modify verbs, adjectives, or other adverbs
-///
-/// # Arguments
-///
-/// * `text` - The word type string to validate
-///
-/// # Returns
-///
-/// * `Ok(())` - The word type is valid and supported
-/// * `Err(ValidationError)` - The word type is not in the allowed list
-///
-/// # Examples
-///
-/// ```rust
-/// use word_api_axum::models::word::validate_word_type;
-/// use validator::ValidationError;
-///
-/// // Valid word types
-/// assert!(validate_word_type("noun").is_ok());
-/// assert!(validate_word_type("verb").is_ok());
-/// assert!(validate_word_type("adjective").is_ok());
-/// assert!(validate_word_type("adverb").is_ok());
-///
-/// // Invalid word types
-/// assert!(validate_word_type("preposition").is_err());
-/// assert!(validate_word_type("conjunction").is_err());
-/// assert!(validate_word_type("").is_err());
-/// ```
+/// Validates a word_type field for allowed grammatical types (noun, verb, adjective, adverb)
 pub fn validate_word_type(text: &str) -> Result<(), ValidationError> {
     let allowed_word_types = ["noun", "verb", "adjective", "adverb"];
 
     if !allowed_word_types.contains(&text) {
         return Err(ValidationError::new("invalid_word_type"));
     }
-
     Ok(())
 }
 
-/// Accessor methods for UpsertWord fields with validation.
-///
-/// These methods provide validated access to the UpsertWord fields. Each method
-/// runs the complete validation before returning the field value, ensuring that
-/// only valid data is used throughout the application.
-///
-/// # Error Handling
-///
-/// All accessor methods return `Result<&str, AppError>` to handle validation
-/// errors gracefully and convert them to appropriate HTTP responses.
 impl UpsertWord {
-    /// Returns the word field after validation.
-    ///
-    /// This method validates the entire UpsertWord struct and returns a reference
-    /// to the word field if validation passes.
-    ///
-    /// # Returns
-    ///
-    /// * `Ok(&str)` - Reference to the validated word
-    /// * `Err(AppError)` - Validation failed for any field
+    /// Returns the word field after validation
     pub fn word(&self) -> Result<&str, AppError> {
         match self.validate() {
             Ok(_) => Ok(self.word.as_ref()),
@@ -683,15 +308,7 @@ impl UpsertWord {
         }
     }
 
-    /// Returns the definition field after validation.
-    ///
-    /// This method validates the entire UpsertWord struct and returns a reference
-    /// to the definition field if validation passes.
-    ///
-    /// # Returns
-    ///
-    /// * `Ok(&str)` - Reference to the validated definition
-    /// * `Err(AppError)` - Validation failed for any field
+    /// Returns the definition field after validation
     pub fn definition(&self) -> Result<&str, AppError> {
         match self.validate() {
             Ok(_) => Ok(self.definition.as_ref()),
@@ -699,15 +316,7 @@ impl UpsertWord {
         }
     }
 
-    /// Returns the pronunciation field after validation.
-    ///
-    /// This method validates the entire UpsertWord struct and returns a reference
-    /// to the pronunciation field if validation passes.
-    ///
-    /// # Returns
-    ///
-    /// * `Ok(&str)` - Reference to the validated pronunciation
-    /// * `Err(AppError)` - Validation failed for any field
+    /// Returns the pronunciation field after validation
     pub fn pronunciation(&self) -> Result<&str, AppError> {
         match self.validate() {
             Ok(_) => Ok(self.pronunciation.as_ref()),
@@ -715,22 +324,7 @@ impl UpsertWord {
         }
     }
 
-    /// Returns the word_type field after validation.
-    ///
-    /// This method validates the entire UpsertWord struct and returns a reference
-    /// to the word_type field if validation passes. The word type must be one of
-    /// the supported grammatical categories (noun, verb, adjective, adverb).
-    ///
-    /// # Returns
-    ///
-    /// * `Ok(&str)` - Reference to the validated word type
-    /// * `Err(AppError)` - Validation failed for any field
-    ///
-    /// # Validation
-    ///
-    /// The word type undergoes validation to ensure it is one of the supported
-    /// grammatical categories that enable proper word filtering and categorization
-    /// for client applications.
+    /// Returns the word_type field after validation
     pub fn word_type(&self) -> Result<&str, AppError> {
         match self.validate() {
             Ok(_) => Ok(self.word_type.as_ref()),
@@ -739,49 +333,7 @@ impl UpsertWord {
     }
 }
 
-/// Validates a Merriam-Webster lemma using regex pattern matching.
-///
-/// This function checks if a string conforms to the standards used by Merriam-Webster
-/// for dictionary lemmas. It accepts a specific set of characters that are commonly
-/// found in English dictionary entries, including accented characters for borrowed words.
-///
-/// # Accepted Characters
-///
-/// - Alphanumeric characters (a-z, A-Z, 0-9)
-/// - Hyphens for compound words
-/// - Apostrophes for contractions and possessives
-/// - Periods for abbreviations
-/// - Latin-1 supplement accented characters (À-ÿ)
-/// - Latin Extended-A characters (Ā-ž)
-/// - Latin Extended Additional characters (Ḁ-ỿ)
-///
-/// # Arguments
-///
-/// * `lemma` - The string to validate as a dictionary lemma
-///
-/// # Returns
-///
-/// * `true` - The string is a valid lemma format
-/// * `false` - The string contains invalid characters or is empty
-///
-/// # Examples
-///
-/// ```rust
-/// use word_api_axum::models::word::is_valid_lemma;
-///
-/// // Valid lemmas
-/// assert!(is_valid_lemma("hello"));
-/// assert!(is_valid_lemma("co-worker"));
-/// assert!(is_valid_lemma("don't"));
-/// assert!(is_valid_lemma("Mr."));
-/// assert!(is_valid_lemma("café"));
-/// assert!(is_valid_lemma("naïve"));
-///
-/// // Invalid lemmas
-/// assert!(!is_valid_lemma("hello world")); // contains space
-/// assert!(!is_valid_lemma("")); // empty string
-/// assert!(!is_valid_lemma("hello@world")); // contains invalid character
-/// ```
+/// Validates a Merriam-Webster lemma using regex pattern matching
 pub fn is_valid_lemma(lemma: &str) -> bool {
     use regex::Regex;
     use std::sync::OnceLock;
@@ -806,54 +358,7 @@ pub fn is_valid_lemma(lemma: &str) -> bool {
     !lemma.is_empty() && regex.is_match(lemma)
 }
 
-/// Validates a definition string for dictionary-appropriate content.
-///
-/// This function ensures that definition text contains only characters that would
-/// be expected in a professional dictionary definition. It allows for descriptive
-/// text while excluding symbols that might indicate non-definition content.
-///
-/// # Accepted Characters
-///
-/// - Basic Latin letters (a-z, A-Z)
-/// - Common accented characters (À-ÿĀ-žḀ-ỿ)
-/// - Numbers (0-9) for definitions that include numeric references
-/// - Whitespace characters for word separation
-/// - Common punctuation: periods, commas, semicolons, colons, exclamation marks,
-///   question marks, parentheses, apostrophes, quotation marks, and hyphens
-///
-/// # Excluded Characters
-///
-/// - Email symbols (@, angle brackets)
-/// - Social media symbols (#, mentions)
-/// - Currency symbols ($, €, £, etc.)
-/// - Programming symbols (*, &, %, etc.)
-/// - URLs and web-related symbols
-///
-/// # Arguments
-///
-/// * `definition` - The string to validate as a dictionary definition
-///
-/// # Returns
-///
-/// * `true` - The string contains only valid definition characters
-/// * `false` - The string contains invalid characters or is empty
-///
-/// # Examples
-///
-/// ```rust
-/// use word_api_axum::models::word::is_valid_definition;
-///
-/// // Valid definitions
-/// assert!(is_valid_definition("a word or phrase"));
-/// assert!(is_valid_definition("departing from an accepted standard"));
-/// assert!(is_valid_definition("restrain oneself from indulging in something"));
-/// assert!(is_valid_definition("having the quality of being naïve"));
-///
-/// // Invalid definitions
-/// assert!(!is_valid_definition("contact us at test@email.com"));
-/// assert!(!is_valid_definition("costs $50 or more"));
-/// assert!(!is_valid_definition("")); // empty string
-/// ```
+/// Validates a definition string for dictionary-appropriate content
 pub fn is_valid_definition(definition: &str) -> bool {
     use regex::Regex;
     use std::sync::OnceLock;
@@ -876,54 +381,7 @@ pub fn is_valid_definition(definition: &str) -> bool {
     !definition.is_empty() && regex.is_match(definition)
 }
 
-/// Validates a pronunciation string using International Phonetic Alphabet (IPA) notation.
-///
-/// This function ensures that pronunciation follows the standard IPA format used
-/// in dictionaries, with forward slash delimiters and authentic phonetic symbols.
-/// The validation is based on common IPA characters found in English pronunciation
-/// guides and includes stress markers and length indicators.
-///
-/// # Format Requirements
-///
-/// - Must be enclosed in forward slashes (/)
-/// - Must contain only valid IPA phonetic symbols
-/// - Can include stress markers and diacritics
-/// - Cannot be empty between the slashes
-///
-/// # Accepted IPA Symbols
-///
-/// - Basic Latin letters for consonants and some vowels
-/// - Common IPA vowels: ə ɛ ɪ ɔ ʊ ʌ ɑ æ ɒ ɜ ʏ
-/// - Stress and length markers: ˈ (primary stress), ˌ (secondary stress), ː (long), ˑ (half-long)
-/// - Common IPA consonants: θ ð ʃ ʒ ʧ ʤ ŋ ɹ ɾ ɭ ɻ ɲ ɳ
-/// - Diacritics and modifiers: ʰ ʷ ʲ ˠ ˤ ᵊ ᵛ ᵚ ᵏ
-///
-/// # Arguments
-///
-/// * `pronunciation` - The string to validate as IPA notation
-///
-/// # Returns
-///
-/// * `true` - The string is valid IPA notation with proper delimiters
-/// * `false` - The string is not properly formatted IPA notation or is empty
-///
-/// # Examples
-///
-/// ```rust
-/// use word_api_axum::models::word::is_valid_pronunciation;
-///
-/// // Valid pronunciations
-/// assert!(is_valid_pronunciation("/əˈbeɪt/"));
-/// assert!(is_valid_pronunciation("/æˈberənt/"));
-/// assert!(is_valid_pronunciation("/ˌæbəˈreɪʃən/"));
-/// assert!(is_valid_pronunciation("/ˈhɛloʊ/"));
-///
-/// // Invalid pronunciations
-/// assert!(!is_valid_pronunciation("invalid")); // no slashes
-/// assert!(!is_valid_pronunciation("//")); // empty content
-/// assert!(!is_valid_pronunciation("/test@/")); // invalid character
-/// assert!(!is_valid_pronunciation("əˈbeɪt")); // missing slashes
-/// ```
+/// Validates a pronunciation string using International Phonetic Alphabet (IPA) notation
 pub fn is_valid_pronunciation(pronunciation: &str) -> bool {
     use regex::Regex;
     use std::sync::OnceLock;
