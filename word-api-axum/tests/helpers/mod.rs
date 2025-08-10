@@ -76,7 +76,7 @@ pub async fn create_test_app_state() -> Result<(AppState, NamedTempFile)> {
     let config = create_test_config(db_url);
 
     let state = AppState {
-        config: Arc::new(Mutex::new(config)),
+        apiconfig: Arc::new(Mutex::new(config)),
         dbpool: pool,
     };
 
@@ -100,7 +100,7 @@ pub async fn create_test_server_with_pool() -> Result<(TestServer, NamedTempFile
     let config = create_test_config(db_url);
 
     let state = AppState {
-        config: Arc::new(Mutex::new(config)),
+        apiconfig: Arc::new(Mutex::new(config)),
         dbpool: pool.clone(),
     };
 

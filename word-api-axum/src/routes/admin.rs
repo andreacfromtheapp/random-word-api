@@ -93,7 +93,7 @@ use crate::state::AppState;
 ///
 /// The routes are structured to easily integrate authentication middleware
 /// at the router level for protecting administrative operations.
-pub fn create_admin_routes(state: AppState, origins: Vec<HeaderValue>) -> Router {
+pub fn create_admin_routes(state: AppState, origins: &[HeaderValue]) -> Router {
     Router::new()
         .nest(
             "/admin",
@@ -108,6 +108,6 @@ pub fn create_admin_routes(state: AppState, origins: Vec<HeaderValue>) -> Router
         .layer(
             CorsLayer::new()
                 .allow_methods([Method::POST, Method::GET, Method::PUT, Method::DELETE])
-                .allow_origin(origins.clone()),
+                .allow_origin(origins.to_owned()),
         )
 }

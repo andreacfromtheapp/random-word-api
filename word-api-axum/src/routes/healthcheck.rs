@@ -88,18 +88,18 @@ use crate::state::AppState;
 ///
 /// Health check routes are designed to be lightweight and respond quickly
 /// to minimize impact on monitoring systems and overall application performance.
-pub fn create_health_routes(state: AppState, origins: Vec<HeaderValue>) -> Router {
+pub fn create_health_routes(state: AppState, origins: &[HeaderValue]) -> Router {
     Router::new()
         .nest(
             "/health",
             Router::new()
                 .route("/alive", get(alive))
-                .route("/ready", get(ping)),
+                .route("/ready", get(ready)),
         )
         .with_state(state)
         .layer(
             CorsLayer::new()
                 .allow_methods([Method::GET])
-                .allow_origin(origins.clone()),
+                .allow_origin(origins.to_owned()),
         )
 }

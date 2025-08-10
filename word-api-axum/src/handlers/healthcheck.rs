@@ -142,7 +142,7 @@ pub async fn alive() -> String {
         (status = 500, description = "API is not ready - database connection failed or other critical error"),
     )
 )]
-pub async fn ping(State(state): State<AppState>) -> Result<String, AppError> {
+pub async fn ready(State(state): State<AppState>) -> Result<String, AppError> {
     use sqlx::Connection;
 
     let mut conn = state.dbpool.acquire().await?;

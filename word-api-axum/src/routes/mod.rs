@@ -101,22 +101,22 @@ use word::create_word_routes;
 /// Router creation is infallible as all error handling is deferred to
 /// request processing time through the centralized error handling system.
 pub async fn create_router(state: AppState) -> Router {
-    let origins = [
+    let origins = vec![
         "http://localhost".parse().unwrap(),
         "http://127.0.0.1".parse().unwrap(),
     ];
 
     // Add admin routes under /admin
-    let admin_routes = create_admin_routes(state.clone(), origins.to_vec());
+    let admin_routes = create_admin_routes(state.clone(), &origins);
 
     // Add admin routes under /admin
-    let health_routes = create_health_routes(state.clone(), origins.to_vec());
+    let health_routes = create_health_routes(state.clone(), &origins);
 
     // Add API Docs under /swagger-ui, /rapidoc, /scalar, and /redoc
-    let apidocs_routes = create_apidocs_routes(state.clone(), origins.to_vec());
+    let apidocs_routes = create_apidocs_routes(state.clone(), &origins);
 
     // Add public routes under /{lang}/word
-    let word_routes = create_word_routes(state.clone(), origins.to_vec());
+    let word_routes = create_word_routes(state.clone(), &origins);
 
     // Setup top-level router
     Router::new()

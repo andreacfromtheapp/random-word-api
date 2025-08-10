@@ -81,7 +81,7 @@ pub struct AppState {
     /// The mutex allows for runtime configuration changes without requiring
     /// application restarts, enabling dynamic feature toggling and parameter
     /// adjustment.
-    pub config: Arc<Mutex<ApiConfig>>,
+    pub apiconfig: Arc<Mutex<ApiConfig>>,
 
     /// SQLite database connection pool for efficient query execution.
     ///

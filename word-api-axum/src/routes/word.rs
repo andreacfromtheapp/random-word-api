@@ -98,7 +98,7 @@ use crate::state::AppState;
 ///
 /// The routes are optimized for high-frequency access with minimal overhead
 /// and efficient database connection utilization for concurrent word requests.
-pub fn create_word_routes(state: AppState, origins: Vec<HeaderValue>) -> Router {
+pub fn create_word_routes(state: AppState, origins: &[HeaderValue]) -> Router {
     Router::new()
         .route("/{lang}/word", get(word_random))
         .route("/{lang}/word/{type}", get(word_type))
@@ -106,6 +106,6 @@ pub fn create_word_routes(state: AppState, origins: Vec<HeaderValue>) -> Router 
         .layer(
             CorsLayer::new()
                 .allow_methods([Method::GET])
-                .allow_origin(origins.clone()),
+                .allow_origin(origins.to_owned()),
         )
 }

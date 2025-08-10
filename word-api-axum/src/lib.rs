@@ -8,20 +8,8 @@
 //! for testing and integration purposes. All core application logic is contained
 //! here, following Rust idioms for better testability and code reuse.
 //!
-//! ## Usage
-//!
-//! ```rust,no_run
-//! use word_api_axum::{cli, run_app};
-//! use clap::Parser;
-//!
-//! #[tokio::main]
-//! async fn main() -> Result<(), anyhow::Error> {
-//!     let cli = cli::Cli::parse();
-//!     run_app(cli).await
-//! }
-//! ```
 
-use anyhow::{bail, Context, Result};
+use anyhow::{Context, Result};
 use sqlx::sqlite::{SqliteConnectOptions, SqlitePoolOptions};
 use std::path::Path;
 use std::str::FromStr;
@@ -49,7 +37,7 @@ pub mod routes;
 pub mod state;
 
 use crate::cli::Commands;
-use crate::error::SqlxError;
+use crate::error::{AppError, SqlxError};
 use crate::models::apiconfig::{ApiConfig, FileKind};
 
 /// Configure tracing and logging (accepts `RUST_LOG` environment variable or uses default const above)
@@ -81,7 +69,7 @@ pub async fn init_dbpool(db_url: &str) -> Result<sqlx::Pool<sqlx::Sqlite>, SqlxE
 }
 
 /// Check if provided env-file or config are non-existent and exit gracefully
-pub fn does_file_exist(file_name: &Path, file_kind: &str) -> Result<(), anyhow::Error> {
+pub fn does_file_exist(file_name: &Path, file_kind: &str) -> Result<(), AppError> {
     std::fs::read(file_name)
         .with_context(|| format!("couldn't read {file_kind} file '{file_name:?}'"))?;
 
@@ -89,7 +77,7 @@ pub fn does_file_exist(file_name: &Path, file_kind: &str) -> Result<(), anyhow::
 }
 
 /// Main application logic - extracted from main() for better testability and reusability
-pub async fn run_app(cli: cli::Cli) -> Result<(), anyhow::Error> {
+pub async fn run_app(cli: cli::Cli) -> Result<(), AppError> {
     use routes::create_router;
 
     // Handle setup commands first
@@ -120,7 +108,8 @@ pub async fn run_app(cli: cli::Cli) -> Result<(), anyhow::Error> {
         }
 
         // this should never be reached. here because let Ok() else requires !
-        bail!("something went really wrong... this was not supposed to happen!");
+        // I want a panic here, so it's explicit.....
+        panic!("something went really wrong... this was not supposed to happen!");
     };
 
     // Enable tracing using https://tokio.rs/#tk-lib-tracing
@@ -132,7 +121,7 @@ pub async fn run_app(cli: cli::Cli) -> Result<(), anyhow::Error> {
         .context("couldn't initialize the database connection pool")?;
 
     let state = state::AppState {
-        config: Arc::new(Mutex::new(apiconfig.clone())),
+        apiconfig: Arc::new(Mutex::new(apiconfig.clone())),
         dbpool: dbpool.clone(),
     };
 

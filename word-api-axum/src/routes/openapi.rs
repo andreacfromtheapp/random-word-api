@@ -45,6 +45,7 @@
 
 // OpenAPI documentation configuration
 use axum::Router;
+use http::HeaderValue;
 use utoipa::OpenApi;
 
 use crate::handlers::{admin::*, healthcheck::*, word::*};
@@ -90,7 +91,7 @@ use crate::state::AppState;
     paths(
         // Health check endpoints
         alive,
-        ping,
+        ready,
         // Public word endpoints
         word_random,
         word_type,
@@ -290,14 +291,14 @@ pub fn create_rapidoc_routes() -> Router {
 ///
 /// Only enabled interfaces are included in the router, ensuring minimal
 /// performance impact when documentation is disabled for production deployments.
-pub fn create_apidocs_routes(state: AppState, origins: Vec<http::HeaderValue>) -> Router {
+pub fn create_apidocs_routes(state: AppState, origins: &[HeaderValue]) -> Router {
     use http::Method;
     use tower_http::cors::CorsLayer;
 
     let mut router = Router::new();
 
     // Get the config to check which documentation routes to enable
-    if let Ok(config) = state.config.lock() {
+    if let Ok(config) = state.apiconfig.lock() {
         if config.openapi.enable_swagger_ui {
             router = router.merge(create_swagger_routes());
         }
@@ -315,6 +316,6 @@ pub fn create_apidocs_routes(state: AppState, origins: Vec<http::HeaderValue>) -
     router.layer(
         CorsLayer::new()
             .allow_methods([Method::POST, Method::GET, Method::PUT, Method::DELETE])
-            .allow_origin(origins.clone()),
+            .allow_origin(origins.to_owned()),
     )
 }
