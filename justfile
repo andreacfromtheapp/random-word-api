@@ -38,11 +38,20 @@ run *args:
 
 # Run the API server in development mode with auto-reload
 dev:
-    watchexec -e rs cargo run --bin word-api-axum
+    watchexec -r -e rs cargo run --bin word-api-axum
 
 # Run the API server with Swagger UI
-swag:
-    watchexec -e rs cargo run --bin word-api-axum -- --with-swagger-ui
+swagger:
+    watchexec -r -e rs cargo run --bin word-api-axum -- --with-swagger-ui
+# Run the API server with Redoc
+redoc:
+    watchexec -r -e rs cargo run --bin word-api-axum -- --with-redoc
+# Run the API server with Scalar
+scalar:
+    watchexec -r -e rs cargo run --bin word-api-axum -- --with-scalar
+# Run the API server with RapiDoc
+rapidoc:
+    watchexec -r -e rs cargo run --bin word-api-axum -- --with-rapidoc
 
 # Generate API configuration file
 gen-config:
