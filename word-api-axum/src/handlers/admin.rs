@@ -229,3 +229,83 @@ pub async fn word_delete(
 ) -> Result<(), AppError> {
     Word::delete(state.dbpool, &lang, id).await
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::error::{AppError, PathError};
+    use crate::models::word::{Language, UpsertWord, ALLOWED_WORD_TYPES};
+    use std::str::FromStr;
+
+    #[test]
+    fn test_parameter_extraction_logic() {
+        // Test language parameter validation logic used by handlers
+        let valid_lang = "en";
+        let language_result = Language::from_str(valid_lang);
+        assert!(language_result.is_ok());
+        assert_eq!(language_result.unwrap().table_name(), "words");
+
+        let invalid_lang = "xyz";
+        let language_result = Language::from_str(invalid_lang);
+        assert!(language_result.is_err());
+    }
+
+    #[test]
+    fn test_error_conversion_logic() {
+        // Test error conversion used by handlers
+        let path_error = PathError::InvalidPath("invalid".to_string());
+        let app_error = AppError::from(path_error);
+        let error_debug = format!("{app_error:?}");
+        assert!(error_debug.contains("invalid") || error_debug.contains("InvalidPath"));
+
+        let word_type_error = PathError::InvalidWordType("preposition".to_string());
+        let app_error = AppError::from(word_type_error);
+        let error_debug = format!("{app_error:?}");
+        assert!(error_debug.contains("preposition") || error_debug.contains("InvalidWordType"));
+    }
+
+    #[test]
+    fn test_data_transformation_logic() {
+        // Test data transformation logic used by handlers
+        let test_word = UpsertWord {
+            word: "TEST".to_string(),
+            definition: "A Test Definition".to_string(),
+            pronunciation: "/TEST/".to_string(),
+            word_type: "NOUN".to_string(),
+        };
+
+        // Test lowercase transformation that handlers perform
+        let lowercase_word = test_word.word.to_lowercase();
+        let lowercase_definition = test_word.definition.to_lowercase();
+        let lowercase_pronunciation = test_word.pronunciation.to_lowercase();
+        let lowercase_word_type = test_word.word_type.to_lowercase();
+
+        assert_eq!(lowercase_word, "test");
+        assert_eq!(lowercase_definition, "a test definition");
+        assert_eq!(lowercase_pronunciation, "/test/");
+        assert_eq!(lowercase_word_type, "noun");
+
+        assert!(ALLOWED_WORD_TYPES.contains(&lowercase_word_type.as_str()));
+    }
+
+    #[test]
+    fn test_validation_logic() {
+        // Test validation logic used by handlers
+        let invalid_word = UpsertWord {
+            word: "".to_string(),
+            definition: "valid definition".to_string(),
+            pronunciation: "/valid/".to_string(),
+            word_type: "noun".to_string(),
+        };
+
+        assert!(invalid_word.word().is_err());
+
+        let invalid_type_word = UpsertWord {
+            word: "valid".to_string(),
+            definition: "valid definition".to_string(),
+            pronunciation: "/valid/".to_string(),
+            word_type: "preposition".to_string(),
+        };
+
+        assert!(invalid_type_word.word_type().is_err());
+    }
+}

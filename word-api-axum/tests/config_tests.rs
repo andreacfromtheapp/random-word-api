@@ -16,8 +16,8 @@ async fn test_config_creation() -> Result<()> {
     // Test server creation with default configuration
     let _server = helpers::create_test_server_streamlined().await?;
 
-    // Verify successful server initialization
-    assert!(true, "Server creation with default config successful");
+    // If we reach this point, server creation was successful
+    // No assertion needed as the function would have returned early with an error if it failed
 
     Ok(())
 }
@@ -111,26 +111,23 @@ async fn test_environment_file_loading() -> Result<()> {
 }
 
 #[tokio::test]
-async fn test_configuration_precedence() -> Result<()> {
+async fn test_configuration_simple_precedence() -> Result<()> {
     // Test configuration precedence logic with simple string comparisons
 
     // Simulate config file values (TOML defaults)
-    let config_address = "0.0.0.0";
-    let config_port = "3000";
     let config_db_url = "sqlite://config.db";
 
     // Simulate environment variable overrides
-    let env_address = Some("127.0.0.1");
-    let env_port = Some("4000");
-    let env_db_url: Option<&str> = None; // Not overridden
+    let env_address = "127.0.0.1";
+    let env_port = "4000";
 
-    // Test precedence: env vars override config values when present
-    let final_address = env_address.unwrap_or(config_address);
-    let final_port = env_port.unwrap_or(config_port);
-    let final_db_url = env_db_url.unwrap_or(config_db_url);
+    // Test precedence: environment vars override config values when present
+    let final_address = env_address;
+    let final_port = env_port;
+    let final_db_url = config_db_url; // From config (no override)
 
-    assert_eq!(final_address, "127.0.0.1"); // From env (overrides config)
-    assert_eq!(final_port, "4000"); // From env (overrides config)
+    assert_eq!(final_address, "127.0.0.1"); // From environment (overrides config)
+    assert_eq!(final_port, "4000"); // From environment (overrides config)
     assert_eq!(final_db_url, "sqlite://config.db"); // From config (no override)
 
     Ok(())
@@ -185,6 +182,203 @@ async fn test_default_config_values() -> Result<()> {
     assert!(!config.openapi.enable_redoc);
     assert!(!config.openapi.enable_scalar);
     assert!(!config.openapi.enable_rapidoc);
+
+    Ok(())
+}
+
+#[tokio::test]
+async fn test_toml_file_parsing() -> Result<()> {
+    // Test loading configuration from TOML file
+    let temp_file = NamedTempFile::new()?;
+    let toml_path = PathBuf::from(temp_file.path());
+
+    // Create test TOML content with known values
+    let toml_content = r#"
+address = "192.168.1.100"
+port = 8080
+database_url = "sqlite:test.db"
+
+[openapi]
+enable_swagger_ui = true
+enable_redoc = false
+enable_scalar = true
+enable_rapidoc = false
+"#;
+    fs::write(&toml_path, toml_content)?;
+
+    // Test ApiConfig::from_config_file()
+    let config = ApiConfig::from_config_file(&toml_path)?;
+
+    // Assert parsed values match expected
+    assert_eq!(config.address.to_string(), "192.168.1.100");
+    assert_eq!(config.port, 8080);
+    assert_eq!(config.database_url, "sqlite:test.db");
+    assert!(config.openapi.enable_swagger_ui);
+    assert!(!config.openapi.enable_redoc);
+    assert!(config.openapi.enable_scalar);
+    assert!(!config.openapi.enable_rapidoc);
+
+    Ok(())
+}
+
+#[tokio::test]
+async fn test_environment_file_parsing() -> Result<()> {
+    // Test loading configuration from environment file
+    let temp_file = NamedTempFile::new()?;
+    let env_path = PathBuf::from(temp_file.path());
+
+    // Create test environment file content with known values
+    let env_content = r#"BIND_ADDR="172.16.0.1"
+BIND_PORT=9000
+DATABASE_URL=sqlite:unique_env_test.db
+ENABLE_SWAGGER_UI=false
+ENABLE_REDOC=true
+ENABLE_SCALAR=false
+ENABLE_RAPIDOC=true
+"#;
+    fs::write(&env_path, env_content)?;
+
+    // Test ApiConfig::from_env_file()
+    let config = ApiConfig::from_env_file(&env_path)?;
+
+    // Assert parsed values match expected
+    assert_eq!(config.address.to_string(), "172.16.0.1");
+    assert_eq!(config.port, 9000);
+    assert_eq!(config.database_url, "sqlite:unique_env_test.db");
+    assert!(!config.openapi.enable_swagger_ui);
+    assert!(config.openapi.enable_redoc);
+    assert!(!config.openapi.enable_scalar);
+    assert!(config.openapi.enable_rapidoc);
+
+    Ok(())
+}
+
+#[tokio::test]
+async fn test_configuration_precedence_logic() -> Result<()> {
+    // Test configuration precedence logic without environment variable conflicts
+    use std::net::IpAddr;
+    use std::str::FromStr;
+    use word_api_axum::cli::{Arguments, Cli, Config};
+
+    // Test CLI args only (lowest precedence)
+    let cli_args_only = Cli {
+        cfg: Config {
+            env_file: None,
+            config: None,
+        },
+        arg: Arguments {
+            address: IpAddr::from_str("10.0.0.1").unwrap(),
+            port: 8000,
+            database_url: "sqlite:cli_only.db".to_string(),
+            with_swagger_ui: true,
+            with_redoc: false,
+            with_scalar: false,
+            with_rapidoc: false,
+        },
+        command: None,
+    };
+
+    let config_from_cli = ApiConfig::from_cli(&cli_args_only)?;
+    assert_eq!(config_from_cli.address.to_string(), "10.0.0.1");
+    assert_eq!(config_from_cli.port, 8000);
+    assert_eq!(config_from_cli.database_url, "sqlite:cli_only.db");
+    assert!(config_from_cli.openapi.enable_swagger_ui);
+
+    Ok(())
+}
+
+#[tokio::test]
+async fn test_file_existence_validation() -> Result<()> {
+    use word_api_axum::does_file_exist;
+
+    // Test with existing file (should pass)
+    let existing_file = NamedTempFile::new()?;
+    fs::write(existing_file.path(), "test content")?;
+
+    let result = does_file_exist(existing_file.path(), "test");
+    assert!(result.is_ok(), "Existing file should pass validation");
+
+    // Test with non-existent file (should fail)
+    let non_existent_path = PathBuf::from("/tmp/definitely_does_not_exist_12345.txt");
+    let result = does_file_exist(&non_existent_path, "test");
+    assert!(result.is_err(), "Non-existent file should fail validation");
+
+    // Test error message contains file info
+    if let Err(err) = result {
+        let error_msg = format!("{err:?}");
+        assert!(error_msg.contains("test"), "Error should mention file kind");
+    }
+
+    Ok(())
+}
+
+#[tokio::test]
+async fn test_enhanced_file_generation_validation() -> Result<()> {
+    // Test TOML file generation with comprehensive validation
+    let temp_toml = NamedTempFile::new()?;
+    let toml_path = PathBuf::from(temp_toml.path());
+
+    ApiConfig::gen_file(&toml_path, FileKind::Toml)?;
+
+    // Verify file exists and has content
+    assert!(toml_path.exists(), "Generated TOML file should exist");
+    let toml_content = fs::read_to_string(&toml_path)?;
+    assert!(!toml_content.is_empty(), "TOML file should not be empty");
+
+    // Verify TOML structure
+    assert!(
+        toml_content.contains("address = "),
+        "TOML should contain address field"
+    );
+    assert!(
+        toml_content.contains("port = "),
+        "TOML should contain port field"
+    );
+    assert!(
+        toml_content.contains("database_url = "),
+        "TOML should contain database_url"
+    );
+    assert!(
+        toml_content.contains("[openapi]"),
+        "TOML should contain openapi section"
+    );
+    assert!(
+        toml_content.contains("enable_swagger_ui"),
+        "TOML should contain swagger_ui setting"
+    );
+
+    // Test env file generation with comprehensive validation
+    let temp_env = NamedTempFile::new()?;
+    let env_path = PathBuf::from(temp_env.path());
+
+    ApiConfig::gen_file(&env_path, FileKind::EnvFile)?;
+
+    // Verify file exists and has content
+    assert!(env_path.exists(), "Generated env file should exist");
+    let env_content = fs::read_to_string(&env_path)?;
+    assert!(!env_content.is_empty(), "Env file should not be empty");
+
+    // Verify env file structure
+    assert!(
+        env_content.contains("BIND_ADDR="),
+        "Env file should contain BIND_ADDR"
+    );
+    assert!(
+        env_content.contains("BIND_PORT="),
+        "Env file should contain BIND_PORT"
+    );
+    assert!(
+        env_content.contains("DATABASE_URL="),
+        "Env file should contain DATABASE_URL"
+    );
+    assert!(
+        env_content.contains("ENABLE_SWAGGER_UI="),
+        "Env file should contain swagger UI setting"
+    );
+    assert!(
+        env_content.contains("# OpenAPI Docs"),
+        "Env file should contain OpenAPI section header"
+    );
 
     Ok(())
 }

@@ -227,12 +227,6 @@ async fn test_multiple_requests_reliability() -> Result<()> {
     Ok(())
 }
 
-// === CRUD Operations ===
-// CRUD operations are tested in admin_tests.rs
-// This module focuses on word retrieval and read-only API testing
-
-// === API Consistency and Integration Tests ===
-
 #[tokio::test]
 async fn test_api_consistency_parallel() -> Result<()> {
     // Test API consistency with parallel requests
@@ -289,8 +283,8 @@ async fn test_api_consistency_parallel() -> Result<()> {
     Ok(())
 }
 
-// === Data Integrity Tests ===
-// Note: Data integrity is covered by existing CRUD tests above
+// === Handler Unit Tests ===
+// Tests handler logic directly without full HTTP integration
 
 // === Workflow and Edge Case Tests ===
 

@@ -376,10 +376,3 @@ async fn test_source_validation_integration() -> Result<()> {
 
     Ok(())
 }
-
-// === Test Coverage Summary ===
-// - Word creation, retrieval, update, and deletion
-// - Validation for empty fields and invalid word types
-// - Request format validation (JSON, content-type)
-// - Duplicate prevention and constraint handling
-// - Source validation integration with ALLOWED_WORD_TYPES

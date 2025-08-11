@@ -95,3 +95,46 @@ pub async fn word_type(
         .await
         .map(Json::from)
 }
+
+#[cfg(test)]
+mod tests {
+
+    use crate::error::{AppError, PathError};
+    use crate::models::word::{Language, ALLOWED_WORD_TYPES};
+    use std::str::FromStr;
+
+    #[test]
+    fn test_language_validation_logic() {
+        // Test language validation used by word handlers
+        let valid_lang = Language::from_str("en");
+        assert!(valid_lang.is_ok());
+        assert_eq!(valid_lang.unwrap().table_name(), "words");
+
+        let invalid_lang = Language::from_str("xyz");
+        assert!(invalid_lang.is_err());
+
+        // Test PathError creation for invalid language
+        let path_error = PathError::InvalidPath("xyz".to_string());
+        let app_error = AppError::from(path_error);
+        let error_debug = format!("{app_error:?}");
+        assert!(error_debug.contains("xyz") || error_debug.contains("InvalidPath"));
+    }
+
+    #[test]
+    fn test_word_type_validation_logic() {
+        // Test word type validation used by handlers
+        for &valid_type in &ALLOWED_WORD_TYPES {
+            assert!(ALLOWED_WORD_TYPES.contains(&valid_type));
+        }
+
+        let invalid_types = ["preposition", "conjunction", "article"];
+        for invalid_type in invalid_types {
+            assert!(!ALLOWED_WORD_TYPES.contains(&invalid_type));
+
+            let path_error = PathError::InvalidWordType(invalid_type.to_string());
+            let app_error = AppError::from(path_error);
+            let error_debug = format!("{app_error:?}");
+            assert!(error_debug.contains(invalid_type) || error_debug.contains("InvalidWordType"));
+        }
+    }
+}

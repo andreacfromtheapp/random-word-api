@@ -80,3 +80,43 @@ pub async fn ready(State(state): State<AppState>) -> Result<String, AppError> {
         .map(|_| "The API can establish a connection to the database".to_string())
         .map_err(Into::into)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::alive;
+    use crate::error::AppError;
+    use crate::models::apiconfig::{ApiConfig, OpenApiDocs};
+    use std::net::IpAddr;
+    use std::str::FromStr;
+
+    #[tokio::test]
+    async fn test_alive_response() {
+        let response = alive().await;
+        assert_eq!(response, "The API is successfully running");
+        assert!(!response.is_empty());
+        assert!(response.contains("API"));
+        assert!(response.contains("running"));
+    }
+
+    #[test]
+    fn test_error_conversion_logic() {
+        let test_error = anyhow::anyhow!("database connection failed");
+        let app_error = AppError::from(test_error);
+        assert!(format!("{app_error:?}").contains("database connection failed"));
+    }
+
+    #[test]
+    fn test_config_structure_logic() {
+        let config = ApiConfig {
+            address: IpAddr::from_str("127.0.0.1").unwrap(),
+            port: 3000,
+            database_url: "sqlite:test.db".to_string(),
+            openapi: OpenApiDocs::default(),
+        };
+
+        assert_eq!(config.address.to_string(), "127.0.0.1");
+        assert_eq!(config.port, 3000);
+        assert_eq!(config.database_url, "sqlite:test.db");
+        assert!(!config.openapi.enable_swagger_ui);
+    }
+}
