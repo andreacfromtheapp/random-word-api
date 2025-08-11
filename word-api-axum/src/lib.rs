@@ -59,7 +59,17 @@ pub fn init_tracing() {
 /// Configure the database pool
 pub async fn init_dbpool(db_url: &str) -> Result<sqlx::Pool<sqlx::Sqlite>, SqlxError> {
     let dbpool = SqlitePoolOptions::new()
-        .connect_with(SqliteConnectOptions::from_str(db_url)?.create_if_missing(true))
+        .max_connections(10)
+        .acquire_timeout(std::time::Duration::from_secs(30))
+        .idle_timeout(Some(std::time::Duration::from_secs(10)))
+        .connect_with(
+            SqliteConnectOptions::from_str(db_url)?
+                .create_if_missing(true)
+                .journal_mode(sqlx::sqlite::SqliteJournalMode::Wal)
+                .synchronous(sqlx::sqlite::SqliteSynchronous::Normal)
+                .pragma("cache_size", "1000")
+                .pragma("temp_store", "memory"),
+        )
         .await?;
 
     sqlx::migrate!("./migrations").run(&dbpool).await?;
