@@ -41,18 +41,24 @@ pub struct Word {
 impl Word {
     /// Retrieves all words from the database (admin only)
     pub async fn list(dbpool: SqlitePool, lang: &str) -> Result<Vec<Self>, AppError> {
+        // if the language code is in the allowed ones
         if ALLOWED_LANG_CODES.contains(&lang) {
-            let my_query = match lang {
-                "en" => "SELECT * FROM words",
-                "de" => "SELECT * FROM words_de", // this is an example
-                "fr" => "SELECT * FROM words_fr", // this is an example
-                "es" => "SELECT * FROM words_es", // this is an example
-                "it" => "SELECT * FROM words_it", // this is an example
-                "nl" => "SELECT * FROM words_nl", // this is an example
-                _ => "SELECT * FROM words",
+            // set the corresponding table
+            let what_table = match lang {
+                "en" => "words",
+                "de" => "words_de", // this is an example
+                "fr" => "words_fr", // this is an example
+                "es" => "words_es", // this is an example
+                "it" => "words_it", // this is an example
+                "nl" => "words_nl", // this is an example
+                _ => "words",       // default will go after refactor to use enum
             };
 
-            query_as(my_query)
+            // form the query with the right table
+            let my_query = format!("SELECT * FROM {what_table}");
+
+            // perform the actual query
+            query_as(&my_query)
                 .fetch_all(&dbpool)
                 .await
                 .map_err(Into::into)
@@ -72,13 +78,24 @@ impl Word {
         let pronunciation = new_word.pronunciation()?.to_lowercase();
         let word_type = new_word.word_type()?.to_lowercase();
 
+        // if the language code is in the allowed ones
         if ALLOWED_LANG_CODES.contains(&lang) {
-            let my_query = match lang {
-                "en" => "INSERT INTO words (word, definition, pronunciation, word_type) VALUES ($1, $2, $3, $4) RETURNING *",
-                _ => "INSERT INTO words (word, definition, pronunciation, word_type) VALUES ($1, $2, $3, $4) RETURNING *",
+            // set the corresponding table
+            let what_table = match lang {
+                "en" => "words",
+                "de" => "words_de", // this is an example
+                "fr" => "words_fr", // this is an example
+                "es" => "words_es", // this is an example
+                "it" => "words_it", // this is an example
+                "nl" => "words_nl", // this is an example
+                _ => "words",       // default will go after refactor to use enum
             };
 
-            query_as(my_query)
+            // form the query with the right table
+            let my_query = format!("INSERT INTO {what_table} (word, definition, pronunciation, word_type) VALUES ($1, $2, $3, $4) RETURNING *");
+
+            // perform the actual query
+            query_as(&my_query)
                 .bind(word)
                 .bind(definition)
                 .bind(pronunciation)
@@ -93,13 +110,24 @@ impl Word {
 
     /// Retrieves a specific word by ID
     pub async fn read(dbpool: SqlitePool, lang: &str, id: u32) -> Result<Vec<Self>, AppError> {
+        // if the language code is in the allowed ones
         if ALLOWED_LANG_CODES.contains(&lang) {
-            let my_query = match lang {
-                "en" => "SELECT * FROM words WHERE id = $1",
-                _ => "SELECT * FROM words WHERE id = $1",
+            // set the corresponding table
+            let what_table = match lang {
+                "en" => "words",
+                "de" => "words_de", // this is an example
+                "fr" => "words_fr", // this is an example
+                "es" => "words_es", // this is an example
+                "it" => "words_it", // this is an example
+                "nl" => "words_nl", // this is an example
+                _ => "words",       // default will go after refactor to use enum
             };
 
-            query_as(my_query)
+            // form the query with the right table
+            let my_query = format!("SELECT * FROM {what_table} WHERE id = $1");
+
+            // perform the actual query
+            query_as(&my_query)
                 .bind(id)
                 .fetch_all(&dbpool)
                 .await
@@ -121,13 +149,24 @@ impl Word {
         let pronunciation = updated_word.pronunciation()?.to_lowercase();
         let word_type = updated_word.word_type()?.to_lowercase();
 
+        // if the language code is in the allowed ones
         if ALLOWED_LANG_CODES.contains(&lang) {
-            let my_query = match lang {
-                "en" => "UPDATE words SET word = $1, definition = $2, pronunciation = $3, word_type = $4 WHERE id = $5 RETURNING *",
-                _ => "UPDATE words SET word = $1, definition = $2, pronunciation = $3, word_type = $4 WHERE id = $5 RETURNING *",
+            // set the corresponding table
+            let what_table = match lang {
+                "en" => "words",
+                "de" => "words_de", // this is an example
+                "fr" => "words_fr", // this is an example
+                "es" => "words_es", // this is an example
+                "it" => "words_it", // this is an example
+                "nl" => "words_nl", // this is an example
+                _ => "words",       // default will go after refactor to use enum
             };
 
-            query_as(my_query)
+            // form the query with the right table
+            let my_query = format!("UPDATE {what_table} SET word = $1, definition = $2, pronunciation = $3, word_type = $4 WHERE id = $5 RETURNING *");
+
+            // perform the actual query
+            query_as(&my_query)
                 .bind(word)
                 .bind(definition)
                 .bind(pronunciation)
@@ -143,13 +182,24 @@ impl Word {
 
     /// Deletes a word from the database
     pub async fn delete(dbpool: SqlitePool, lang: &str, id: u32) -> Result<(), AppError> {
+        // if the language code is in the allowed ones
         if ALLOWED_LANG_CODES.contains(&lang) {
-            let my_query = match lang {
-                "en" => "DELETE FROM words WHERE id = $1",
-                _ => "DELETE FROM words WHERE id = $1",
+            // set the corresponding table
+            let what_table = match lang {
+                "en" => "words",
+                "de" => "words_de", // this is an example
+                "fr" => "words_fr", // this is an example
+                "es" => "words_es", // this is an example
+                "it" => "words_it", // this is an example
+                "nl" => "words_nl", // this is an example
+                _ => "words",       // default will go after refactor to use enum
             };
 
-            query(my_query).bind(id).execute(&dbpool).await?;
+            // form the query with the right table
+            let my_query = format!("DELETE FROM {what_table} WHERE id = $1");
+
+            // perform the actual query
+            query(&my_query).bind(id).execute(&dbpool).await?;
             Ok(())
         } else {
             Err(PathError::InvalidPath(lang.to_string()).into())
@@ -195,15 +245,24 @@ pub struct GetWord {
 impl GetWord {
     /// Retrieves a random word from the database
     pub async fn random_word(dbpool: SqlitePool, lang: &str) -> Result<Vec<Self>, AppError> {
+        // if the language code is in the allowed ones
         if ALLOWED_LANG_CODES.contains(&lang) {
-            let my_query = match lang {
-                "en" => {
-                    "SELECT word, definition, pronunciation FROM words ORDER BY random() LIMIT 1"
-                }
-                _ => "SELECT word, definition, pronunciation FROM words ORDER BY random() LIMIT 1",
+            // set the corresponding table
+            let what_table = match lang {
+                "en" => "words",
+                "de" => "words_de", // this is an example
+                "fr" => "words_fr", // this is an example
+                "es" => "words_es", // this is an example
+                "it" => "words_it", // this is an example
+                "nl" => "words_nl", // this is an example
+                _ => "words",       // default will go after refactor to use enum
             };
 
-            query_as(my_query)
+            // form the query with the right table
+            let my_query = format!("SELECT word, definition, pronunciation FROM {what_table} ORDER BY random() LIMIT 1");
+
+            // perform the actual query
+            query_as(&my_query)
                 .fetch_all(&dbpool)
                 .await
                 .map_err(Into::into)
@@ -218,16 +277,26 @@ impl GetWord {
         lang: &str,
         word_type: &str,
     ) -> Result<Vec<Self>, AppError> {
+        // if the language code is in the allowed ones
         if ALLOWED_LANG_CODES.contains(&lang) {
-            let my_query = match lang {
-                "en" => {
-                    "SELECT word, definition, pronunciation FROM words WHERE word_type = $1 ORDER BY random() LIMIT 1"
-                }
-                _ => "SELECT word, definition, pronunciation FROM words WHERE word_type = $1 ORDER BY random() LIMIT 1",
+            // set the corresponding table
+            let what_table = match lang {
+                "en" => "words",
+                "de" => "words_de", // this is an example
+                "fr" => "words_fr", // this is an example
+                "es" => "words_es", // this is an example
+                "it" => "words_it", // this is an example
+                "nl" => "words_nl", // this is an example
+                _ => "words",       // default will go after refactor to use enum
             };
 
+            // form the query with the right table
+            let my_query = format!("SELECT word, definition, pronunciation FROM {what_table} WHERE word_type = $1 ORDER BY random() LIMIT 1");
+
+            // if the grammatical type is in the allowed ones
             if ALLOWED_WORD_TYPES.contains(&word_type) {
-                query_as(my_query)
+                // perform the actual query
+                query_as(&my_query)
                     .bind(word_type)
                     .fetch_all(&dbpool)
                     .await
@@ -267,7 +336,7 @@ pub struct UpsertWord {
 
 /// Validates a word field using Merriam-Webster lemma rules
 fn validate_word(text: &str) -> Result<(), ValidationError> {
-    if text.chars().any(char::is_whitespace) || !is_valid_lemma(text) {
+    if !is_valid_lemma(text) {
         return Err(ValidationError::new("invalid_lemma"));
     }
     Ok(())
@@ -291,9 +360,7 @@ fn validate_pronunciation(text: &str) -> Result<(), ValidationError> {
 
 /// Validates a word_type field for allowed grammatical types (noun, verb, adjective, adverb)
 pub fn validate_word_type(text: &str) -> Result<(), ValidationError> {
-    let allowed_word_types = ["noun", "verb", "adjective", "adverb"];
-
-    if !allowed_word_types.contains(&text) {
+    if !ALLOWED_WORD_TYPES.contains(&text) {
         return Err(ValidationError::new("invalid_word_type"));
     }
     Ok(())
