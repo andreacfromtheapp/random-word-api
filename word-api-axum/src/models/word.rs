@@ -6,11 +6,65 @@
 use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 use sqlx::{query, query_as, SqlitePool};
+use std::str::FromStr;
+use strum_macros::EnumString;
 use utoipa::ToSchema;
 use validator::{Validate, ValidationError};
 
 use crate::error::{AppError, PathError};
-use crate::{ALLOWED_LANG_CODES, ALLOWED_WORD_TYPES};
+
+///  Type-based retrieval supports common grammatical categories
+///
+/// - Nouns for entity-based word requests
+/// - Verbs for action-based word requests
+/// - Adjectives for descriptive word requests
+/// - Adverbs for modifier-based word requests
+///
+/// Methods include language parameter validation to ensure:
+/// - Only supported grammatical types are processed
+/// - Proper error handling for unsupported grammatical types
+/// - Future extensibility for additional grammatical types support
+pub const ALLOWED_WORD_TYPES: [&str; 4] = ["noun", "verb", "adjective", "adverb"];
+
+/// Languages support. Currently only supports American English.
+///
+/// Methods include language parameter validation to ensure:
+/// - Only supported languages are processed
+/// - Proper error handling for unsupported language codes
+/// - Future extensibility for multi-language support
+///
+/// To add new longuages see the commented out examples.
+///
+/// NOTE: the database need to have the tables and data ready to
+/// accommodate any additiomal language
+#[derive(Debug, PartialEq, EnumString)]
+pub enum Language {
+    #[strum(serialize = "en")]
+    English,
+    // #[strum(serialize = "de")]
+    // German,
+    // #[strum(serialize = "fr")]
+    // French,
+    // #[strum(serialize = "es")]
+    // Spanish,
+    // #[strum(serialize = "it")]
+    // Italian,
+    // #[strum(serialize = "nl")]
+    // Dutch,
+}
+
+impl Language {
+    pub fn table_name(&self) -> &str {
+        match self {
+            Language::English => "words",
+            // Language::German => "words_de",
+            // Language::French => "words_fr",
+            // Language::Spanish => "words_es",
+            // Language::Italian => "words_it",
+            // Language::Dutch => "words_nl",
+        }
+    }
+}
 
 /// Represents a word in the database and in API responses.
 ///
@@ -42,29 +96,17 @@ impl Word {
     /// Retrieves all words from the database (admin only)
     pub async fn list(dbpool: SqlitePool, lang: &str) -> Result<Vec<Self>, AppError> {
         // if the language code is in the allowed ones
-        if ALLOWED_LANG_CODES.contains(&lang) {
-            // set the corresponding table
-            let what_table = match lang {
-                "en" => "words",
-                "de" => "words_de", // this is an example
-                "fr" => "words_fr", // this is an example
-                "es" => "words_es", // this is an example
-                "it" => "words_it", // this is an example
-                "nl" => "words_nl", // this is an example
-                _ => "words",       // default will go after refactor to use enum
-            };
+        let language =
+            Language::from_str(lang).map_err(|_| PathError::InvalidPath(lang.to_string()))?;
 
-            // form the query with the right table
-            let my_query = format!("SELECT * FROM {what_table}");
+        // form the query with the right table
+        let my_query = format!("SELECT * FROM {}", language.table_name());
 
-            // perform the actual query
-            query_as(&my_query)
-                .fetch_all(&dbpool)
-                .await
-                .map_err(Into::into)
-        } else {
-            Err(PathError::InvalidPath(lang.to_string()).into())
-        }
+        // perform the actual query
+        query_as(&my_query)
+            .fetch_all(&dbpool)
+            .await
+            .map_err(Into::into)
     }
 
     /// Creates a new word in the database with validation
@@ -79,62 +121,38 @@ impl Word {
         let word_type = new_word.word_type()?.to_lowercase();
 
         // if the language code is in the allowed ones
-        if ALLOWED_LANG_CODES.contains(&lang) {
-            // set the corresponding table
-            let what_table = match lang {
-                "en" => "words",
-                "de" => "words_de", // this is an example
-                "fr" => "words_fr", // this is an example
-                "es" => "words_es", // this is an example
-                "it" => "words_it", // this is an example
-                "nl" => "words_nl", // this is an example
-                _ => "words",       // default will go after refactor to use enum
-            };
+        let language =
+            Language::from_str(lang).map_err(|_| PathError::InvalidPath(lang.to_string()))?;
 
-            // form the query with the right table
-            let my_query = format!("INSERT INTO {what_table} (word, definition, pronunciation, word_type) VALUES ($1, $2, $3, $4) RETURNING *");
+        // form the query with the right table
+        let my_query = format!("INSERT INTO {} (word, definition, pronunciation, word_type) VALUES ($1, $2, $3, $4) RETURNING *", language.table_name());
 
-            // perform the actual query
-            query_as(&my_query)
-                .bind(word)
-                .bind(definition)
-                .bind(pronunciation)
-                .bind(word_type)
-                .fetch_all(&dbpool)
-                .await
-                .map_err(Into::into)
-        } else {
-            Err(PathError::InvalidPath(lang.to_string()).into())
-        }
+        // perform the actual query
+        query_as(&my_query)
+            .bind(word)
+            .bind(definition)
+            .bind(pronunciation)
+            .bind(word_type)
+            .fetch_all(&dbpool)
+            .await
+            .map_err(Into::into)
     }
 
     /// Retrieves a specific word by ID
     pub async fn read(dbpool: SqlitePool, lang: &str, id: u32) -> Result<Vec<Self>, AppError> {
         // if the language code is in the allowed ones
-        if ALLOWED_LANG_CODES.contains(&lang) {
-            // set the corresponding table
-            let what_table = match lang {
-                "en" => "words",
-                "de" => "words_de", // this is an example
-                "fr" => "words_fr", // this is an example
-                "es" => "words_es", // this is an example
-                "it" => "words_it", // this is an example
-                "nl" => "words_nl", // this is an example
-                _ => "words",       // default will go after refactor to use enum
-            };
+        let language =
+            Language::from_str(lang).map_err(|_| PathError::InvalidPath(lang.to_string()))?;
 
-            // form the query with the right table
-            let my_query = format!("SELECT * FROM {what_table} WHERE id = $1");
+        // form the query with the right table
+        let my_query = format!("SELECT * FROM {} WHERE id = $1", language.table_name());
 
-            // perform the actual query
-            query_as(&my_query)
-                .bind(id)
-                .fetch_all(&dbpool)
-                .await
-                .map_err(Into::into)
-        } else {
-            Err(PathError::InvalidPath(lang.to_string()).into())
-        }
+        // perform the actual query
+        query_as(&my_query)
+            .bind(id)
+            .fetch_all(&dbpool)
+            .await
+            .map_err(Into::into)
     }
 
     /// Updates an existing word in the database
@@ -150,60 +168,36 @@ impl Word {
         let word_type = updated_word.word_type()?.to_lowercase();
 
         // if the language code is in the allowed ones
-        if ALLOWED_LANG_CODES.contains(&lang) {
-            // set the corresponding table
-            let what_table = match lang {
-                "en" => "words",
-                "de" => "words_de", // this is an example
-                "fr" => "words_fr", // this is an example
-                "es" => "words_es", // this is an example
-                "it" => "words_it", // this is an example
-                "nl" => "words_nl", // this is an example
-                _ => "words",       // default will go after refactor to use enum
-            };
+        let language =
+            Language::from_str(lang).map_err(|_| PathError::InvalidPath(lang.to_string()))?;
 
-            // form the query with the right table
-            let my_query = format!("UPDATE {what_table} SET word = $1, definition = $2, pronunciation = $3, word_type = $4 WHERE id = $5 RETURNING *");
+        // form the query with the right table
+        let my_query = format!("UPDATE {} SET word = $1, definition = $2, pronunciation = $3, word_type = $4 WHERE id = $5 RETURNING *", language.table_name());
 
-            // perform the actual query
-            query_as(&my_query)
-                .bind(word)
-                .bind(definition)
-                .bind(pronunciation)
-                .bind(word_type)
-                .bind(id)
-                .fetch_all(&dbpool)
-                .await
-                .map_err(Into::into)
-        } else {
-            Err(PathError::InvalidPath(lang.to_string()).into())
-        }
+        // perform the actual query
+        query_as(&my_query)
+            .bind(word)
+            .bind(definition)
+            .bind(pronunciation)
+            .bind(word_type)
+            .bind(id)
+            .fetch_all(&dbpool)
+            .await
+            .map_err(Into::into)
     }
 
     /// Deletes a word from the database
     pub async fn delete(dbpool: SqlitePool, lang: &str, id: u32) -> Result<(), AppError> {
         // if the language code is in the allowed ones
-        if ALLOWED_LANG_CODES.contains(&lang) {
-            // set the corresponding table
-            let what_table = match lang {
-                "en" => "words",
-                "de" => "words_de", // this is an example
-                "fr" => "words_fr", // this is an example
-                "es" => "words_es", // this is an example
-                "it" => "words_it", // this is an example
-                "nl" => "words_nl", // this is an example
-                _ => "words",       // default will go after refactor to use enum
-            };
+        let language =
+            Language::from_str(lang).map_err(|_| PathError::InvalidPath(lang.to_string()))?;
 
-            // form the query with the right table
-            let my_query = format!("DELETE FROM {what_table} WHERE id = $1");
+        // form the query with the right table
+        let my_query = format!("DELETE FROM {} WHERE id = $1", language.table_name());
 
-            // perform the actual query
-            query(&my_query).bind(id).execute(&dbpool).await?;
-            Ok(())
-        } else {
-            Err(PathError::InvalidPath(lang.to_string()).into())
-        }
+        // perform the actual query
+        query(&my_query).bind(id).execute(&dbpool).await?;
+        Ok(())
     }
 }
 
@@ -246,29 +240,20 @@ impl GetWord {
     /// Retrieves a random word from the database
     pub async fn random_word(dbpool: SqlitePool, lang: &str) -> Result<Vec<Self>, AppError> {
         // if the language code is in the allowed ones
-        if ALLOWED_LANG_CODES.contains(&lang) {
-            // set the corresponding table
-            let what_table = match lang {
-                "en" => "words",
-                "de" => "words_de", // this is an example
-                "fr" => "words_fr", // this is an example
-                "es" => "words_es", // this is an example
-                "it" => "words_it", // this is an example
-                "nl" => "words_nl", // this is an example
-                _ => "words",       // default will go after refactor to use enum
-            };
+        let language =
+            Language::from_str(lang).map_err(|_| PathError::InvalidPath(lang.to_string()))?;
 
-            // form the query with the right table
-            let my_query = format!("SELECT word, definition, pronunciation FROM {what_table} ORDER BY random() LIMIT 1");
+        // form the query with the right table
+        let my_query = format!(
+            "SELECT word, definition, pronunciation FROM {} ORDER BY random() LIMIT 1",
+            language.table_name()
+        );
 
-            // perform the actual query
-            query_as(&my_query)
-                .fetch_all(&dbpool)
-                .await
-                .map_err(Into::into)
-        } else {
-            Err(PathError::InvalidPath(lang.to_string()).into())
-        }
+        // perform the actual query
+        query_as(&my_query)
+            .fetch_all(&dbpool)
+            .await
+            .map_err(Into::into)
     }
 
     /// Retrieves a random word of a specific grammatical type
@@ -278,34 +263,22 @@ impl GetWord {
         word_type: &str,
     ) -> Result<Vec<Self>, AppError> {
         // if the language code is in the allowed ones
-        if ALLOWED_LANG_CODES.contains(&lang) {
-            // set the corresponding table
-            let what_table = match lang {
-                "en" => "words",
-                "de" => "words_de", // this is an example
-                "fr" => "words_fr", // this is an example
-                "es" => "words_es", // this is an example
-                "it" => "words_it", // this is an example
-                "nl" => "words_nl", // this is an example
-                _ => "words",       // default will go after refactor to use enum
-            };
+        let language =
+            Language::from_str(lang).map_err(|_| PathError::InvalidPath(lang.to_string()))?;
 
-            // form the query with the right table
-            let my_query = format!("SELECT word, definition, pronunciation FROM {what_table} WHERE word_type = $1 ORDER BY random() LIMIT 1");
+        // form the query with the right table
+        let my_query = format!("SELECT word, definition, pronunciation FROM {} WHERE word_type = $1 ORDER BY random() LIMIT 1", language.table_name());
 
-            // if the grammatical type is in the allowed ones
-            if ALLOWED_WORD_TYPES.contains(&word_type) {
-                // perform the actual query
-                query_as(&my_query)
-                    .bind(word_type)
-                    .fetch_all(&dbpool)
-                    .await
-                    .map_err(Into::into)
-            } else {
-                Err(PathError::InvalidWordType(word_type.to_string()).into())
-            }
+        // if the grammatical type is in the allowed ones
+        if ALLOWED_WORD_TYPES.contains(&word_type) {
+            // perform the actual query
+            query_as(&my_query)
+                .bind(word_type)
+                .fetch_all(&dbpool)
+                .await
+                .map_err(Into::into)
         } else {
-            Err(PathError::InvalidPath(lang.to_string()).into())
+            Err(PathError::InvalidWordType(word_type.to_string()).into())
         }
     }
 }

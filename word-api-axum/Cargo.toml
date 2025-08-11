@@ -52,6 +52,8 @@ utoipa-redoc = { version = "6.0.0", features = ["axum"] }
 utoipa-scalar = { version = "0.3.0", features = ["axum"] }
 utoipa-swagger-ui = { version = "9.0.2", features = ["axum"] }
 validator = { version = "0.20.0", features = ["derive"] }
+strum = { version = "0.27.2", features = ["derive"] }
+strum_macros = "0.27.2"
 
 [dev-dependencies]
 axum-test = "17.3.0"

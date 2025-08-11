@@ -17,30 +17,6 @@ use std::sync::{Arc, Mutex};
 /// Define default tracing log levels. Uses `RUST_LOG` when unset.
 pub const TRACING_LOG_LEVELS: &str = "sqlx=info,tower_http=debug,info";
 
-/// Languages support. Currently only supports American English.
-///
-/// Currently supported language codes:
-/// - en
-///
-/// Methods include language parameter validation to ensure:
-/// - Only supported languages are processed
-/// - Proper error handling for unsupported language codes
-/// - Future extensibility for multi-language support
-pub const ALLOWED_LANG_CODES: [&str; 1] = ["en"];
-
-///  Type-based retrieval supports common grammatical categories
-///
-/// - Nouns for entity-based word requests
-/// - Verbs for action-based word requests
-/// - Adjectives for descriptive word requests
-/// - Adverbs for modifier-based word requests
-///
-/// Methods include language parameter validation to ensure:
-/// - Only supported grammatical types are processed
-/// - Proper error handling for unsupported grammatical types
-/// - Future extensibility for additional grammatical types support
-pub const ALLOWED_WORD_TYPES: [&str; 4] = ["noun", "verb", "adjective", "adverb"];
-
 /// CLI argument parsing and configuration
 pub mod cli;
 
