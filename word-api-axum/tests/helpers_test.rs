@@ -9,8 +9,11 @@ use anyhow::Result;
 mod helpers;
 use helpers::{
     create_test_server,
-    database::{cleanup_test_data, count_words, create_unique_test_word, populate_test_data},
-    fixtures::{create_test_word_by_type, WordFactory},
+    shared_db::get_shared_database,
+    test_data::{
+        cleanup_test_data, count_words, count_words_by_type, create_test_word_by_type,
+        create_unique_test_word, populate_test_data, WordFactory,
+    },
 };
 
 // Database helper tests
@@ -105,4 +108,61 @@ fn test_word_factory_by_type() {
     assert_ne!(noun.word, verb.word);
     assert_ne!(verb.word, adjective.word);
     assert_ne!(adjective.word, adverb.word);
+}
+
+// Shared database tests (Phase 2)
+#[tokio::test]
+async fn test_shared_database_functionality() -> Result<()> {
+    let pool = get_shared_database().await?;
+
+    // Verify shared database is accessible
+    let total_count = count_words(pool).await?;
+    assert!(total_count > 0, "Shared database should have test data");
+
+    // Test that we can count words by type using ALLOWED_WORD_TYPES
+    use word_api_axum::models::word::ALLOWED_WORD_TYPES;
+
+    for &word_type in &ALLOWED_WORD_TYPES {
+        let count = count_words_by_type(pool, word_type).await?;
+        assert!(count > 0, "Shared database should have {word_type} words");
+    }
+
+    Ok(())
+}
+
+#[tokio::test]
+async fn test_shared_database_reuse() -> Result<()> {
+    // Test that multiple calls to get_shared_database return the same instance
+    let pool1 = get_shared_database().await?;
+    let pool2 = get_shared_database().await?;
+
+    // Both should have the same data
+    let count1 = count_words(pool1).await?;
+    let count2 = count_words(pool2).await?;
+
+    assert_eq!(count1, count2, "Shared database should be consistent");
+    assert!(count1 > 0, "Shared database should have test data");
+
+    Ok(())
+}
+
+// Advanced shared database tests (Phase 3)
+#[tokio::test]
+async fn test_shared_database_performance_characteristics() -> Result<()> {
+    let pool = get_shared_database().await?;
+
+    // Test rapid consecutive operations
+    for _ in 0..5 {
+        let total_count = count_words(pool).await?;
+        assert!(total_count > 0, "Shared database should maintain data");
+    }
+
+    // Test type-specific operations
+    use word_api_axum::models::word::ALLOWED_WORD_TYPES;
+    for &word_type in &ALLOWED_WORD_TYPES {
+        let count = count_words_by_type(pool, word_type).await?;
+        assert!(count > 0, "Shared database should have {word_type} words");
+    }
+
+    Ok(())
 }

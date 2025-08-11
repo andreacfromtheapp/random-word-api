@@ -66,6 +66,19 @@ impl Language {
     }
 }
 
+impl std::fmt::Display for Language {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Language::English => write!(f, "en"),
+            // Language::German => write!(f, "de"),
+            // Language::French => write!(f, "fr"),
+            // Language::Spanish => write!(f, "es"),
+            // Language::Italian => write!(f, "it"),
+            // Language::Dutch => write!(f, "nl"),
+        }
+    }
+}
+
 /// Represents a word in the database and in API responses.
 ///
 /// This struct contains all the information about a dictionary word including
