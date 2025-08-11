@@ -1,19 +1,18 @@
-//! Word API integration tests (Phase 4 Optimization)
+//! Word API integration tests
 //!
-//! This module contains comprehensive integration tests for word API endpoints,
-//! including word retrieval, CRUD operations, response format validation,
-//! and error handling scenarios.
-//!
-//! Consolidated from previous word_tests.rs and functional_tests.rs to reduce
-//! test overhead while maintaining complete test coverage.
+//! Tests word retrieval endpoints, error handling, API consistency,
+//! and database integration scenarios. Covers all word types and
+//! validates response formats and edge cases.
 
 use anyhow::Result;
 use axum::http::StatusCode;
-use serde_json::json;
 
 mod helpers;
-use helpers::{create_test_server, create_test_server_memory, create_test_server_streamlined};
-use word_api_axum::models::word::{Language, UpsertWord, ALLOWED_WORD_TYPES};
+use helpers::{
+    create_test_server_memory,      // For empty database scenarios
+    create_test_server_streamlined, // For read-only operations using shared database
+};
+use word_api_axum::models::word::{Language, ALLOWED_WORD_TYPES};
 
 // === Core Word Retrieval Tests ===
 
@@ -228,97 +227,9 @@ async fn test_multiple_requests_reliability() -> Result<()> {
     Ok(())
 }
 
-// === CRUD Operations Tests ===
-
-#[tokio::test]
-async fn test_admin_crud_workflow_streamlined() -> Result<()> {
-    let (server, _temp_file) = create_test_server().await?;
-
-    // Streamlined CRUD test with minimal overhead
-    let word_data = UpsertWord {
-        word: "streamlined".to_string(),
-        definition: "efficient and optimized".to_string(),
-        pronunciation: "/striːmlaɪnd/".to_string(),
-        word_type: "adjective".to_string(),
-    };
-
-    let create_body = json!({
-        "word": word_data.word,
-        "definition": word_data.definition,
-        "pronunciation": word_data.pronunciation,
-        "word_type": word_data.word_type
-    });
-
-    // CREATE
-    let language = Language::English;
-    let create_response = server
-        .post(&format!("/admin/{language}/words"))
-        .json(&create_body)
-        .await;
-    assert_eq!(create_response.status_code(), StatusCode::OK);
-
-    // Verify public API accessibility
-    let api_response = server.get("/en/word").await;
-    assert!(
-        api_response.status_code() == StatusCode::OK
-            || api_response.status_code() == StatusCode::NO_CONTENT
-    );
-
-    Ok(())
-}
-
-#[tokio::test]
-async fn test_crud_workflow_comprehensive() -> Result<()> {
-    let (server, _temp_file) = create_test_server().await?;
-
-    // CREATE - Add a word via admin API
-    let word_data = UpsertWord {
-        word: "workflow".to_string(),
-        definition: "a workflow test word".to_string(),
-        pronunciation: "/wɜːrkfloʊ/".to_string(),
-        word_type: "noun".to_string(),
-    };
-
-    let create_body = json!({
-        "word": word_data.word,
-        "definition": word_data.definition,
-        "pronunciation": word_data.pronunciation,
-        "word_type": word_data.word_type
-    });
-
-    let language = Language::English;
-    let create_response = server
-        .post(&format!("/admin/{language}/words"))
-        .json(&create_body)
-        .await;
-    assert_eq!(
-        create_response.status_code(),
-        StatusCode::OK,
-        "Create should succeed"
-    );
-
-    // READ - Try to get words via public API (simplified approach)
-    let mut found_valid_response = false;
-    for _attempt in 0..5 {
-        let response = server.get("/en/word").await;
-        if response.status_code() == StatusCode::OK {
-            let json: serde_json::Value = response.json();
-            if let Some(words) = json.as_array() {
-                if !words.is_empty() {
-                    found_valid_response = true;
-                    break;
-                }
-            }
-        }
-    }
-
-    assert!(
-        found_valid_response,
-        "Should be able to retrieve words from API"
-    );
-
-    Ok(())
-}
+// === CRUD Operations ===
+// CRUD operations are tested in admin_tests.rs
+// This module focuses on word retrieval and read-only API testing
 
 // === API Consistency and Integration Tests ===
 
@@ -359,13 +270,8 @@ async fn test_api_consistency_parallel() -> Result<()> {
         },
         async {
             let server = create_test_server_streamlined().await?;
-            // Batch test multiple scenarios for maximum efficiency
-            let test_endpoints = vec![
-                "/health/alive",
-                "/health/ready",
-                "/en/word",
-                "/admin/en/words",
-            ];
+            // Batch test word API endpoints (health checks handled in health_tests.rs)
+            let test_endpoints = vec!["/en/word", "/admin/en/words"];
             for endpoint in test_endpoints {
                 let response = server.get(endpoint).await;
                 assert!(
@@ -394,9 +300,7 @@ async fn test_workflow_and_edge_cases_parallel() -> Result<()> {
     let (workflow_result, edge_cases_result) = tokio::join!(
         async {
             let server = create_test_server_streamlined().await?;
-            // Test common user workflow: health check -> get word -> check admin
-            let health_response = server.get("/health/alive").await;
-            assert_eq!(health_response.status_code(), StatusCode::OK);
+            // Test user workflow: get word -> check admin (health checks handled in health_tests.rs)
             let word_response = server.get("/en/word").await;
             assert_eq!(word_response.status_code(), StatusCode::OK);
             let admin_response = server.get("/admin/en/words").await;

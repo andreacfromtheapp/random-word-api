@@ -1,130 +1,29 @@
-//! Streamlined admin API integration tests (Phase 3 Optimization)
+//! Admin API integration tests
 //!
-//! This module contains optimized integration tests for the admin endpoints
-//! using batch operations, minimal database overhead, and streamlined test
-//! patterns for maximum efficiency while maintaining full coverage.
+//! Tests for admin endpoints including CRUD operations, validation,
+//! error handling, and request format validation.
 
 use anyhow::Result;
 use axum::http::StatusCode;
 use serde_json::json;
-use std::time::{SystemTime, UNIX_EPOCH};
 
 use word_api_axum::models::word::UpsertWord;
 
 mod helpers;
-use helpers::{create_test_server, create_test_server_streamlined};
-use word_api_axum::models::word::{
-    is_valid_definition, is_valid_lemma, is_valid_pronunciation, Language, ALLOWED_WORD_TYPES,
+use helpers::{
+    create_test_server,             // For write operations requiring isolated database
+    create_test_server_streamlined, // For read-only operations using shared database
 };
+use word_api_axum::models::word::{Language, ALLOWED_WORD_TYPES};
 
-/// Generate a unique timestamp-based suffix for test data (lemma-safe)
-fn generate_unique_suffix() -> String {
-    let timestamp = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .unwrap()
-        .as_nanos();
-    // Use only the last 6 digits to keep it short and valid for lemmas
-    format!("{}", timestamp % 1_000_000)
-}
-
-/// Generate a unique pronunciation with valid IPA characters to avoid database conflicts
-fn generate_unique_pronunciation(base_word: &str, _suffix: &str) -> String {
-    let timestamp = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .unwrap()
-        .as_micros();
-
-    // Create hash from suffix for additional uniqueness
-    use std::collections::hash_map::DefaultHasher;
-    use std::hash::{Hash, Hasher};
-    let mut hasher = DefaultHasher::new();
-    _suffix.hash(&mut hasher);
-    let suffix_hash = hasher.finish();
-
-    // Combine timestamp and suffix hash for maximum uniqueness
-    let unique_id = (timestamp as u64) + suffix_hash;
-
-    // Use purely IPA characters without numbers - create unique patterns
-    let ipa_endings = ["ər", "əl", "əs", "əd", "ən", "əm", "ɪn", "ʊr", "ɛr", "ɔr"];
-    let ipa_vowels = ["ə", "ɛ", "ɪ", "ɔ", "ʊ", "ʌ", "ɑ", "æ"];
-
-    let ending_index = unique_id as usize % ipa_endings.len();
-    let vowel_index = (unique_id / 1000) as usize % ipa_vowels.len();
-
-    format!(
-        "/{}{}{}/",
-        base_word, ipa_vowels[vowel_index], ipa_endings[ending_index]
-    )
-}
-
-/// Create a test word using built-in validation and Language enum with guaranteed uniqueness
+/// Create a test word for admin testing
 fn create_test_word(suffix: &str) -> UpsertWord {
-    // Sanitize suffix to remove invalid characters for lemma validation
-    let clean_suffix = suffix.replace("_", "").replace("-", "");
-    let unique_suffix = format!("{}{}", clean_suffix, generate_unique_suffix());
-    let word = format!("testword{unique_suffix}");
-    let definition = format!("test definition {unique_suffix}");
-    let pronunciation = generate_unique_pronunciation("tɛst", &unique_suffix);
-    let word_type = ALLOWED_WORD_TYPES[0]; // "noun"
-
-    // Validate using built-in functions
-    assert!(
-        is_valid_lemma(&word),
-        "Generated word '{word}' should be valid"
-    );
-    assert!(
-        is_valid_definition(&definition),
-        "Generated definition should be valid"
-    );
-    assert!(
-        is_valid_pronunciation(&pronunciation),
-        "Generated pronunciation should be valid"
-    );
-
-    UpsertWord {
-        word,
-        definition,
-        pronunciation,
-        word_type: word_type.to_string(),
-    }
+    helpers::test_data::create_basic_test_word(suffix)
 }
 
-/// Create a validated test word with specific type and guaranteed uniqueness
+/// Create a test word of a specific type for admin testing
 fn create_validated_test_word(word_type: &str, suffix: &str) -> UpsertWord {
-    // Sanitize suffix to remove invalid characters for lemma validation
-    let clean_suffix = suffix.replace("_", "").replace("-", "");
-    let unique_suffix = format!("{}{}", clean_suffix, generate_unique_suffix());
-
-    // Ensure word_type is valid using ALLOWED_WORD_TYPES
-    assert!(
-        ALLOWED_WORD_TYPES.contains(&word_type),
-        "Word type '{word_type}' must be one of: {ALLOWED_WORD_TYPES:?}"
-    );
-
-    let word = format!("unique{word_type}{unique_suffix}");
-    let definition = format!("A unique {word_type} definition for {unique_suffix}");
-    let pronunciation = generate_unique_pronunciation("juːnik", &unique_suffix);
-
-    // Validate using built-in validation functions
-    assert!(
-        is_valid_lemma(&word),
-        "Generated word '{word}' should be valid"
-    );
-    assert!(
-        is_valid_definition(&definition),
-        "Generated definition should be valid"
-    );
-    assert!(
-        is_valid_pronunciation(&pronunciation),
-        "Generated pronunciation '{pronunciation}' should be valid"
-    );
-
-    UpsertWord {
-        word,
-        definition,
-        pronunciation,
-        word_type: word_type.to_string(),
-    }
+    helpers::test_data::create_typed_test_word(word_type, suffix)
 }
 
 #[tokio::test]
@@ -244,12 +143,14 @@ async fn test_admin_validation_batch() -> Result<()> {
     let server = create_test_server_streamlined().await?;
     let language = Language::English;
 
-    // Batch test all validation scenarios for efficiency
+    // Use source validation by testing cases that should fail according to source ALLOWED_WORD_TYPES
     let invalid_bodies = vec![
         json!({ "word": "", "definition": "valid", "pronunciation": "/vælɪd/", "word_type": ALLOWED_WORD_TYPES[0] }),
         json!({ "word": "valid", "definition": "", "pronunciation": "/vælɪd/", "word_type": ALLOWED_WORD_TYPES[0] }),
         json!({ "word": "valid", "definition": "valid", "pronunciation": "", "word_type": ALLOWED_WORD_TYPES[0] }),
+        // Use source validation - test invalid word type not in ALLOWED_WORD_TYPES
         json!({ "word": "valid", "definition": "valid", "pronunciation": "/vælɪd/", "word_type": "invalid" }),
+        json!({ "word": "valid", "definition": "valid", "pronunciation": "/vælɪd/", "word_type": "preposition" }),
     ];
 
     for invalid_body in invalid_bodies {
@@ -288,12 +189,12 @@ async fn test_admin_update_streamlined() -> Result<()> {
     let id = create_json.as_array().unwrap()[0]["id"].as_u64().unwrap() as u32;
 
     // UPDATE with guaranteed unique data
-    let update_suffix = generate_unique_suffix();
+    let update_word = create_validated_test_word(ALLOWED_WORD_TYPES[1], "updated");
     let update_body = json!({
-        "word": format!("updated{}", update_suffix),
-        "definition": format!("updated definition {}", update_suffix),
-        "pronunciation": generate_unique_pronunciation("ʌpdeɪt", &update_suffix),
-        "word_type": ALLOWED_WORD_TYPES[1]
+        "word": update_word.word,
+        "definition": update_word.definition,
+        "pronunciation": update_word.pronunciation,
+        "word_type": update_word.word_type
     });
 
     let update_response = server
@@ -363,11 +264,10 @@ async fn test_admin_nonexistent_operations_batch() -> Result<()> {
     assert_eq!(delete_response.status_code(), StatusCode::OK);
 
     // UPDATE nonexistent (should fail)
-    let update_suffix = generate_unique_suffix();
     let update_body = json!({
-        "word": format!("nonexistent{}", update_suffix),
-        "definition": format!("definition {}", update_suffix),
-        "pronunciation": generate_unique_pronunciation("nɑnɪɡz", &update_suffix),
+        "word": "nonexistent",
+        "definition": "nonexistent definition",
+        "pronunciation": "/nɑnɪɡzɪstənt/",
         "word_type": ALLOWED_WORD_TYPES[0]
     });
     let update_response = server
@@ -387,15 +287,17 @@ async fn test_admin_request_validation_batch() -> Result<()> {
     let server = create_test_server_streamlined().await?;
     let language = Language::English;
 
-    // Batch test all request validation scenarios
+    // Test request format validation (distinct from data validation)
     let test_cases = vec![
-        // Invalid JSON
+        // Invalid JSON syntax
         ("{ invalid json", "application/json"),
-        // Missing content type
+        // Wrong content type (valid JSON, wrong header)
         (
             r#"{"word":"test","definition":"test","pronunciation":"/tɛst/","word_type":"noun"}"#,
             "text/plain",
         ),
+        // Valid content type but malformed JSON
+        ("not json at all", "application/json"),
     ];
 
     for (body, content_type) in test_cases {
@@ -404,7 +306,10 @@ async fn test_admin_request_validation_batch() -> Result<()> {
             .text(body)
             .content_type(content_type)
             .await;
-        assert!(response.status_code() >= StatusCode::BAD_REQUEST);
+        assert!(
+            response.status_code() >= StatusCode::BAD_REQUEST,
+            "Should reject malformed request with body='{body}' and content_type='{content_type}'"
+        );
     }
 
     Ok(())
@@ -443,80 +348,38 @@ async fn test_admin_duplicate_prevention() -> Result<()> {
 }
 
 #[tokio::test]
-async fn test_admin_streamlined_workflow() -> Result<()> {
-    let (server, _temp_file) = create_test_server().await?;
+async fn test_source_validation_integration() -> Result<()> {
+    // Test that admin endpoints leverage source ALLOWED_WORD_TYPES validation
+    let server = create_test_server_streamlined().await?;
     let language = Language::English;
 
-    // Test complete admin workflow in single test for maximum efficiency
+    // Test that types not in source ALLOWED_WORD_TYPES are rejected
+    let invalid_types = ["preposition", "conjunction"];
+    for invalid_type in invalid_types {
+        let invalid_body = json!({
+            "word": "valid",
+            "definition": "valid definition",
+            "pronunciation": "/vælɪd/",
+            "word_type": invalid_type
+        });
 
-    // 1. List initial words
-    let initial_list = server.get(&format!("/admin/{language}/words")).await;
-    assert_eq!(initial_list.status_code(), StatusCode::OK);
-    let initial_count = initial_list
-        .json::<serde_json::Value>()
-        .as_array()
-        .unwrap()
-        .len();
+        let response = server
+            .post(&format!("/admin/{language}/words"))
+            .json(&invalid_body)
+            .await;
 
-    // 2. Create new word
-    let word_data = create_test_word("workflow");
-    let create_body = json!({
-        "word": word_data.word,
-        "definition": word_data.definition,
-        "pronunciation": word_data.pronunciation,
-        "word_type": word_data.word_type
-    });
-
-    let create_response = server
-        .post(&format!("/admin/{language}/words"))
-        .json(&create_body)
-        .await;
-    assert_eq!(create_response.status_code(), StatusCode::OK);
-
-    let create_json: serde_json::Value = create_response.json();
-    let id = create_json.as_array().unwrap()[0]["id"].as_u64().unwrap() as u32;
-
-    // 3. Verify word exists
-    let get_response = server.get(&format!("/admin/{language}/words/{id}")).await;
-    assert_eq!(get_response.status_code(), StatusCode::OK);
-
-    // 4. Update the word
-    let update_suffix = generate_unique_suffix();
-    let update_body = json!({
-        "word": format!("workflowupdated{}", update_suffix),
-        "definition": format!("workflow updated definition {}", update_suffix),
-        "pronunciation": generate_unique_pronunciation("wɜrkfloʊ", &update_suffix),
-        "word_type": ALLOWED_WORD_TYPES[1]
-    });
-
-    let update_response = server
-        .put(&format!("/admin/{language}/words/{id}"))
-        .json(&update_body)
-        .await;
-    assert_eq!(update_response.status_code(), StatusCode::OK);
-
-    // 5. Verify updated content
-    let verify_response = server.get(&format!("/admin/{language}/words/{id}")).await;
-    assert_eq!(verify_response.status_code(), StatusCode::OK);
-
-    // 6. Delete the word
-    let delete_response = server
-        .delete(&format!("/admin/{language}/words/{id}"))
-        .await;
-    assert_eq!(delete_response.status_code(), StatusCode::OK);
-
-    // 7. Verify list count is back to initial
-    let final_list = server.get(&format!("/admin/{language}/words")).await;
-    assert_eq!(final_list.status_code(), StatusCode::OK);
-    let final_count = final_list
-        .json::<serde_json::Value>()
-        .as_array()
-        .unwrap()
-        .len();
-    assert_eq!(
-        final_count, initial_count,
-        "Word count should return to initial after delete"
-    );
+        assert!(
+            response.status_code() >= StatusCode::BAD_REQUEST,
+            "Invalid word type '{invalid_type}' should be rejected by source validation"
+        );
+    }
 
     Ok(())
 }
+
+// === Test Coverage Summary ===
+// - Word creation, retrieval, update, and deletion
+// - Validation for empty fields and invalid word types
+// - Request format validation (JSON, content-type)
+// - Duplicate prevention and constraint handling
+// - Source validation integration with ALLOWED_WORD_TYPES
