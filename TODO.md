@@ -52,7 +52,7 @@
 ## Part 3
 
 - [x] Split codebase and use a workspace:
-  - [x] Add backend with `Random Word API`
+  - [x] Add backend with `Axum`
   - [ ] Add frontend with `Leptos CSR` for random word UI + reload
   - [ ] Add frontend with `Elm Speak and Spell` for fun UI
   - [ ] Add frontend with `Leptos SSR` for admin with auth
@@ -73,8 +73,10 @@
     - [ ] <https://random.localhost/> (page with random word + button)
     - [ ] <https://play.localhost/> (Elm Speak n Spell)
     - [ ] <https://swagger.localhost/> (Swagger UI)
-    - [ ] <https://monitor.localhost/> (Grafana UI)
-    - [ ] <https://metrics.localhost/> (Open Telemetry UI)
+    - [ ] <https://redoc.localhost/> (Redoc UI)
+    - [ ] <https://scalar.localhost/> (Scalar UI)
+    - [ ] <https://rapidoc.localhost/> (RapiDoc UI)
+    - [ ] <https://metrics.localhost/> (Grafana UI)
   - [ ] API backend
   - [ ] Use Postgres?
 
