@@ -95,6 +95,7 @@ impl std::fmt::Display for Language {
 /// - `updated_at`: Timestamp when the word was last modified
 ///
 #[derive(ToSchema, Deserialize, Serialize, Clone, sqlx::FromRow)]
+#[serde(rename_all = "camelCase")]
 pub struct Word {
     id: u32,
     word_type: String,
@@ -243,6 +244,7 @@ impl Word {
 /// - Adverbs for modifier-based word requests
 ///
 #[derive(ToSchema, Deserialize, Serialize, Clone, sqlx::FromRow)]
+#[serde(rename_all = "camelCase")]
 pub struct GetWord {
     word: String,
     definition: String,
@@ -309,6 +311,7 @@ impl GetWord {
 /// - `definition`: Must contain only alphabetic characters, punctuation, and whitespace
 /// - `pronunciation`: Must be valid IPA notation enclosed in forward slashes
 #[derive(ToSchema, Deserialize, Serialize, Validate)]
+#[serde(rename_all = "camelCase")]
 pub struct UpsertWord {
     #[validate(length(min = 1), custom(function = "validate_word"))]
     pub word: String,

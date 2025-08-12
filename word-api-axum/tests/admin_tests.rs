@@ -36,7 +36,7 @@ async fn test_admin_create_word_success() -> Result<()> {
         "word": word_data.word,
         "definition": word_data.definition,
         "pronunciation": word_data.pronunciation,
-        "word_type": word_data.word_type
+        "wordType": word_data.word_type
     });
 
     let response = server
@@ -54,7 +54,7 @@ async fn test_admin_create_word_success() -> Result<()> {
 
     let word = &words[0];
     assert_eq!(word["word"], word_data.word.to_lowercase());
-    assert_eq!(word["word_type"], word_data.word_type);
+    assert_eq!(word["wordType"], word_data.word_type);
 
     Ok(())
 }
@@ -90,7 +90,7 @@ async fn test_admin_crud_batch_operations() -> Result<()> {
             "word": word_data.word,
             "definition": word_data.definition,
             "pronunciation": word_data.pronunciation,
-            "word_type": word_data.word_type
+            "wordType": word_data.word_type
         });
 
         let create_response = server
@@ -145,12 +145,12 @@ async fn test_admin_validation_batch() -> Result<()> {
 
     // Use source validation by testing cases that should fail according to source ALLOWED_WORD_TYPES
     let invalid_bodies = vec![
-        json!({ "word": "", "definition": "valid", "pronunciation": "/vælɪd/", "word_type": ALLOWED_WORD_TYPES[0] }),
-        json!({ "word": "valid", "definition": "", "pronunciation": "/vælɪd/", "word_type": ALLOWED_WORD_TYPES[0] }),
-        json!({ "word": "valid", "definition": "valid", "pronunciation": "", "word_type": ALLOWED_WORD_TYPES[0] }),
+        json!({ "word": "", "definition": "valid", "pronunciation": "/vælɪd/", "wordType": ALLOWED_WORD_TYPES[0] }),
+        json!({ "word": "valid", "definition": "", "pronunciation": "/vælɪd/", "wordType": ALLOWED_WORD_TYPES[0] }),
+        json!({ "word": "valid", "definition": "valid", "pronunciation": "", "wordType": ALLOWED_WORD_TYPES[0] }),
         // Use source validation - test invalid word type not in ALLOWED_WORD_TYPES
-        json!({ "word": "valid", "definition": "valid", "pronunciation": "/vælɪd/", "word_type": "invalid" }),
-        json!({ "word": "valid", "definition": "valid", "pronunciation": "/vælɪd/", "word_type": "preposition" }),
+        json!({ "word": "valid", "definition": "valid", "pronunciation": "/vælɪd/", "wordType": "invalid" }),
+        json!({ "word": "valid", "definition": "valid", "pronunciation": "/vælɪd/", "wordType": "preposition" }),
     ];
 
     for invalid_body in invalid_bodies {
@@ -175,7 +175,7 @@ async fn test_admin_update_streamlined() -> Result<()> {
         "word": word_data.word,
         "definition": word_data.definition,
         "pronunciation": word_data.pronunciation,
-        "word_type": word_data.word_type
+        "wordType": word_data.word_type
     });
 
     // CREATE
@@ -194,7 +194,7 @@ async fn test_admin_update_streamlined() -> Result<()> {
         "word": update_word.word,
         "definition": update_word.definition,
         "pronunciation": update_word.pronunciation,
-        "word_type": update_word.word_type
+        "wordType": update_word.word_type
     });
 
     let update_response = server
@@ -217,7 +217,7 @@ async fn test_admin_delete_streamlined() -> Result<()> {
         "word": word_data.word,
         "definition": word_data.definition,
         "pronunciation": word_data.pronunciation,
-        "word_type": word_data.word_type
+        "wordType": word_data.word_type
     });
 
     // CREATE
@@ -268,7 +268,7 @@ async fn test_admin_nonexistent_operations_batch() -> Result<()> {
         "word": "nonexistent",
         "definition": "nonexistent definition",
         "pronunciation": "/nɑnɪɡzɪstənt/",
-        "word_type": ALLOWED_WORD_TYPES[0]
+        "wordType": ALLOWED_WORD_TYPES[0]
     });
     let update_response = server
         .put(&format!("/admin/{language}/words/{nonexistent_id}"))
@@ -293,7 +293,7 @@ async fn test_admin_request_validation_batch() -> Result<()> {
         ("{ invalid json", "application/json"),
         // Wrong content type (valid JSON, wrong header)
         (
-            r#"{"word":"test","definition":"test","pronunciation":"/tɛst/","word_type":"noun"}"#,
+            r#"{"word":"test","definition":"test","pronunciation":"/tɛst/","wordType":"noun"}"#,
             "text/plain",
         ),
         // Valid content type but malformed JSON
@@ -326,7 +326,7 @@ async fn test_admin_duplicate_prevention() -> Result<()> {
         "word": word_data.word,
         "definition": word_data.definition,
         "pronunciation": word_data.pronunciation,
-        "word_type": word_data.word_type
+        "wordType": word_data.word_type
     });
 
     let first_response = server
@@ -360,7 +360,7 @@ async fn test_source_validation_integration() -> Result<()> {
             "word": "valid",
             "definition": "valid definition",
             "pronunciation": "/vælɪd/",
-            "word_type": invalid_type
+            "wordType": invalid_type
         });
 
         let response = server
