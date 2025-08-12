@@ -141,7 +141,7 @@ pub async fn run_app(cli: cli::Cli) -> Result<(), AppError> {
     // Instantiate a listener on the socket address and port
     let listener = tokio::net::TcpListener::bind((apiconfig.address, apiconfig.port))
         .await
-        .context("couldn't bind to address or port")?;
+        .context("couldn't bind TCP listener")?;
 
     // Serve the API
     axum::serve(listener, router)
