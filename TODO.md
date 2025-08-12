@@ -53,8 +53,8 @@
 
 - [x] Split codebase and use a workspace:
   - [x] Add backend with `Axum`
+  - [x] Add frontend with `Elm Speak and Spell` for fun UI
   - [ ] Add frontend with `Leptos CSR` for random word UI + reload
-  - [ ] Add frontend with `Elm Speak and Spell` for fun UI
   - [ ] Add frontend with `Leptos SSR` for admin with auth
 
 ## Part 4
