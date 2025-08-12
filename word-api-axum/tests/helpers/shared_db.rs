@@ -7,7 +7,7 @@ use anyhow::{Context, Result};
 use sqlx::{Pool, Sqlite};
 use std::sync::OnceLock;
 use tempfile::NamedTempFile;
-use word_api_axum::models::word::{Language, ALLOWED_WORD_TYPES};
+use word_api_axum::models::word::{GrammaticalType, LanguageCode};
 
 /// Global shared database pool for read-heavy tests
 static SHARED_DB: OnceLock<(Pool<Sqlite>, NamedTempFile)> = OnceLock::new();
@@ -39,10 +39,20 @@ async fn create_and_populate_shared_db() -> Result<(Pool<Sqlite>, NamedTempFile)
 
 /// Populates the shared database with minimal test fixtures
 async fn populate_minimal_fixtures(pool: &Pool<Sqlite>) -> Result<()> {
-    let language = Language::English;
+    let language = LanguageCode::English;
+    let noun = GrammaticalType::Noun;
+    let verb = GrammaticalType::Verb;
+    let adjective = GrammaticalType::Adjective;
+    let adverb = GrammaticalType::Adverb;
+    let allowed_word_types = [
+        noun.type_name(),
+        verb.type_name(),
+        adjective.type_name(),
+        adverb.type_name(),
+    ];
 
     // Create one word per type for comprehensive read testing
-    for (index, &word_type) in ALLOWED_WORD_TYPES.iter().enumerate() {
+    for (index, &word_type) in allowed_word_types.iter().enumerate() {
         let fixture =
             super::test_data::create_typed_test_word(word_type, &format!("fixture{index}"));
 

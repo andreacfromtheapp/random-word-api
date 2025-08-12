@@ -10,7 +10,6 @@ use std::hash::{Hash, Hasher};
 
 use word_api_axum::models::word::{
     is_valid_definition, is_valid_lemma, is_valid_pronunciation, validate_word_type, UpsertWord,
-    ALLOWED_WORD_TYPES,
 };
 
 // === Database Operations ===
@@ -80,11 +79,6 @@ pub fn create_basic_test_word(suffix: &str) -> UpsertWord {
 /// Creates a test word of a specific type
 #[allow(dead_code)]
 pub fn create_typed_test_word(word_type: &str, suffix: &str) -> UpsertWord {
-    assert!(
-        ALLOWED_WORD_TYPES.contains(&word_type),
-        "Word type must be one of: {ALLOWED_WORD_TYPES:?}"
-    );
-
     let clean_suffix = suffix.replace(['_', '-', ' '], "");
     let unique_ipa = get_unique_ipa(suffix);
 

@@ -12,12 +12,23 @@ use helpers::{
     create_test_server_memory,      // For empty database scenarios
     create_test_server_streamlined, // For read-only operations using shared database
 };
-use word_api_axum::models::word::{Language, ALLOWED_WORD_TYPES};
+use word_api_axum::models::word::{GrammaticalType, LanguageCode};
 
 // === Core Word Retrieval Tests ===
 
 #[tokio::test]
 async fn test_word_retrieval_parallel() -> Result<()> {
+    let noun = GrammaticalType::Noun;
+    let verb = GrammaticalType::Verb;
+    let adjective = GrammaticalType::Adjective;
+    let adverb = GrammaticalType::Adverb;
+    let allowed_word_types = [
+        noun.type_name(),
+        verb.type_name(),
+        adjective.type_name(),
+        adverb.type_name(),
+    ];
+
     // Run word retrieval tests in parallel for efficiency
     let (basic_result, types_result, format_result) = tokio::join!(
         async {
@@ -43,7 +54,7 @@ async fn test_word_retrieval_parallel() -> Result<()> {
         async {
             let server = create_test_server_streamlined().await?;
             // Test all word types in parallel
-            for &word_type in &ALLOWED_WORD_TYPES {
+            for &word_type in &allowed_word_types {
                 let response = server.get(&format!("/en/word/{word_type}")).await;
                 assert_eq!(response.status_code(), StatusCode::OK);
                 let json: serde_json::Value = response.json();
@@ -71,7 +82,7 @@ async fn test_word_retrieval_parallel() -> Result<()> {
         },
         async {
             let server = create_test_server_streamlined().await?;
-            let language = Language::English;
+            let language = LanguageCode::English;
             let response = server.get(&format!("/{language}/word")).await;
             assert_eq!(response.status_code(), StatusCode::OK);
             // Verify content type
@@ -148,7 +159,7 @@ async fn test_error_handling_parallel() -> Result<()> {
         async {
             let server = create_test_server_streamlined().await?;
             // Test invalid word type with detailed validation
-            let language = Language::English;
+            let language = LanguageCode::English;
             let invalid_type_response = server.get(&format!("/{language}/word/invalid_type")).await;
             assert_eq!(
                 invalid_type_response.status_code(),

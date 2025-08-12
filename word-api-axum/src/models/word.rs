@@ -24,7 +24,39 @@ use crate::error::{AppError, PathError};
 /// - Only supported grammatical types are processed
 /// - Proper error handling for unsupported grammatical types
 /// - Future extensibility for additional grammatical types support
-pub const ALLOWED_WORD_TYPES: [&str; 4] = ["noun", "verb", "adjective", "adverb"];
+#[derive(Debug, PartialEq, EnumString)]
+pub enum GrammaticalType {
+    #[strum(serialize = "noun")]
+    Noun,
+    #[strum(serialize = "verb")]
+    Verb,
+    #[strum(serialize = "adjective")]
+    Adjective,
+    #[strum(serialize = "adverb")]
+    Adverb,
+}
+
+impl GrammaticalType {
+    pub fn type_name(&self) -> &str {
+        match self {
+            GrammaticalType::Noun => "noun",
+            GrammaticalType::Verb => "verb",
+            GrammaticalType::Adjective => "adjective",
+            GrammaticalType::Adverb => "adverb",
+        }
+    }
+}
+
+impl std::fmt::Display for GrammaticalType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            GrammaticalType::Noun => write!(f, "noun"),
+            GrammaticalType::Verb => write!(f, "verb"),
+            GrammaticalType::Adjective => write!(f, "adjective"),
+            GrammaticalType::Adverb => write!(f, "adverb"),
+        }
+    }
+}
 
 /// Languages support. Currently only supports American English.
 ///
@@ -38,7 +70,7 @@ pub const ALLOWED_WORD_TYPES: [&str; 4] = ["noun", "verb", "adjective", "adverb"
 /// NOTE: the database need to have the tables and data ready to
 /// accommodate any additiomal language
 #[derive(Debug, PartialEq, EnumString)]
-pub enum Language {
+pub enum LanguageCode {
     #[strum(serialize = "en")]
     English,
     // #[strum(serialize = "de")]
@@ -53,10 +85,10 @@ pub enum Language {
     // Dutch,
 }
 
-impl Language {
+impl LanguageCode {
     pub fn table_name(&self) -> &str {
         match self {
-            Language::English => "words",
+            LanguageCode::English => "words",
             // Language::German => "words_de",
             // Language::French => "words_fr",
             // Language::Spanish => "words_es",
@@ -66,10 +98,10 @@ impl Language {
     }
 }
 
-impl std::fmt::Display for Language {
+impl std::fmt::Display for LanguageCode {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Language::English => write!(f, "en"),
+            LanguageCode::English => write!(f, "en"),
             // Language::German => write!(f, "de"),
             // Language::French => write!(f, "fr"),
             // Language::Spanish => write!(f, "es"),
@@ -110,11 +142,11 @@ impl Word {
     /// Retrieves all words from the database (admin only)
     pub async fn list(dbpool: SqlitePool, lang: &str) -> Result<Vec<Self>, AppError> {
         // if the language code is in the allowed ones
-        let language =
-            Language::from_str(lang).map_err(|_| PathError::InvalidPath(lang.to_string()))?;
+        let language_code =
+            LanguageCode::from_str(lang).map_err(|_| PathError::InvalidPath(lang.to_string()))?;
 
         // form the query with the right table
-        let my_query = format!("SELECT * FROM {}", language.table_name());
+        let my_query = format!("SELECT * FROM {}", language_code.table_name());
 
         // perform the actual query
         query_as(&my_query)
@@ -135,11 +167,11 @@ impl Word {
         let word_type = new_word.word_type()?.to_lowercase();
 
         // if the language code is in the allowed ones
-        let language =
-            Language::from_str(lang).map_err(|_| PathError::InvalidPath(lang.to_string()))?;
+        let language_code =
+            LanguageCode::from_str(lang).map_err(|_| PathError::InvalidPath(lang.to_string()))?;
 
         // form the query with the right table
-        let my_query = format!("INSERT INTO {} (word, definition, pronunciation, word_type) VALUES ($1, $2, $3, $4) RETURNING *", language.table_name());
+        let my_query = format!("INSERT INTO {} (word, definition, pronunciation, word_type) VALUES ($1, $2, $3, $4) RETURNING *", language_code.table_name());
 
         // perform the actual query
         query_as(&my_query)
@@ -155,11 +187,11 @@ impl Word {
     /// Retrieves a specific word by ID
     pub async fn read(dbpool: SqlitePool, lang: &str, id: u32) -> Result<Vec<Self>, AppError> {
         // if the language code is in the allowed ones
-        let language =
-            Language::from_str(lang).map_err(|_| PathError::InvalidPath(lang.to_string()))?;
+        let language_code =
+            LanguageCode::from_str(lang).map_err(|_| PathError::InvalidPath(lang.to_string()))?;
 
         // form the query with the right table
-        let my_query = format!("SELECT * FROM {} WHERE id = $1", language.table_name());
+        let my_query = format!("SELECT * FROM {} WHERE id = $1", language_code.table_name());
 
         // perform the actual query
         query_as(&my_query)
@@ -182,11 +214,11 @@ impl Word {
         let word_type = updated_word.word_type()?.to_lowercase();
 
         // if the language code is in the allowed ones
-        let language =
-            Language::from_str(lang).map_err(|_| PathError::InvalidPath(lang.to_string()))?;
+        let language_code =
+            LanguageCode::from_str(lang).map_err(|_| PathError::InvalidPath(lang.to_string()))?;
 
         // form the query with the right table
-        let my_query = format!("UPDATE {} SET word = $1, definition = $2, pronunciation = $3, word_type = $4 WHERE id = $5 RETURNING *", language.table_name());
+        let my_query = format!("UPDATE {} SET word = $1, definition = $2, pronunciation = $3, word_type = $4 WHERE id = $5 RETURNING *", language_code.table_name());
 
         // perform the actual query
         query_as(&my_query)
@@ -203,11 +235,11 @@ impl Word {
     /// Deletes a word from the database
     pub async fn delete(dbpool: SqlitePool, lang: &str, id: u32) -> Result<(), AppError> {
         // if the language code is in the allowed ones
-        let language =
-            Language::from_str(lang).map_err(|_| PathError::InvalidPath(lang.to_string()))?;
+        let language_code =
+            LanguageCode::from_str(lang).map_err(|_| PathError::InvalidPath(lang.to_string()))?;
 
         // form the query with the right table
-        let my_query = format!("DELETE FROM {} WHERE id = $1", language.table_name());
+        let my_query = format!("DELETE FROM {} WHERE id = $1", language_code.table_name());
 
         // perform the actual query
         query(&my_query).bind(id).execute(&dbpool).await?;
@@ -255,13 +287,13 @@ impl GetWord {
     /// Retrieves a random word from the database
     pub async fn random_word(dbpool: SqlitePool, lang: &str) -> Result<Vec<Self>, AppError> {
         // if the language code is in the allowed ones
-        let language =
-            Language::from_str(lang).map_err(|_| PathError::InvalidPath(lang.to_string()))?;
+        let language_code =
+            LanguageCode::from_str(lang).map_err(|_| PathError::InvalidPath(lang.to_string()))?;
 
         // form the query with the right table
         let my_query = format!(
             "SELECT word, definition, pronunciation FROM {} ORDER BY random() LIMIT 1",
-            language.table_name()
+            language_code.table_name()
         );
 
         // perform the actual query
@@ -278,23 +310,22 @@ impl GetWord {
         word_type: &str,
     ) -> Result<Vec<Self>, AppError> {
         // if the language code is in the allowed ones
-        let language =
-            Language::from_str(lang).map_err(|_| PathError::InvalidPath(lang.to_string()))?;
-
-        // form the query with the right table
-        let my_query = format!("SELECT word, definition, pronunciation FROM {} WHERE word_type = $1 ORDER BY random() LIMIT 1", language.table_name());
+        let language_code =
+            LanguageCode::from_str(lang).map_err(|_| PathError::InvalidPath(lang.to_string()))?;
 
         // if the grammatical type is in the allowed ones
-        if ALLOWED_WORD_TYPES.contains(&word_type) {
-            // perform the actual query
-            query_as(&my_query)
-                .bind(word_type)
-                .fetch_all(&dbpool)
-                .await
-                .map_err(Into::into)
-        } else {
-            Err(PathError::InvalidWordType(word_type.to_string()).into())
-        }
+        let grammatical_type = GrammaticalType::from_str(word_type)
+            .map_err(|_| PathError::InvalidWordType(word_type.to_string()))?;
+
+        // form the query with the right table
+        let my_query = format!("SELECT word, definition, pronunciation FROM {} WHERE word_type = $1 ORDER BY random() LIMIT 1", language_code.table_name());
+
+        // perform the actual query
+        query_as(&my_query)
+            .bind(grammatical_type.type_name())
+            .fetch_all(&dbpool)
+            .await
+            .map_err(Into::into)
     }
 }
 
@@ -349,9 +380,8 @@ fn validate_pronunciation(text: &str) -> Result<(), ValidationError> {
 
 /// Validates a word_type field for allowed grammatical types (noun, verb, adjective, adverb)
 pub fn validate_word_type(text: &str) -> Result<(), ValidationError> {
-    if !ALLOWED_WORD_TYPES.contains(&text) {
-        return Err(ValidationError::new("invalid_word_type"));
-    }
+    let _ =
+        GrammaticalType::from_str(text).map_err(|_| ValidationError::new("invalid_word_type"))?;
     Ok(())
 }
 

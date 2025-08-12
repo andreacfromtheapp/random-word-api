@@ -233,20 +233,28 @@ pub async fn word_delete(
 #[cfg(test)]
 mod tests {
     use crate::error::{AppError, PathError};
-    use crate::models::word::{Language, UpsertWord, ALLOWED_WORD_TYPES};
+    use crate::models::word::{GrammaticalType, LanguageCode, UpsertWord};
     use std::str::FromStr;
 
     #[test]
     fn test_parameter_extraction_logic() {
         // Test language parameter validation logic used by handlers
         let valid_lang = "en";
-        let language_result = Language::from_str(valid_lang);
+        let language_result = LanguageCode::from_str(valid_lang);
         assert!(language_result.is_ok());
         assert_eq!(language_result.unwrap().table_name(), "words");
 
         let invalid_lang = "xyz";
-        let language_result = Language::from_str(invalid_lang);
+        let language_result = LanguageCode::from_str(invalid_lang);
         assert!(language_result.is_err());
+
+        let valid_type = "noun";
+        let type_result = GrammaticalType::from_str(valid_type);
+        assert!(type_result.is_ok());
+
+        let invalid_type = "preposition";
+        let type_result = GrammaticalType::from_str(invalid_type);
+        assert!(type_result.is_err());
     }
 
     #[test]
@@ -283,8 +291,6 @@ mod tests {
         assert_eq!(lowercase_definition, "a test definition");
         assert_eq!(lowercase_pronunciation, "/test/");
         assert_eq!(lowercase_word_type, "noun");
-
-        assert!(ALLOWED_WORD_TYPES.contains(&lowercase_word_type.as_str()));
     }
 
     #[test]

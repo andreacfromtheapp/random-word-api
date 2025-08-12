@@ -100,17 +100,17 @@ pub async fn word_type(
 mod tests {
 
     use crate::error::{AppError, PathError};
-    use crate::models::word::{Language, ALLOWED_WORD_TYPES};
+    use crate::models::word::{GrammaticalType, LanguageCode};
     use std::str::FromStr;
 
     #[test]
     fn test_language_validation_logic() {
         // Test language validation used by word handlers
-        let valid_lang = Language::from_str("en");
+        let valid_lang = LanguageCode::from_str("en");
         assert!(valid_lang.is_ok());
         assert_eq!(valid_lang.unwrap().table_name(), "words");
 
-        let invalid_lang = Language::from_str("xyz");
+        let invalid_lang = LanguageCode::from_str("xyz");
         assert!(invalid_lang.is_err());
 
         // Test PathError creation for invalid language
@@ -123,18 +123,16 @@ mod tests {
     #[test]
     fn test_word_type_validation_logic() {
         // Test word type validation used by handlers
-        for &valid_type in &ALLOWED_WORD_TYPES {
-            assert!(ALLOWED_WORD_TYPES.contains(&valid_type));
-        }
+        let valid_word_type = GrammaticalType::from_str("noun");
+        assert!(valid_word_type.is_ok());
 
-        let invalid_types = ["preposition", "conjunction", "article"];
-        for invalid_type in invalid_types {
-            assert!(!ALLOWED_WORD_TYPES.contains(&invalid_type));
+        let invalid_word_type = GrammaticalType::from_str("preposition");
+        assert!(invalid_word_type.is_err());
 
-            let path_error = PathError::InvalidWordType(invalid_type.to_string());
-            let app_error = AppError::from(path_error);
-            let error_debug = format!("{app_error:?}");
-            assert!(error_debug.contains(invalid_type) || error_debug.contains("InvalidWordType"));
-        }
+        // Test PathError creation for invalid word_type
+        let path_error = PathError::InvalidWordType("preposition".to_string());
+        let app_error = AppError::from(path_error);
+        let error_debug = format!("{app_error:?}");
+        assert!(error_debug.contains("preposition") || error_debug.contains("InvalidWordType"));
     }
 }
