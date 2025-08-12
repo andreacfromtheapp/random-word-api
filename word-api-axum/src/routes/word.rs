@@ -16,7 +16,7 @@ use crate::state::AppState;
 pub fn create_word_routes(state: AppState, origins: &[HeaderValue]) -> Router {
     Router::new()
         .route("/{lang}/word", get(word_random))
-        .route("/{lang}/word/{type}", get(word_type))
+        .route("/{lang}/{type}", get(word_type))
         .with_state(state)
         .layer(
             CorsLayer::new()

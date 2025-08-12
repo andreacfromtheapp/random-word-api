@@ -55,7 +55,7 @@ async fn test_word_retrieval_parallel() -> Result<()> {
             let server = create_test_server_streamlined().await?;
             // Test all word types in parallel
             for &word_type in &allowed_word_types {
-                let response = server.get(&format!("/en/word/{word_type}")).await;
+                let response = server.get(&format!("/en/{word_type}")).await;
                 assert_eq!(response.status_code(), StatusCode::OK);
                 let json: serde_json::Value = response.json();
                 assert!(
@@ -160,7 +160,7 @@ async fn test_error_handling_parallel() -> Result<()> {
             let server = create_test_server_streamlined().await?;
             // Test invalid word type with detailed validation
             let language = LanguageCode::English;
-            let invalid_type_response = server.get(&format!("/{language}/word/invalid_type")).await;
+            let invalid_type_response = server.get(&format!("/{language}/invalid_type")).await;
             assert_eq!(
                 invalid_type_response.status_code(),
                 StatusCode::BAD_REQUEST,
@@ -315,12 +315,7 @@ async fn test_workflow_and_edge_cases_parallel() -> Result<()> {
         async {
             let server = create_test_server_streamlined().await?;
             // Test edge case scenarios
-            let edge_cases = vec![
-                "/en/word/noun",
-                "/en/word/verb",
-                "/en/word/adjective",
-                "/en/word/adverb",
-            ];
+            let edge_cases = vec!["/en/noun", "/en/verb", "/en/adjective", "/en/adverb"];
             for endpoint in edge_cases {
                 let response = server.get(endpoint).await;
                 assert!(
