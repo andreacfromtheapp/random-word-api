@@ -27,8 +27,8 @@ use word::create_word_routes;
 /// Creates the main application router with all route modules and middleware
 pub async fn create_router(state: AppState) -> Router {
     let origins = vec![
-        "http://localhost".parse().unwrap(),
-        "http://127.0.0.1".parse().unwrap(),
+        "http://localhost:5173".parse().unwrap(),
+        "https://speak-and-spell.netlify.app/".parse().unwrap(),
     ];
 
     // Add admin routes under /admin
