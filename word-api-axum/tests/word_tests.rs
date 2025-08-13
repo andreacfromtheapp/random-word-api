@@ -33,7 +33,7 @@ async fn test_word_retrieval_parallel() -> Result<()> {
     let (basic_result, types_result, format_result) = tokio::join!(
         async {
             let server = create_test_server_streamlined().await?;
-            let response = server.get("/en/word").await;
+            let response = server.get("/en/random").await;
             assert_eq!(response.status_code(), StatusCode::OK);
             let json: serde_json::Value = response.json();
             assert!(json.is_array(), "Response should be an array");
@@ -83,7 +83,7 @@ async fn test_word_retrieval_parallel() -> Result<()> {
         async {
             let server = create_test_server_streamlined().await?;
             let language = LanguageCode::English;
-            let response = server.get(&format!("/{language}/word")).await;
+            let response = server.get(&format!("/{language}/random")).await;
             assert_eq!(response.status_code(), StatusCode::OK);
             // Verify content type
             let content_type = response
@@ -143,8 +143,8 @@ async fn test_error_handling_parallel() -> Result<()> {
             let server = create_test_server_streamlined().await?;
             // Batch test all invalid scenarios for efficiency
             let invalid_scenarios = vec![
-                ("/invalid/word", "Invalid language"),
-                ("/en/word/invalid_type", "Invalid word type"),
+                ("/invalid/random", "Invalid language"),
+                ("/en/random/invalid_type", "Invalid word type"),
                 ("/nonexistent/endpoint", "Nonexistent endpoint"),
             ];
             for (path, description) in invalid_scenarios {
@@ -188,7 +188,7 @@ async fn test_error_handling_parallel() -> Result<()> {
 #[tokio::test]
 async fn test_empty_database_scenario() -> Result<()> {
     let (server, _pool) = create_test_server_memory().await?;
-    let response = server.get("/en/word").await;
+    let response = server.get("/en/random").await;
 
     // Empty database returns OK with empty array or error - both acceptable
     assert!(
@@ -206,7 +206,7 @@ async fn test_multiple_requests_reliability() -> Result<()> {
     // Test multiple requests in parallel for better reliability testing
     let (req1, req2, req3) = tokio::join!(
         async {
-            let response = server.get("/en/word").await;
+            let response = server.get("/en/random").await;
             assert!(
                 response.status_code() == StatusCode::OK
                     || response.status_code() == StatusCode::NO_CONTENT
@@ -214,7 +214,7 @@ async fn test_multiple_requests_reliability() -> Result<()> {
             Ok::<(), anyhow::Error>(())
         },
         async {
-            let response = server.get("/en/word").await;
+            let response = server.get("/en/random").await;
             assert!(
                 response.status_code() == StatusCode::OK
                     || response.status_code() == StatusCode::NO_CONTENT
@@ -222,7 +222,7 @@ async fn test_multiple_requests_reliability() -> Result<()> {
             Ok::<(), anyhow::Error>(())
         },
         async {
-            let response = server.get("/en/word").await;
+            let response = server.get("/en/random").await;
             assert!(
                 response.status_code() == StatusCode::OK
                     || response.status_code() == StatusCode::NO_CONTENT
@@ -247,21 +247,21 @@ async fn test_api_consistency_parallel() -> Result<()> {
             // Test that multiple requests return consistent format
             let (req1, req2, req3) = tokio::join!(
                 async {
-                    let response = server.get("/en/word").await;
+                    let response = server.get("/en/random").await;
                     assert_eq!(response.status_code(), StatusCode::OK);
                     let json: serde_json::Value = response.json();
                     assert!(json.is_array(), "Response should be array");
                     Ok::<(), anyhow::Error>(())
                 },
                 async {
-                    let response = server.get("/en/word").await;
+                    let response = server.get("/en/random").await;
                     assert_eq!(response.status_code(), StatusCode::OK);
                     let json: serde_json::Value = response.json();
                     assert!(json.is_array(), "Response should be array");
                     Ok::<(), anyhow::Error>(())
                 },
                 async {
-                    let response = server.get("/en/word").await;
+                    let response = server.get("/en/random").await;
                     assert_eq!(response.status_code(), StatusCode::OK);
                     let json: serde_json::Value = response.json();
                     assert!(json.is_array(), "Response should be array");
@@ -276,7 +276,7 @@ async fn test_api_consistency_parallel() -> Result<()> {
         async {
             let server = create_test_server_streamlined().await?;
             // Batch test word API endpoints (health checks handled in health_tests.rs)
-            let test_endpoints = vec!["/en/word", "/admin/en/words"];
+            let test_endpoints = vec!["/en/random", "/admin/en/words"];
             for endpoint in test_endpoints {
                 let response = server.get(endpoint).await;
                 assert!(
@@ -306,7 +306,7 @@ async fn test_workflow_and_edge_cases_parallel() -> Result<()> {
         async {
             let server = create_test_server_streamlined().await?;
             // Test user workflow: get word -> check admin (health checks handled in health_tests.rs)
-            let word_response = server.get("/en/word").await;
+            let word_response = server.get("/en/random").await;
             assert_eq!(word_response.status_code(), StatusCode::OK);
             let admin_response = server.get("/admin/en/words").await;
             assert!(admin_response.status_code() <= StatusCode::OK);

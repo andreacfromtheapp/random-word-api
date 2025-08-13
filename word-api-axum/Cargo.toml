@@ -7,7 +7,7 @@ rust-version.workspace = true
 authors.workspace = true
 repository.workspace = true
 homepage.workspace = true
-description = "A simple API to use with my Speak and Spell toy project"
+description = "Random Word API - A simple dictionary word service"
 keywords = ["speak-and-spell"]
 publish = false
 

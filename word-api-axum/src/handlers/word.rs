@@ -26,7 +26,7 @@ use axum::Json;
 /// * `500 Internal Server Error` - Database connection or query error
 #[utoipa::path(
     get,
-    path = "/{lang}/word",
+    path = "/{lang}/random",
     operation_id = "public_word_random",
     tag = "public_endpoints",
 
@@ -72,7 +72,7 @@ pub async fn word_random(
 /// * `500 Internal Server Error` - Database connection or query error
 #[utoipa::path(
     get,
-    path = "/{lang}/word/{type}",
+    path = "/{lang}/{type}",
     operation_id = "public_word_random_type",
     tag = "public_endpoints",
 
