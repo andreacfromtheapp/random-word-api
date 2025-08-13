@@ -45,13 +45,13 @@ swagger:
     watchexec -r -e rs cargo run --bin word-api-axum -- --with-swagger-ui
 # Run the API server with Redoc
 redoc:
-    watchexec -r -e rs cargo run --bin word-api-axum -- --with-redoc
+    watchexec -r -e rs cargo run --bin word-api-axum -- --with-redoc  --with-swagger-ui
 # Run the API server with Scalar
 scalar:
-    watchexec -r -e rs cargo run --bin word-api-axum -- --with-scalar
+    watchexec -r -e rs cargo run --bin word-api-axum -- --with-scalar  --with-swagger-ui
 # Run the API server with RapiDoc
 rapidoc:
-    watchexec -r -e rs cargo run --bin word-api-axum -- --with-rapidoc
+    watchexec -r -e rs cargo run --bin word-api-axum -- --with-rapidoc  --with-swagger-ui
 
 # Generate API configuration file
 gen-config:

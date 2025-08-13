@@ -1,7 +1,5 @@
 [workspace]
-members = [
-    "word-api-axum",
-]
+members = ["word-api-axum"]
 resolver = "2"
 
 [workspace.package]
@@ -11,7 +9,7 @@ license = "Apache-2.0"
 rust-version = "1.88"
 authors = ["Andrea C"]
 repository = "http://github.com/andreacfromtheapp/random-word-api"
-homepage = "sps-api.netlify.app"
+homepage = "https://word-api-axum.netlify.app"
 
 [workspace.dependencies]
 # General purpose dependencies that could be shared across workspace members
