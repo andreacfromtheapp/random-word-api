@@ -8,7 +8,7 @@ use crate::state::AppState;
 use axum::extract::{Path, State};
 use axum::Json;
 
-/// Retrieves a random word from the database as a JSON object.
+/// Retrieves a random word from the database.
 ///
 /// Returns a randomly selected word using SQLite's RANDOM() function for fair
 /// distribution across all available words in the specified language database.

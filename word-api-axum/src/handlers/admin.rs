@@ -1,4 +1,4 @@
-//! Administrative word management endpoints (authenticated)
+//! Administrative word management endpoints. Require authentication and administrative privileges.
 //!
 //! Provides CRUD operations for word database management. All endpoints
 //! require authentication and return JSON responses.
@@ -9,10 +9,9 @@ use crate::error::AppError;
 use crate::models::word::{UpsertWord, Word};
 use crate::state::AppState;
 
-/// Lists all words in the database as a JSON array.
+/// Lists all words in the database.
 ///
 /// Returns every word stored in the database without filtering or pagination.
-/// Requires authentication and administrative privileges.
 ///
 /// # Parameters
 ///
@@ -51,7 +50,6 @@ pub async fn word_list(
 ///
 /// Accepts a JSON payload with word data and creates a new entry after validation.
 /// All text fields are automatically converted to lowercase for consistency.
-/// Requires authentication and administrative privileges.
 ///
 /// # Parameters
 ///
@@ -61,7 +59,7 @@ pub async fn word_list(
 /// # Request Body
 ///
 /// JSON object with required fields: `word`, `definition`, `pronunciation`, `word_type`.
-/// All fields must pass validation (valid lemma, dictionary text, IPA notation).
+/// All fields must pass validation (valid lemma, dictionary text, IPA notation, allowed grammatical types).
 ///
 /// # Returns
 ///
@@ -101,7 +99,6 @@ pub async fn word_create(
 ///
 /// Fetches a single word using its unique identifier. Provides administrators
 /// access to complete word records including metadata.
-/// Requires authentication and administrative privileges.
 ///
 /// # Parameters
 ///
@@ -142,7 +139,6 @@ pub async fn word_read(
 ///
 /// Modifies an existing word identified by its database ID. All text fields
 /// are converted to lowercase and the updated_at timestamp is set automatically.
-/// Requires authentication and administrative privileges.
 ///
 /// # Parameters
 ///
@@ -193,7 +189,6 @@ pub async fn word_update(
 ///
 /// Deletes a word record by its database ID. This operation is irreversible
 /// and permanently removes all associated data.
-/// Requires authentication and administrative privileges.
 ///
 /// # Parameters
 ///

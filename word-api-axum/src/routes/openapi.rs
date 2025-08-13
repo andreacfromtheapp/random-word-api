@@ -35,7 +35,7 @@ use crate::state::AppState;
     tags(
         (name = "healthcheck_endpoints", description = "Health check and system status endpoints"),
         (name = "public_endpoints", description = "Public word retrieval endpoints"),
-        (name = "administration_endpoints", description = "Administrative word management endpoints"),
+        (name = "administration_endpoints", description = "Administrative word management endpoints. Require authentication and administrative privileges."),
     ),
 )]
 pub struct ApiDoc;
