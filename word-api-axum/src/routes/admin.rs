@@ -12,7 +12,7 @@ use crate::handlers::admin::*;
 use crate::state::AppState;
 
 /// Creates administrative routes with CORS and state injection
-pub fn create_admin_routes(state: AppState, origins: &[HeaderValue]) -> Router {
+pub fn create_admin_routes(shared_state: AppState, origins: &[HeaderValue]) -> Router {
     Router::new()
         .nest(
             "/admin",
@@ -23,7 +23,7 @@ pub fn create_admin_routes(state: AppState, origins: &[HeaderValue]) -> Router {
                     get(word_read).put(word_update).delete(word_delete),
                 ),
         )
-        .with_state(state)
+        .with_state(shared_state)
         .layer(
             CorsLayer::new()
                 .allow_methods([Method::POST, Method::GET, Method::PUT, Method::DELETE])

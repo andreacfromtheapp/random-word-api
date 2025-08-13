@@ -130,13 +130,13 @@ pub async fn run_app(cli: cli::Cli) -> Result<(), AppError> {
         .context("couldn't initialize the database connection pool")?;
 
     // Setup the shared mutable state
-    let state = state::AppState {
+    let shared_state = state::AppState {
         apiconfig: Arc::new(Mutex::new(apiconfig.clone())),
         dbpool: dbpool.clone(),
     };
 
     // Setup top-level router (includes SwaggerUI)
-    let router = create_router(state).await;
+    let router = create_router(shared_state).await;
 
     // Instantiate a listener on the socket address and port
     let listener = tokio::net::TcpListener::bind((apiconfig.address, apiconfig.port))

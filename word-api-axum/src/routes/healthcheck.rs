@@ -12,7 +12,7 @@ use crate::handlers::healthcheck::*;
 use crate::state::AppState;
 
 /// Creates health check routes with monitoring-optimized configuration
-pub fn create_health_routes(state: AppState, origins: &[HeaderValue]) -> Router {
+pub fn create_health_routes(shared_state: AppState, origins: &[HeaderValue]) -> Router {
     Router::new()
         .nest(
             "/health",
@@ -20,7 +20,7 @@ pub fn create_health_routes(state: AppState, origins: &[HeaderValue]) -> Router 
                 .route("/alive", get(alive))
                 .route("/ready", get(ready)),
         )
-        .with_state(state)
+        .with_state(shared_state)
         .layer(
             CorsLayer::new()
                 .allow_methods([Method::GET])

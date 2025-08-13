@@ -13,11 +13,11 @@ use crate::handlers::word::*;
 use crate::state::AppState;
 
 /// Creates public word routes with language support and CORS configuration
-pub fn create_word_routes(state: AppState, origins: &[HeaderValue]) -> Router {
+pub fn create_word_routes(shared_state: AppState, origins: &[HeaderValue]) -> Router {
     Router::new()
         .route("/{lang}/word", get(word_random))
         .route("/{lang}/{type}", get(word_type))
-        .with_state(state)
+        .with_state(shared_state)
         .layer(
             CorsLayer::new()
                 .allow_methods([Method::GET])

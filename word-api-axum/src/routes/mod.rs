@@ -25,23 +25,23 @@ use openapi::create_apidocs_routes;
 use word::create_word_routes;
 
 /// Creates the main application router with all route modules and middleware
-pub async fn create_router(state: AppState) -> Router {
+pub async fn create_router(shared_state: AppState) -> Router {
     let origins = vec![
         "http://localhost:5173".parse().unwrap(),
         "https://speak-and-spell.netlify.app/".parse().unwrap(),
     ];
 
     // Add admin routes under /admin
-    let admin_routes = create_admin_routes(state.clone(), &origins);
+    let admin_routes = create_admin_routes(shared_state.clone(), &origins);
 
     // Add admin routes under /admin
-    let health_routes = create_health_routes(state.clone(), &origins);
+    let health_routes = create_health_routes(shared_state.clone(), &origins);
 
     // Add API Docs under /swagger-ui, /rapidoc, /scalar, and /redoc
-    let apidocs_routes = create_apidocs_routes(state.clone(), &origins);
+    let apidocs_routes = create_apidocs_routes(shared_state.clone(), &origins);
 
     // Add public routes under /{lang}/word
-    let word_routes = create_word_routes(state.clone(), &origins);
+    let word_routes = create_word_routes(shared_state.clone(), &origins);
 
     // Setup top-level router
     Router::new()

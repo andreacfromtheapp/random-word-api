@@ -70,14 +70,14 @@ pub fn create_rapidoc_routes() -> Router {
 }
 
 /// Creates the complete OpenAPI documentation router with configurable interfaces
-pub fn create_apidocs_routes(state: AppState, origins: &[HeaderValue]) -> Router {
+pub fn create_apidocs_routes(shared_state: AppState, origins: &[HeaderValue]) -> Router {
     use http::Method;
     use tower_http::cors::CorsLayer;
 
     let mut router = Router::new();
 
     // Get the config to check which documentation routes to enable
-    if let Ok(config) = state.apiconfig.lock() {
+    if let Ok(config) = shared_state.apiconfig.lock() {
         if config.openapi.enable_swagger_ui {
             router = router.merge(create_swagger_routes());
         }
