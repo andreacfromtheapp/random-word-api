@@ -63,6 +63,11 @@ pub async fn word_random(
 ///   - 'verb' (actions, states)
 ///   - 'adjective' (descriptive words)
 ///   - 'adverb' (modifiers)
+///   - 'pronoun' (words that replace nouns)
+///   - 'preposition' (words showing relationships)
+///   - 'conjunction' (connecting words)
+///   - 'interjection' (exclamatory words)
+///   - 'article' (definite and indefinite articles)
 ///
 /// # Returns
 ///
@@ -84,7 +89,7 @@ pub async fn word_random(
     ),
     params(
         ("lang" = String, Path, description = "Language code for word retrieval. Currently supports: 'en' (English). Future versions will support additional languages with separate database tables.", example = "en"),
-        ("type" = String, Path, description = "Grammatical type filter for word selection. Accepted values: 'noun' (people, places, things), 'verb' (actions, states), 'adjective' (descriptive words), 'adverb' (modifiers).", example = "noun"),
+        ("type" = String, Path, description = "Grammatical type filter for word selection. Accepted values: 'noun' (people, places, things), 'verb' (actions, states), 'adjective' (descriptive words), 'adverb' (modifiers), 'pronoun' (words that replace nouns), 'preposition' (words showing relationships), 'conjunction' (connecting words), 'interjection' (exclamatory words), 'article' (definite and indefinite articles).", example = "noun"),
     )
 )]
 pub async fn word_type(
@@ -126,13 +131,50 @@ mod tests {
         let valid_word_type = GrammaticalType::from_str("noun");
         assert!(valid_word_type.is_ok());
 
-        let invalid_word_type = GrammaticalType::from_str("preposition");
+        let invalid_word_type = GrammaticalType::from_str("determiner");
         assert!(invalid_word_type.is_err());
 
         // Test PathError creation for invalid word_type
-        let path_error = PathError::InvalidWordType("preposition".to_string());
+        let path_error = PathError::InvalidWordType("determiner".to_string());
         let app_error = AppError::from(path_error);
         let error_debug = format!("{app_error:?}");
-        assert!(error_debug.contains("preposition") || error_debug.contains("InvalidWordType"));
+        assert!(error_debug.contains("determiner") || error_debug.contains("InvalidWordType"));
+    }
+
+    #[test]
+    fn test_all_grammatical_types_supported() {
+        // Test that all grammatical types are supported by the handler
+        let supported_types = [
+            "noun",
+            "verb",
+            "adjective",
+            "adverb",
+            "pronoun",
+            "preposition",
+            "conjunction",
+            "interjection",
+            "article",
+        ];
+
+        for word_type in supported_types {
+            let result = GrammaticalType::from_str(word_type);
+            assert!(
+                result.is_ok(),
+                "Word type '{}' should be supported",
+                word_type
+            );
+        }
+
+        // Test that unsupported types are rejected
+        let unsupported_types = ["determiner", "particle", "auxiliary", "modal"];
+
+        for word_type in unsupported_types {
+            let result = GrammaticalType::from_str(word_type);
+            assert!(
+                result.is_err(),
+                "Word type '{}' should not be supported",
+                word_type
+            );
+        }
     }
 }

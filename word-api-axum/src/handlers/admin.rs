@@ -247,7 +247,7 @@ mod tests {
         let type_result = GrammaticalType::from_str(valid_type);
         assert!(type_result.is_ok());
 
-        let invalid_type = "preposition";
+        let invalid_type = "determiner";
         let type_result = GrammaticalType::from_str(invalid_type);
         assert!(type_result.is_err());
     }
@@ -304,7 +304,7 @@ mod tests {
             word: "valid".to_string(),
             definition: "valid definition".to_string(),
             pronunciation: "/valid/".to_string(),
-            word_type: "preposition".to_string(),
+            word_type: "determiner".to_string(),
         };
 
         assert!(invalid_type_word.word_type().is_err());

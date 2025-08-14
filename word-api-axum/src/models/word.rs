@@ -34,6 +34,16 @@ pub enum GrammaticalType {
     Adjective,
     #[strum(serialize = "adverb")]
     Adverb,
+    #[strum(serialize = "pronoun")]
+    Pronoun,
+    #[strum(serialize = "preposition")]
+    Preposition,
+    #[strum(serialize = "conjunction")]
+    Conjunction,
+    #[strum(serialize = "interjection")]
+    Interjection,
+    #[strum(serialize = "article")]
+    Article,
 }
 
 impl GrammaticalType {
@@ -43,6 +53,11 @@ impl GrammaticalType {
             GrammaticalType::Verb => "verb",
             GrammaticalType::Adjective => "adjective",
             GrammaticalType::Adverb => "adverb",
+            GrammaticalType::Pronoun => "pronoun",
+            GrammaticalType::Preposition => "preposition",
+            GrammaticalType::Conjunction => "conjunction",
+            GrammaticalType::Interjection => "interjection",
+            GrammaticalType::Article => "article",
         }
     }
 }
@@ -54,6 +69,11 @@ impl std::fmt::Display for GrammaticalType {
             GrammaticalType::Verb => write!(f, "verb"),
             GrammaticalType::Adjective => write!(f, "adjective"),
             GrammaticalType::Adverb => write!(f, "adverb"),
+            GrammaticalType::Pronoun => write!(f, "pronoun"),
+            GrammaticalType::Preposition => write!(f, "preposition"),
+            GrammaticalType::Conjunction => write!(f, "conjunction"),
+            GrammaticalType::Interjection => write!(f, "interjection"),
+            GrammaticalType::Article => write!(f, "article"),
         }
     }
 }
@@ -557,12 +577,91 @@ mod tests {
         assert!(validate_word_type("verb").is_ok());
         assert!(validate_word_type("adjective").is_ok());
         assert!(validate_word_type("adverb").is_ok());
+        assert!(validate_word_type("pronoun").is_ok());
+        assert!(validate_word_type("preposition").is_ok());
+        assert!(validate_word_type("conjunction").is_ok());
+        assert!(validate_word_type("interjection").is_ok());
+        assert!(validate_word_type("article").is_ok());
 
         // Invalid word types
-        assert!(validate_word_type("preposition").is_err());
-        assert!(validate_word_type("conjunction").is_err());
         assert!(validate_word_type("").is_err());
         assert!(validate_word_type("invalid").is_err());
+        assert!(validate_word_type("determiner").is_err());
+        assert!(validate_word_type("NOUN").is_err()); // case sensitive
+    }
+
+    #[test]
+    fn test_grammatical_type_from_str() {
+        use std::str::FromStr;
+
+        // Valid grammatical types
+        assert_eq!(
+            GrammaticalType::from_str("noun").unwrap(),
+            GrammaticalType::Noun
+        );
+        assert_eq!(
+            GrammaticalType::from_str("verb").unwrap(),
+            GrammaticalType::Verb
+        );
+        assert_eq!(
+            GrammaticalType::from_str("adjective").unwrap(),
+            GrammaticalType::Adjective
+        );
+        assert_eq!(
+            GrammaticalType::from_str("adverb").unwrap(),
+            GrammaticalType::Adverb
+        );
+        assert_eq!(
+            GrammaticalType::from_str("pronoun").unwrap(),
+            GrammaticalType::Pronoun
+        );
+        assert_eq!(
+            GrammaticalType::from_str("preposition").unwrap(),
+            GrammaticalType::Preposition
+        );
+        assert_eq!(
+            GrammaticalType::from_str("conjunction").unwrap(),
+            GrammaticalType::Conjunction
+        );
+        assert_eq!(
+            GrammaticalType::from_str("interjection").unwrap(),
+            GrammaticalType::Interjection
+        );
+        assert_eq!(
+            GrammaticalType::from_str("article").unwrap(),
+            GrammaticalType::Article
+        );
+
+        // Invalid grammatical types
+        assert!(GrammaticalType::from_str("invalid").is_err());
+        assert!(GrammaticalType::from_str("").is_err());
+        assert!(GrammaticalType::from_str("NOUN").is_err()); // case sensitive
+    }
+
+    #[test]
+    fn test_grammatical_type_type_name() {
+        assert_eq!(GrammaticalType::Noun.type_name(), "noun");
+        assert_eq!(GrammaticalType::Verb.type_name(), "verb");
+        assert_eq!(GrammaticalType::Adjective.type_name(), "adjective");
+        assert_eq!(GrammaticalType::Adverb.type_name(), "adverb");
+        assert_eq!(GrammaticalType::Pronoun.type_name(), "pronoun");
+        assert_eq!(GrammaticalType::Preposition.type_name(), "preposition");
+        assert_eq!(GrammaticalType::Conjunction.type_name(), "conjunction");
+        assert_eq!(GrammaticalType::Interjection.type_name(), "interjection");
+        assert_eq!(GrammaticalType::Article.type_name(), "article");
+    }
+
+    #[test]
+    fn test_grammatical_type_display() {
+        assert_eq!(format!("{}", GrammaticalType::Noun), "noun");
+        assert_eq!(format!("{}", GrammaticalType::Verb), "verb");
+        assert_eq!(format!("{}", GrammaticalType::Adjective), "adjective");
+        assert_eq!(format!("{}", GrammaticalType::Adverb), "adverb");
+        assert_eq!(format!("{}", GrammaticalType::Pronoun), "pronoun");
+        assert_eq!(format!("{}", GrammaticalType::Preposition), "preposition");
+        assert_eq!(format!("{}", GrammaticalType::Conjunction), "conjunction");
+        assert_eq!(format!("{}", GrammaticalType::Interjection), "interjection");
+        assert_eq!(format!("{}", GrammaticalType::Article), "article");
     }
 
     #[test]

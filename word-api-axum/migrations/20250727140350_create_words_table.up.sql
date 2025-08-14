@@ -1,7 +1,17 @@
 CREATE TABLE IF NOT EXISTS words (
   id INTEGER PRIMARY KEY NOT NULL,
   word_type TEXT NOT NULL CHECK (
-    word_type IN ("noun", "verb", "adjective", "adverb")
+    word_type IN (
+      "noun",
+      "verb",
+      "adjective",
+      "adverb",
+      "pronoun",
+      "preposition",
+      "conjunction",
+      "interjection",
+      "article"
+    )
   ),
   word TEXT NOT NULL UNIQUE,
   definition TEXT NOT NULL UNIQUE,

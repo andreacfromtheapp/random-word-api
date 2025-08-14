@@ -151,7 +151,7 @@ async fn test_admin_validation_batch() -> Result<()> {
         json!({ "word": "valid", "definition": "valid", "pronunciation": "", "wordType": word_type.type_name() }),
         // Use source validation - test invalid word type not in ALLOWED_WORD_TYPES
         json!({ "word": "valid", "definition": "valid", "pronunciation": "/vælɪd/", "wordType": "invalid" }),
-        json!({ "word": "valid", "definition": "valid", "pronunciation": "/vælɪd/", "wordType": "preposition" }),
+        json!({ "word": "valid", "definition": "valid", "pronunciation": "/vælɪd/", "wordType": "determiner" }),
     ];
 
     for invalid_body in invalid_bodies {
@@ -359,7 +359,7 @@ async fn test_source_validation_integration() -> Result<()> {
     let language = LanguageCode::English;
 
     // Test that types not in source ALLOWED_WORD_TYPES are rejected
-    let invalid_types = ["preposition", "conjunction"];
+    let invalid_types = ["determiner", "particle"];
     for invalid_type in invalid_types {
         let invalid_body = json!({
             "word": "valid",

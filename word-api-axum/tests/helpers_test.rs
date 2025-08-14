@@ -39,3 +39,27 @@ fn test_word_creation() {
     assert_ne!(basic_word.word, typed_word.word);
     assert_eq!(typed_word.word_type, "noun");
 }
+
+#[test]
+fn test_all_grammatical_types_supported() {
+    // Test that helper functions work with all supported grammatical types
+    let supported_types = [
+        "noun",
+        "verb",
+        "adjective",
+        "adverb",
+        "pronoun",
+        "preposition",
+        "conjunction",
+        "interjection",
+        "article",
+    ];
+
+    for word_type in supported_types {
+        let typed_word = create_typed_test_word(word_type, "test");
+        assert_eq!(typed_word.word_type, word_type);
+        assert!(!typed_word.word.is_empty());
+        assert!(!typed_word.definition.is_empty());
+        assert!(!typed_word.pronunciation.is_empty());
+    }
+}
