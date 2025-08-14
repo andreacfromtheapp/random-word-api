@@ -28,7 +28,7 @@ fn create_validated_test_word(word_type: &str, suffix: &str) -> UpsertWord {
 
 #[tokio::test]
 async fn test_admin_create_word_success() -> Result<()> {
-    let (server, _temp_file) = create_test_server().await?;
+    let server = create_test_server().await?;
     let language = LanguageCode::English;
 
     let word_data = create_test_word("1");
@@ -75,7 +75,7 @@ async fn test_admin_list_words_optimized() -> Result<()> {
 
 // #[tokio::test]
 // async fn test_admin_crud_batch_operations() -> Result<()> {
-//     let (server, _temp_file) = create_test_server().await?;
+//     let server = create_test_server().await?;
 //     let language = LanguageCode::English;
 
 //     // Batch test multiple CRUD operations in single test for efficiency
@@ -167,7 +167,7 @@ async fn test_admin_validation_batch() -> Result<()> {
 
 #[tokio::test]
 async fn test_admin_update_streamlined() -> Result<()> {
-    let (server, _temp_file) = create_test_server().await?;
+    let server = create_test_server().await?;
     let language = LanguageCode::English;
     let type_noun = GrammaticalType::Noun;
     let type_verb = GrammaticalType::Verb;
@@ -211,7 +211,7 @@ async fn test_admin_update_streamlined() -> Result<()> {
 
 #[tokio::test]
 async fn test_admin_delete_streamlined() -> Result<()> {
-    let (server, _temp_file) = create_test_server().await?;
+    let server = create_test_server().await?;
     let language = LanguageCode::English;
     let type_noun = GrammaticalType::Noun;
 
@@ -322,7 +322,7 @@ async fn test_admin_request_validation_batch() -> Result<()> {
 
 #[tokio::test]
 async fn test_admin_duplicate_prevention() -> Result<()> {
-    let (server, _temp_file) = create_test_server().await?;
+    let server = create_test_server().await?;
     let language = LanguageCode::English;
 
     // Create a word

@@ -89,14 +89,14 @@ impl ApiConfig {
 
         // set the variables as needed
         Ok(Self::new(
-            IpAddr::from_str(dotenvy::var("BIND_ADDR")?.trim())?,
-            u16::from_str(dotenvy::var("BIND_PORT")?.trim())?,
-            dotenvy::var("DATABASE_URL")?.trim().to_owned(),
+            IpAddr::from_str(&dotenvy::var("BIND_ADDR")?)?,
+            u16::from_str(&dotenvy::var("BIND_PORT")?)?,
+            dotenvy::var("DATABASE_URL")?,
             OpenApiDocs::new(
-                bool::from_str(dotenvy::var("ENABLE_SWAGGER_UI")?.trim())?,
-                bool::from_str(dotenvy::var("ENABLE_REDOC")?.trim())?,
-                bool::from_str(dotenvy::var("ENABLE_SCALAR")?.trim())?,
-                bool::from_str(dotenvy::var("ENABLE_RAPIDOC")?.trim())?,
+                bool::from_str(&dotenvy::var("ENABLE_SWAGGER_UI")?)?,
+                bool::from_str(&dotenvy::var("ENABLE_REDOC")?)?,
+                bool::from_str(&dotenvy::var("ENABLE_SCALAR")?)?,
+                bool::from_str(&dotenvy::var("ENABLE_RAPIDOC")?)?,
             ),
         ))
     }

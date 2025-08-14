@@ -1,16 +1,15 @@
 //! Test helper utilities for integration testing
 //!
 //! Provides streamlined server creation functions for different test scenarios:
-//! - `create_test_server()` - Isolated database for write operations
-//! - `create_test_server_streamlined()` - Shared database for read-only tests
-//! - `create_test_server_memory()` - In-memory database for empty scenarios
+//! - `create_test_server()` - Isolated in-memory database for write operations
+//! - `create_test_server_streamlined()` - In-memory database for read-only tests
+//! - `create_test_server_memory()` - In-memory database with direct pool access
 
 use anyhow::{Context, Result};
 use axum_test::TestServer;
 use sqlx::{Pool, Sqlite};
 use std::sync::{Arc, Mutex};
 
-use tempfile::NamedTempFile;
 use word_api_axum::{
     init_dbpool, models::apiconfig::ApiConfig, routes::create_router, state::AppState,
 };
@@ -18,38 +17,17 @@ use word_api_axum::{
 /// Test data utilities
 pub mod test_data;
 
-/// Shared database utilities
-pub mod shared_db;
-
-/// Creates a temporary SQLite database for testing with migrations applied
+/// Creates test server with isolated in-memory database for write operations
 #[allow(dead_code)]
-async fn create_test_database() -> Result<(Pool<Sqlite>, NamedTempFile)> {
-    let temp_file = NamedTempFile::new().context("Failed to create temporary database file")?;
-
-    let db_path = temp_file.path().to_string_lossy();
-    let db_url = format!("sqlite://{db_path}");
-
-    let pool = init_dbpool(&db_url)
-        .await
-        .context("Failed to initialize test database pool")?;
-
-    Ok((pool, temp_file))
+pub async fn create_test_server() -> Result<TestServer> {
+    let (server, _pool) = create_test_server_memory().await?;
+    Ok(server)
 }
 
-/// Creates test server with isolated database for write operations
+/// Creates test server with isolated in-memory database and direct pool access
 #[allow(dead_code)]
-pub async fn create_test_server() -> Result<(TestServer, NamedTempFile)> {
-    let (pool, temp_file) = create_test_database().await?;
-    let server = create_server_with_pool(pool).await?;
-    Ok((server, temp_file))
-}
-
-/// Creates test server with isolated database and direct pool access
-#[allow(dead_code)]
-pub async fn create_test_server_with_pool() -> Result<(TestServer, NamedTempFile, Pool<Sqlite>)> {
-    let (pool, temp_file) = create_test_database().await?;
-    let server = create_server_with_pool(pool.clone()).await?;
-    Ok((server, temp_file, pool))
+pub async fn create_test_server_with_pool() -> Result<(TestServer, Pool<Sqlite>)> {
+    create_test_server_memory().await
 }
 
 /// Creates test server with in-memory database for empty scenarios
@@ -64,11 +42,11 @@ pub async fn create_test_server_memory() -> Result<(TestServer, Pool<Sqlite>)> {
     Ok((server, pool))
 }
 
-/// Creates test server with shared database for read-only tests
+/// Creates test server with in-memory database for read-only tests
 #[allow(dead_code)]
 pub async fn create_test_server_streamlined() -> Result<TestServer> {
-    let pool = shared_db::get_shared_database().await?.clone();
-    create_server_with_pool(pool).await
+    let (server, _pool) = create_test_server_memory().await?;
+    Ok(server)
 }
 
 /// Internal helper for creating test servers with database pool

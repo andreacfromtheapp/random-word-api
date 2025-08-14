@@ -1,20 +1,19 @@
 //! Helper function tests
 //!
 //! Essential tests for helper utilities including server creation,
-//! database operations, and shared database functionality.
+//! database operations, and test data functionality.
 
 use anyhow::Result;
 
 mod helpers;
 use helpers::{
     create_test_server_with_pool,
-    shared_db::get_shared_database,
     test_data::{count_words, create_basic_test_word, create_typed_test_word},
 };
 
 #[tokio::test]
 async fn test_server_creation() -> Result<()> {
-    let (_server, _temp_file, pool) = create_test_server_with_pool().await?;
+    let (_server, pool) = create_test_server_with_pool().await?;
 
     let count = count_words(&pool).await?;
     assert!(count >= 0, "Database should return valid word count");
@@ -23,10 +22,13 @@ async fn test_server_creation() -> Result<()> {
 }
 
 #[tokio::test]
-async fn test_shared_database() -> Result<()> {
-    let pool = get_shared_database().await?;
-    let count = count_words(pool).await?;
-    assert!(count > 0, "Shared database should have test data");
+async fn test_in_memory_database() -> Result<()> {
+    let (_server, pool) = create_test_server_with_pool().await?;
+    let count = count_words(&pool).await?;
+    assert!(
+        count > 0,
+        "In-memory database should have migrated test data"
+    );
 
     Ok(())
 }

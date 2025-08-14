@@ -60,7 +60,7 @@ handlers/*.rs:       Various (9 tests) - Pure logic extraction
 **What We Test:**
 
 - **HTTP Endpoints**: All API routes with real requests/responses
-- **Database Operations**: CRUD operations with actual SQLite
+- **Database Operations**: CRUD operations with in-memory SQLite databases
 - **Error Scenarios**: End-to-end error handling validation
 - **System Integration**: Full application lifecycle testing
 
@@ -111,7 +111,7 @@ their authors. Integration tests validate they work together correctly.
 - All common IPv4/IPv6 configurations tested
 - Configuration file formats validated
 - Error scenarios properly handled
-- Database operations verified end-to-end
+- Database operations verified with in-memory SQLite (fast, isolated)
 
 **Maintainability:**
 
@@ -140,7 +140,8 @@ their authors. Integration tests validate they work together correctly.
 
 **Infrastructure Code Uses Integration Testing:**
 
-- Database methods: Tested with real SQLite (more reliable than mocks)
+- Database methods: Tested with in-memory SQLite (faster than files, perfect
+  isolation)
 - HTTP handlers: Tested with real HTTP requests (catches serialization issues)
 - Application startup: Tested in full context (catches wiring problems)
 
@@ -150,10 +151,14 @@ their authors. Integration tests validate they work together correctly.
 
 **Learning**: Discovered framework code was already tested by library authors
 
-**Final Strategy**: Focus unit tests on business logic, use integration for
-system behavior
+**Database Evolution**: Migrated from temporary file databases to in-memory
+databases for faster, cleaner testing
 
-**Result**: Higher confidence with fewer, more focused tests
+**Final Strategy**: Focus unit tests on business logic, use integration for
+system behavior, leverage in-memory databases for speed and isolation
+
+**Result**: Higher confidence with fewer, more focused tests and zero file
+system impact
 
 ## Interview Talking Points
 
@@ -164,6 +169,8 @@ system behavior
 - **Architectural Thinking**: Clear separation between business logic and
   infrastructure
 - **Pragmatic Engineering**: Balancing coverage with maintainability
+- **Database Strategy**: In-memory databases for fast, isolated integration
+  tests without file system dependencies
 
 ### Problem-Solving Approach
 
@@ -189,10 +196,11 @@ judgment**:
 ✅ **Architectural Understanding**: Clear boundaries between layers
 ✅ **Production Mindset**: Real deployment scenarios thoroughly validated
 ✅ **Engineering Maturity**: Quality over quantity in test coverage
+✅ **Performance Optimization**: In-memory databases for fast, clean testing
 
-The combination of focused unit tests and comprehensive integration tests
-provides **maximum confidence with minimal maintenance overhead** - exactly
-what production systems need.
+The combination of focused unit tests and comprehensive integration tests with
+in-memory databases provides **maximum confidence with minimal maintenance
+overhead and zero file system impact** - exactly what production systems need.
 
 ---
 
