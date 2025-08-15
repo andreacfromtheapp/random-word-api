@@ -7,11 +7,11 @@ doc:
 swagger:
     watchexec -r -e rs cargo r -- --with-swagger-ui
 redoc:
-    watchexec -r -e rs cargo r -- --with-redoc
+    watchexec -r -e rs cargo r -- --with-redoc  --with-swagger-ui
 scalar:
-    watchexec -r -e rs cargo r -- --with-scalar
+    watchexec -r -e rs cargo r -- --with-scalar --with-swagger-ui
 rapidoc:
-    watchexec -r -e rs cargo r -- --with-rapidoc
+    watchexec -r -e rs cargo r -- --with-rapidoc --with-swagger-ui
 run:
     cargo run
 
