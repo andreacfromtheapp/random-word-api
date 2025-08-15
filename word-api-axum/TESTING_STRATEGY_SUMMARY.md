@@ -127,6 +127,13 @@ their authors. Integration tests validate they work together correctly.
 - Clear error messages for misconfigurations
 - Refactoring safety net
 
+**Build Process:**
+
+- No database files required for compilation
+- Clean repository without binary dependencies
+- CI/CD friendly (no DATABASE_URL setup needed)
+- Faster builds (eliminated compile-time SQL validation)
+
 ## Architecture Decisions
 
 ### Why 28.65% Unit Coverage is Optimal
@@ -152,13 +159,18 @@ their authors. Integration tests validate they work together correctly.
 **Learning**: Discovered framework code was already tested by library authors
 
 **Database Evolution**: Migrated from temporary file databases to in-memory
-databases for faster, cleaner testing
+databases, then eliminated compile-time database dependencies entirely
+
+**Dependency Elimination**: Replaced compile-time SQL validation
+(`sqlx::query_scalar!`) with runtime validation (`sqlx::query_scalar`) for
+cleaner builds
 
 **Final Strategy**: Focus unit tests on business logic, use integration for
-system behavior, leverage in-memory databases for speed and isolation
+system behavior, leverage in-memory databases for speed and isolation, eliminate
+unnecessary build dependencies
 
-**Result**: Higher confidence with fewer, more focused tests and zero file
-system impact
+**Result**: Higher confidence with fewer, more focused tests, zero file system
+impact, and clean build process without database dependencies
 
 ## Interview Talking Points
 
@@ -170,7 +182,7 @@ system impact
   infrastructure
 - **Pragmatic Engineering**: Balancing coverage with maintainability
 - **Database Strategy**: In-memory databases for fast, isolated integration
-  tests without file system dependencies
+  tests with zero build dependencies (eliminated compile-time SQL validation)
 
 ### Problem-Solving Approach
 
@@ -197,10 +209,12 @@ judgment**:
 ✅ **Production Mindset**: Real deployment scenarios thoroughly validated
 ✅ **Engineering Maturity**: Quality over quantity in test coverage
 ✅ **Performance Optimization**: In-memory databases for fast, clean testing
+✅ **Build Process Optimization**: Eliminated compile-time database dependencies
 
 The combination of focused unit tests and comprehensive integration tests with
 in-memory databases provides **maximum confidence with minimal maintenance
-overhead and zero file system impact** - exactly what production systems need.
+overhead, zero file system impact, and clean build processes** - exactly what
+production systems need.
 
 ---
 

@@ -25,7 +25,7 @@ use word_api_axum::models::word::{
 /// Used for verifying database state and ensuring test isolation.
 #[allow(dead_code)]
 pub async fn count_words(pool: &Pool<Sqlite>) -> Result<i64> {
-    let count = sqlx::query_scalar!("SELECT COUNT(*) as count FROM words")
+    let count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM words")
         .fetch_one(pool)
         .await
         .context("Failed to count words in database")?;
