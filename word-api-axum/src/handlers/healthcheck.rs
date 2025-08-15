@@ -84,8 +84,8 @@ pub async fn ready(State(state): State<AppState>) -> Result<String, AppError> {
 #[cfg(test)]
 mod tests {
     use super::alive;
+    use crate::config::{ApiConfig, OpenApiDocs};
     use crate::error::AppError;
-    use crate::models::apiconfig::{ApiConfig, OpenApiDocs};
     use std::net::IpAddr;
     use std::str::FromStr;
 

@@ -5,7 +5,7 @@
 
 use std::sync::{Arc, Mutex};
 
-use crate::models::apiconfig::ApiConfig;
+use crate::config::ApiConfig;
 
 /// Central application state shared across all HTTP handlers
 #[derive(Clone)]

@@ -14,7 +14,7 @@ use anyhow::Result;
 use std::fs;
 use std::path::PathBuf;
 use tempfile::NamedTempFile;
-use word_api_axum::models::apiconfig::{ApiConfig, FileKind};
+use word_api_axum::config::{ApiConfig, FileKind};
 
 mod helpers;
 

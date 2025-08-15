@@ -20,6 +20,9 @@ pub const TRACING_LOG_LEVELS: &str = "sqlx=info,tower_http=debug,info";
 /// CLI argument parsing and configuration
 pub mod cli;
 
+/// Server configuration management
+pub mod config;
+
 /// Error handling types and conversions
 pub mod error;
 
@@ -36,8 +39,8 @@ pub mod routes;
 pub mod state;
 
 use crate::cli::Commands;
+use crate::config::{ApiConfig, FileKind};
 use crate::error::{AppError, SqlxError};
-use crate::models::apiconfig::{ApiConfig, FileKind};
 
 /// Configure  tracing and logging using Tokio lib-tracing
 pub fn init_tracing() {

@@ -14,9 +14,7 @@ use axum_test::TestServer;
 use sqlx::{Pool, Sqlite};
 use std::sync::{Arc, Mutex};
 
-use word_api_axum::{
-    init_dbpool, models::apiconfig::ApiConfig, routes::create_router, state::AppState,
-};
+use word_api_axum::{config::ApiConfig, init_dbpool, routes::create_router, state::AppState};
 
 /// Test data utilities
 pub mod test_data;
@@ -56,7 +54,7 @@ pub async fn create_test_server_streamlined() -> Result<TestServer> {
 /// Internal helper for creating test servers with database pool
 async fn create_server_with_pool(pool: Pool<Sqlite>) -> Result<TestServer> {
     use std::net::IpAddr;
-    use word_api_axum::models::apiconfig::OpenApiDocs;
+    use word_api_axum::config::OpenApiDocs;
 
     let config = ApiConfig {
         address: "127.0.0.1".parse::<IpAddr>().unwrap(),
