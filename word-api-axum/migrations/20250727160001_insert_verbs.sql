@@ -1,1849 +1,1869 @@
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'abandon',
-    'to give up completely',
-    '/əˈbændən/',
-    'verb'
-  );
+    (
+        'abandon',
+        'to give up completely',
+        '/əˈbændən/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'abbreviate',
-    'to shorten a word or phrase',
-    '/əˈbriviˌeɪt/',
-    'verb'
-  );
+    (
+        'abbreviate',
+        'to shorten a word or phrase',
+        '/əˈbriviˌeɪt/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'abolish',
-    'to formally put an end to',
-    '/əˈbɑlɪʃ/',
-    'verb'
-  );
+    (
+        'abolish',
+        'to formally put an end to',
+        '/əˈbɑlɪʃ/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'absorb',
-    'to take in or soak up',
-    '/æbˈzɔrb/',
-    'verb'
-  );
+    (
+        'absorb',
+        'to take in or soak up',
+        '/æbˈzɔrb/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'accelerate',
-    'to increase in rate, amount, or extent',
-    '/ækˈsɛləˌreɪt/',
-    'verb'
-  );
+    (
+        'accelerate',
+        'to increase in rate, amount, or extent',
+        '/ækˈsɛləˌreɪt/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'accept',
-    'to consent to receive',
-    '/ækˈsɛpt/',
-    'verb'
-  );
+    (
+        'accept',
+        'to consent to receive',
+        '/ækˈsɛpt/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'accomplish',
-    'to achieve or complete successfully',
-    '/əˈkʌmplɪʃ/',
-    'verb'
-  );
+    (
+        'accomplish',
+        'to achieve or complete successfully',
+        '/əˈkʌmplɪʃ/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'achieve',
-    'to reach or attain by effort',
-    '/əˈtʃiv/',
-    'verb'
-  );
+    (
+        'achieve',
+        'to reach or attain by effort',
+        '/əˈtʃiv/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'acknowledge',
-    'to accept or admit the existence of',
-    '/ækˈnɑlɪdʒ/',
-    'verb'
-  );
+    (
+        'acknowledge',
+        'to accept or admit the existence of',
+        '/ækˈnɑlɪdʒ/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'acquire',
-    'to buy or obtain for oneself',
-    '/əˈkwaɪər/',
-    'verb'
-  );
+    (
+        'acquire',
+        'to buy or obtain for oneself',
+        '/əˈkwaɪər/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'activate',
-    'to make something active or operative',
-    '/ˈæktəˌveɪt/',
-    'verb'
-  );
+    (
+        'activate',
+        'to make something active or operative',
+        '/ˈæktəˌveɪt/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'adapt',
-    'to make suitable for a new use',
-    '/əˈdæpt/',
-    'verb'
-  );
+    (
+        'adapt',
+        'to make suitable for a new use',
+        '/əˈdæpt/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'address',
-    'to speak to someone',
-    '/əˈdrɛs/',
-    'verb'
-  );
+    (
+        'address',
+        'to speak to someone',
+        '/əˈdrɛs/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'adjust',
-    'to alter or move something slightly',
-    '/əˈdʒʌst/',
-    'verb'
-  );
+    (
+        'adjust',
+        'to alter or move something slightly',
+        '/əˈdʒʌst/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'admire',
-    'to regard with respect or approval',
-    '/ædˈmaɪər/',
-    'verb'
-  );
+    (
+        'admire',
+        'to regard with respect or approval',
+        '/ædˈmaɪər/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'admit',
-    'to confess to be true or to be the case',
-    '/ædˈmɪt/',
-    'verb'
-  );
+    (
+        'admit',
+        'to confess to be true or to be the case',
+        '/ædˈmɪt/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'adopt',
-    'to take in and raise as ones own child',
-    '/əˈdɑpt/',
-    'verb'
-  );
+    (
+        'adopt',
+        'to take in and raise as ones own child',
+        '/əˈdɑpt/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'advance',
-    'to move forward in a purposeful way',
-    '/ædˈvæns/',
-    'verb'
-  );
+    (
+        'advance',
+        'to move forward in a purposeful way',
+        '/ædˈvæns/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'advertise',
-    'to describe or draw attention to',
-    '/ˈædvərˌtaɪz/',
-    'verb'
-  );
+    (
+        'advertise',
+        'to describe or draw attention to',
+        '/ˈædvərˌtaɪz/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'advise',
-    'to give counsel to',
-    '/ædˈvaɪz/',
-    'verb'
-  );
+    (
+        'advise',
+        'to give counsel to',
+        '/ædˈvaɪz/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'afford',
-    'to have enough money to pay for',
-    '/əˈfɔrd/',
-    'verb'
-  );
+    (
+        'afford',
+        'to have enough money to pay for',
+        '/əˈfɔrd/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'agree',
-    'to have the same opinion about something',
-    '/əˈɡri/',
-    'verb'
-  );
+    (
+        'agree',
+        'to have the same opinion about something',
+        '/əˈɡri/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'allow',
-    'to give permission for something to happen',
-    '/əˈlaʊ/',
-    'verb'
-  );
+    (
+        'allow',
+        'to give permission for something to happen',
+        '/əˈlaʊ/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'analyze',
-    'to examine methodically and in detail',
-    '/ˈænəˌlaɪz/',
-    'verb'
-  );
+    (
+        'analyze',
+        'to examine methodically and in detail',
+        '/ˈænəˌlaɪz/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'announce',
-    'to make a public and formal declaration',
-    '/əˈnaʊns/',
-    'verb'
-  );
+    (
+        'announce',
+        'to make a public and formal declaration',
+        '/əˈnaʊns/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'apologize',
-    'to express regret for something done wrong',
-    '/əˈpɑləˌdʒaɪz/',
-    'verb'
-  );
+    (
+        'apologize',
+        'to express regret for something done wrong',
+        '/əˈpɑləˌdʒaɪz/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'appear',
-    'to come into sight or become visible',
-    '/əˈpɪr/',
-    'verb'
-  );
+    (
+        'appear',
+        'to come into sight or become visible',
+        '/əˈpɪr/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'apply',
-    'to make a formal application or request',
-    '/əˈplaɪ/',
-    'verb'
-  );
+    (
+        'apply',
+        'to make a formal application or request',
+        '/əˈplaɪ/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'appreciate',
-    'to recognize the full worth of',
-    '/əˈpriʃiˌeɪt/',
-    'verb'
-  );
+    (
+        'appreciate',
+        'to recognize the full worth of',
+        '/əˈpriʃiˌeɪt/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'approve',
-    'to officially agree to or accept',
-    '/əˈpruv/',
-    'verb'
-  );
+    (
+        'approve',
+        'to officially agree to or accept',
+        '/əˈpruv/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'argue',
-    'to give reasons for or against something',
-    '/ˈɑrɡju/',
-    'verb'
-  );
+    (
+        'argue',
+        'to give reasons for or against something',
+        '/ˈɑrɡju/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'arrange',
-    'to put things in a particular order',
-    '/əˈreɪndʒ/',
-    'verb'
-  );
+    (
+        'arrange',
+        'to put things in a particular order',
+        '/əˈreɪndʒ/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'arrive',
-    'to reach a place at the end of a journey',
-    '/əˈraɪv/',
-    'verb'
-  );
+    (
+        'arrive',
+        'to reach a place at the end of a journey',
+        '/əˈraɪv/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'ask',
-    'to say something in order to obtain an answer',
-    '/æsk/',
-    'verb'
-  );
+    (
+        'ask',
+        'to say something in order to obtain an answer',
+        '/æsk/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'assess',
-    'to evaluate or estimate the nature of',
-    '/əˈsɛs/',
-    'verb'
-  );
+    (
+        'assess',
+        'to evaluate or estimate the nature of',
+        '/əˈsɛs/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'assign',
-    'to allocate a job or role to someone',
-    '/əˈsaɪn/',
-    'verb'
-  );
+    (
+        'assign',
+        'to allocate a job or role to someone',
+        '/əˈsaɪn/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  ('assist', 'to help someone', '/əˈsɪst/', 'verb');
+    (
+        'assist',
+        'to help someone',
+        '/əˈsɪst/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'associate',
-    'to connect someone or something with',
-    '/əˈsoʊʃiˌeɪt/',
-    'verb'
-  );
+    (
+        'associate',
+        'to connect someone or something with',
+        '/əˈsoʊʃiˌeɪt/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'assume',
-    'to suppose to be the case without proof',
-    '/əˈsum/',
-    'verb'
-  );
+    (
+        'assume',
+        'to suppose to be the case without proof',
+        '/əˈsum/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'attend',
-    'to be present at an event',
-    '/əˈtɛnd/',
-    'verb'
-  );
+    (
+        'attend',
+        'to be present at an event',
+        '/əˈtɛnd/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'attract',
-    'to cause to come to a place or participate',
-    '/əˈtrækt/',
-    'verb'
-  );
+    (
+        'attract',
+        'to cause to come to a place or participate',
+        '/əˈtrækt/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'avoid',
-    'to keep away from or stop oneself from',
-    '/əˈvɔɪd/',
-    'verb'
-  );
+    (
+        'avoid',
+        'to keep away from or stop oneself from',
+        '/əˈvɔɪd/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'become',
-    'to grow to be or come to be',
-    '/bɪˈkʌm/',
-    'verb'
-  );
+    (
+        'become',
+        'to grow to be or come to be',
+        '/bɪˈkʌm/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'begin',
-    'to start; perform or undergo the first part',
-    '/bɪˈɡɪn/',
-    'verb'
-  );
+    (
+        'begin',
+        'to start; perform or undergo the first part',
+        '/bɪˈɡɪn/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'behave',
-    'to act in a particular way',
-    '/bɪˈheɪv/',
-    'verb'
-  );
+    (
+        'behave',
+        'to act in a particular way',
+        '/bɪˈheɪv/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'believe',
-    'to accept something as true',
-    '/bɪˈliv/',
-    'verb'
-  );
+    (
+        'believe',
+        'to accept something as true',
+        '/bɪˈliv/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'belong',
-    'to be the property of',
-    '/bɪˈlɔŋ/',
-    'verb'
-  );
+    (
+        'belong',
+        'to be the property of',
+        '/bɪˈlɔŋ/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'blame',
-    'to assign responsibility for a fault',
-    '/bleɪm/',
-    'verb'
-  );
+    (
+        'blame',
+        'to assign responsibility for a fault',
+        '/bleɪm/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'blow',
-    'to move creating an air current',
-    '/bloʊ/',
-    'verb'
-  );
+    (
+        'blow',
+        'to move creating an air current',
+        '/bloʊ/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'borrow',
-    'to take and use something belonging to another',
-    '/ˈbɑroʊ/',
-    'verb'
-  );
+    (
+        'borrow',
+        'to take and use something belonging to another',
+        '/ˈbɑroʊ/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'break',
-    'to separate into pieces as a result of impact',
-    '/breɪk/',
-    'verb'
-  );
+    (
+        'break',
+        'to separate into pieces as a result of impact',
+        '/breɪk/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'breathe',
-    'to take air into the lungs and then expel it',
-    '/brið/',
-    'verb'
-  );
+    (
+        'breathe',
+        'to take air into the lungs and then expel it',
+        '/brið/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'bring',
-    'to take or go with someone to a place',
-    '/brɪŋ/',
-    'verb'
-  );
+    (
+        'bring',
+        'to take or go with someone to a place',
+        '/brɪŋ/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'build',
-    'to construct something by putting parts together',
-    '/bɪld/',
-    'verb'
-  );
+    (
+        'build',
+        'to construct something by putting parts together',
+        '/bɪld/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'burn',
-    'to destroy or damage by fire',
-    '/bɜrn/',
-    'verb'
-  );
+    (
+        'burn',
+        'to destroy or damage by fire',
+        '/bɜrn/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'buy',
-    'to obtain in exchange for payment',
-    '/baɪ/',
-    'verb'
-  );
+    (
+        'buy',
+        'to obtain in exchange for payment',
+        '/baɪ/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'calculate',
-    'to determine by mathematical methods',
-    '/ˈkælkjəˌleɪt/',
-    'verb'
-  );
+    (
+        'calculate',
+        'to determine by mathematical methods',
+        '/ˈkælkjəˌleɪt/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'call',
-    'to cry out to someone to attract attention',
-    '/kɔl/',
-    'verb'
-  );
+    (
+        'call',
+        'to cry out to someone to attract attention',
+        '/kɔl/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'cancel',
-    'to decide that an organized event will not happen',
-    '/ˈkænsəl/',
-    'verb'
-  );
+    (
+        'cancel',
+        'to decide that an organized event will not happen',
+        '/ˈkænsəl/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'capture',
-    'to take into ones possession or control by force',
-    '/ˈkæptʃər/',
-    'verb'
-  );
+    (
+        'capture',
+        'to take into ones possession or control by force',
+        '/ˈkæptʃər/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'carry',
-    'to support and move someone or something',
-    '/ˈkæri/',
-    'verb'
-  );
+    (
+        'carry',
+        'to support and move someone or something',
+        '/ˈkæri/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'catch',
-    'to intercept and hold a moving object',
-    '/kætʃ/',
-    'verb'
-  );
+    (
+        'catch',
+        'to intercept and hold a moving object',
+        '/kætʃ/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'celebrate',
-    'to acknowledge a significant day or event',
-    '/ˈsɛləˌbreɪt/',
-    'verb'
-  );
+    (
+        'celebrate',
+        'to acknowledge a significant day or event',
+        '/ˈsɛləˌbreɪt/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'charge',
-    'to demand an amount as a price',
-    '/tʃɑrdʒ/',
-    'verb'
-  );
+    (
+        'charge',
+        'to demand an amount as a price',
+        '/tʃɑrdʒ/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'choose',
-    'to pick out or select from a number',
-    '/tʃuz/',
-    'verb'
-  );
+    (
+        'choose',
+        'to pick out or select from a number',
+        '/tʃuz/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'claim',
-    'to state or assert that something is the case',
-    '/kleɪm/',
-    'verb'
-  );
+    (
+        'claim',
+        'to state or assert that something is the case',
+        '/kleɪm/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'clean',
-    'to make something free of dirt or marks',
-    '/klin/',
-    'verb'
-  );
+    (
+        'clean',
+        'to make something free of dirt or marks',
+        '/klin/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'clear',
-    'to remove unwanted items from a place',
-    '/klɪr/',
-    'verb'
-  );
+    (
+        'clear',
+        'to remove unwanted items from a place',
+        '/klɪr/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'climb',
-    'to go or come up to a higher position',
-    '/klaɪm/',
-    'verb'
-  );
+    (
+        'climb',
+        'to go or come up to a higher position',
+        '/klaɪm/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'close',
-    'to move so as to block an opening',
-    '/kloʊz/',
-    'verb'
-  );
+    (
+        'close',
+        'to move so as to block an opening',
+        '/kloʊz/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'collect',
-    'to bring or gather together',
-    '/kəˈlɛkt/',
-    'verb'
-  );
+    (
+        'collect',
+        'to bring or gather together',
+        '/kəˈlɛkt/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'combine',
-    'to unite; join or merge',
-    '/kəmˈbaɪn/',
-    'verb'
-  );
+    (
+        'combine',
+        'to unite; join or merge',
+        '/kəmˈbaɪn/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'come',
-    'to move toward or arrive at a particular place',
-    '/kʌm/',
-    'verb'
-  );
+    (
+        'come',
+        'to move toward or arrive at a particular place',
+        '/kʌm/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'commit',
-    'to carry out or perpetrate a mistake or crime',
-    '/kəˈmɪt/',
-    'verb'
-  );
+    (
+        'commit',
+        'to carry out or perpetrate a mistake or crime',
+        '/kəˈmɪt/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'communicate',
-    'to share or exchange information',
-    '/kəˈmjunəˌkeɪt/',
-    'verb'
-  );
+    (
+        'communicate',
+        'to share or exchange information',
+        '/kəˈmjunəˌkeɪt/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'compare',
-    'to estimate similarities or differences',
-    '/kəmˈpɛr/',
-    'verb'
-  );
+    (
+        'compare',
+        'to estimate similarities or differences',
+        '/kəmˈpɛr/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'compete',
-    'to strive to gain or win something',
-    '/kəmˈpit/',
-    'verb'
-  );
+    (
+        'compete',
+        'to strive to gain or win something',
+        '/kəmˈpit/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'complain',
-    'to express dissatisfaction or annoyance',
-    '/kəmˈpleɪn/',
-    'verb'
-  );
+    (
+        'complain',
+        'to express dissatisfaction or annoyance',
+        '/kəmˈpleɪn/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'complete',
-    'to finish making or doing',
-    '/kəmˈplit/',
-    'verb'
-  );
+    (
+        'complete',
+        'to finish making or doing',
+        '/kəmˈplit/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'concentrate',
-    'to focus all ones attention on',
-    '/ˈkɑnsənˌtreɪt/',
-    'verb'
-  );
+    (
+        'concentrate',
+        'to focus all ones attention on',
+        '/ˈkɑnsənˌtreɪt/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'conduct',
-    'to organize and carry out',
-    '/kənˈdʌkt/',
-    'verb'
-  );
+    (
+        'conduct',
+        'to organize and carry out',
+        '/kənˈdʌkt/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'confirm',
-    'to establish the truth or correctness of',
-    '/kənˈfɜrm/',
-    'verb'
-  );
+    (
+        'confirm',
+        'to establish the truth or correctness of',
+        '/kənˈfɜrm/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'connect',
-    'to bring together so as to establish a link',
-    '/kəˈnɛkt/',
-    'verb'
-  );
+    (
+        'connect',
+        'to bring together so as to establish a link',
+        '/kəˈnɛkt/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'consider',
-    'to think carefully about',
-    '/kənˈsɪdər/',
-    'verb'
-  );
+    (
+        'consider',
+        'to think carefully about',
+        '/kənˈsɪdər/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'consist',
-    'to be composed or made up of',
-    '/kənˈsɪst/',
-    'verb'
-  );
+    (
+        'consist',
+        'to be composed or made up of',
+        '/kənˈsɪst/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'construct',
-    'to build or make something',
-    '/kənˈstrʌkt/',
-    'verb'
-  );
+    (
+        'construct',
+        'to build or make something',
+        '/kənˈstrʌkt/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'contain',
-    'to have or hold someone or something within',
-    '/kənˈteɪn/',
-    'verb'
-  );
+    (
+        'contain',
+        'to have or hold someone or something within',
+        '/kənˈteɪn/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'continue',
-    'to persist in an activity or process',
-    '/kənˈtɪnju/',
-    'verb'
-  );
+    (
+        'continue',
+        'to persist in an activity or process',
+        '/kənˈtɪnju/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'contribute',
-    'to give something in order to help achieve',
-    '/kənˈtrɪbjut/',
-    'verb'
-  );
+    (
+        'contribute',
+        'to give something in order to help achieve',
+        '/kənˈtrɪbjut/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'convince',
-    'to cause someone to believe firmly',
-    '/kənˈvɪns/',
-    'verb'
-  );
+    (
+        'convince',
+        'to cause someone to believe firmly',
+        '/kənˈvɪns/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'cook',
-    'to prepare food by heating it',
-    '/kʊk/',
-    'verb'
-  );
+    (
+        'cook',
+        'to prepare food by heating it',
+        '/kʊk/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'copy',
-    'to make an identical reproduction of',
-    '/ˈkɑpi/',
-    'verb'
-  );
+    (
+        'copy',
+        'to make an identical reproduction of',
+        '/ˈkɑpi/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'correct',
-    'to make right or accurate',
-    '/kəˈrɛkt/',
-    'verb'
-  );
+    (
+        'correct',
+        'to make right or accurate',
+        '/kəˈrɛkt/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'count',
-    'to determine the total number of',
-    '/kaʊnt/',
-    'verb'
-  );
+    (
+        'count',
+        'to determine the total number of',
+        '/kaʊnt/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'create',
-    'to bring something into existence',
-    '/kriˈeɪt/',
-    'verb'
-  );
+    (
+        'create',
+        'to bring something into existence',
+        '/kriˈeɪt/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'cross',
-    'to go or extend across something',
-    '/krɔs/',
-    'verb'
-  );
+    (
+        'cross',
+        'to go or extend across something',
+        '/krɔs/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'cry',
-    'to shed tears as a result of emotion',
-    '/kraɪ/',
-    'verb'
-  );
+    (
+        'cry',
+        'to shed tears as a result of emotion',
+        '/kraɪ/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'cut',
-    'to make an opening with a sharp implement',
-    '/kʌt/',
-    'verb'
-  );
+    (
+        'cut',
+        'to make an opening with a sharp implement',
+        '/kʌt/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'decide',
-    'to make a choice from a number of alternatives',
-    '/dɪˈsaɪd/',
-    'verb'
-  );
+    (
+        'decide',
+        'to make a choice from a number of alternatives',
+        '/dɪˈsaɪd/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'declare',
-    'to say something in a solemn manner',
-    '/dɪˈklɛr/',
-    'verb'
-  );
+    (
+        'declare',
+        'to say something in a solemn manner',
+        '/dɪˈklɛr/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'decrease',
-    'to make or become smaller in size',
-    '/dɪˈkris/',
-    'verb'
-  );
+    (
+        'decrease',
+        'to make or become smaller in size',
+        '/dɪˈkris/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'deliver',
-    'to bring and hand over to the intended recipient',
-    '/dɪˈlɪvər/',
-    'verb'
-  );
+    (
+        'deliver',
+        'to bring and hand over to the intended recipient',
+        '/dɪˈlɪvər/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'demonstrate',
-    'to clearly show the existence of something',
-    '/ˈdɛmənˌstreɪt/',
-    'verb'
-  );
+    (
+        'demonstrate',
+        'to clearly show the existence of something',
+        '/ˈdɛmənˌstreɪt/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'deny',
-    'to state that something is not true',
-    '/dɪˈnaɪ/',
-    'verb'
-  );
+    (
+        'deny',
+        'to state that something is not true',
+        '/dɪˈnaɪ/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'depend',
-    'to be controlled or determined by',
-    '/dɪˈpɛnd/',
-    'verb'
-  );
+    (
+        'depend',
+        'to be controlled or determined by',
+        '/dɪˈpɛnd/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'describe',
-    'to give an account in words of',
-    '/dɪˈskraɪb/',
-    'verb'
-  );
+    (
+        'describe',
+        'to give an account in words of',
+        '/dɪˈskraɪb/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'destroy',
-    'to put an end to the existence of',
-    '/dɪˈstrɔɪ/',
-    'verb'
-  );
+    (
+        'destroy',
+        'to put an end to the existence of',
+        '/dɪˈstrɔɪ/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'determine',
-    'to cause something to occur in a particular way',
-    '/dɪˈtɜrmən/',
-    'verb'
-  );
+    (
+        'determine',
+        'to cause something to occur in a particular way',
+        '/dɪˈtɜrmən/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'develop',
-    'to grow or cause to grow and become more mature',
-    '/dɪˈvɛləp/',
-    'verb'
-  );
+    (
+        'develop',
+        'to grow or cause to grow and become more mature',
+        '/dɪˈvɛləp/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  ('die', 'to stop living', '/daɪ/', 'verb');
+    ('die', 'to stop living', '/daɪ/', 'verb');
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'differ',
-    'to be unlike or dissimilar',
-    '/ˈdɪfər/',
-    'verb'
-  );
+    (
+        'differ',
+        'to be unlike or dissimilar',
+        '/ˈdɪfər/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'direct',
-    'to control the operations of',
-    '/dəˈrɛkt/',
-    'verb'
-  );
+    (
+        'direct',
+        'to control the operations of',
+        '/dəˈrɛkt/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'disappear',
-    'to cease to be visible',
-    '/ˌdɪsəˈpɪr/',
-    'verb'
-  );
+    (
+        'disappear',
+        'to cease to be visible',
+        '/ˌdɪsəˈpɪr/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'discover',
-    'to find unexpectedly or in the course of search',
-    '/dɪˈskʌvər/',
-    'verb'
-  );
+    (
+        'discover',
+        'to find unexpectedly or in the course of search',
+        '/dɪˈskʌvər/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'discuss',
-    'to talk about something so as to reach a decision',
-    '/dɪˈskʌs/',
-    'verb'
-  );
+    (
+        'discuss',
+        'to talk about something so as to reach a decision',
+        '/dɪˈskʌs/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'distribute',
-    'to give shares of something to people',
-    '/dɪˈstrɪbjut/',
-    'verb'
-  );
+    (
+        'distribute',
+        'to give shares of something to people',
+        '/dɪˈstrɪbjut/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'divide',
-    'to separate or be separated into parts',
-    '/dɪˈvaɪd/',
-    'verb'
-  );
+    (
+        'divide',
+        'to separate or be separated into parts',
+        '/dɪˈvaɪd/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'do',
-    'to perform an action or activity',
-    '/du/',
-    'verb'
-  );
+    (
+        'do',
+        'to perform an action or activity',
+        '/du/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'double',
-    'to become twice as much or many',
-    '/ˈdʌbəl/',
-    'verb'
-  );
+    (
+        'double',
+        'to become twice as much or many',
+        '/ˈdʌbəl/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'download',
-    'to copy data from one system to another',
-    '/ˈdaʊnˌloʊd/',
-    'verb'
-  );
+    (
+        'download',
+        'to copy data from one system to another',
+        '/ˈdaʊnˌloʊd/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'draw',
-    'to produce a picture by making lines and marks',
-    '/drɔ/',
-    'verb'
-  );
+    (
+        'draw',
+        'to produce a picture by making lines and marks',
+        '/drɔ/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  ('dress', 'to put on clothes', '/drɛs/', 'verb');
+    ('dress', 'to put on clothes', '/drɛs/', 'verb');
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'drink',
-    'to take liquid into the mouth and swallow',
-    '/drɪŋk/',
-    'verb'
-  );
+    (
+        'drink',
+        'to take liquid into the mouth and swallow',
+        '/drɪŋk/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  ('drop', 'to let something fall', '/drɑp/', 'verb');
+    (
+        'drop',
+        'to let something fall',
+        '/drɑp/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'earn',
-    'to obtain money in return for work',
-    '/ɜrn/',
-    'verb'
-  );
+    (
+        'earn',
+        'to obtain money in return for work',
+        '/ɜrn/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'eat',
-    'to put food into the mouth and chew',
-    '/it/',
-    'verb'
-  );
+    (
+        'eat',
+        'to put food into the mouth and chew',
+        '/it/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'edit',
-    'to prepare written material for publication',
-    '/ˈɛdət/',
-    'verb'
-  );
+    (
+        'edit',
+        'to prepare written material for publication',
+        '/ˈɛdət/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'elect',
-    'to choose someone for a position by voting',
-    '/ɪˈlɛkt/',
-    'verb'
-  );
+    (
+        'elect',
+        'to choose someone for a position by voting',
+        '/ɪˈlɛkt/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'employ',
-    'to give work to someone and pay them',
-    '/ɪmˈplɔɪ/',
-    'verb'
-  );
+    (
+        'employ',
+        'to give work to someone and pay them',
+        '/ɪmˈplɔɪ/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'enable',
-    'to give someone the authority to do something',
-    '/ɪˈneɪbəl/',
-    'verb'
-  );
+    (
+        'enable',
+        'to give someone the authority to do something',
+        '/ɪˈneɪbəl/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'encourage',
-    'to give support or confidence to someone',
-    '/ɪnˈkɜrɪdʒ/',
-    'verb'
-  );
+    (
+        'encourage',
+        'to give support or confidence to someone',
+        '/ɪnˈkɜrɪdʒ/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'end',
-    'to come or bring to a final point',
-    '/ɛnd/',
-    'verb'
-  );
+    (
+        'end',
+        'to come or bring to a final point',
+        '/ɛnd/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'engage',
-    'to participate or become involved in',
-    '/ɪnˈɡeɪdʒ/',
-    'verb'
-  );
+    (
+        'engage',
+        'to participate or become involved in',
+        '/ɪnˈɡeɪdʒ/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'enjoy',
-    'to take delight or pleasure in',
-    '/ɪnˈdʒɔɪ/',
-    'verb'
-  );
+    (
+        'enjoy',
+        'to take delight or pleasure in',
+        '/ɪnˈdʒɔɪ/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'ensure',
-    'to make certain that something happens',
-    '/ɪnˈʃʊr/',
-    'verb'
-  );
+    (
+        'ensure',
+        'to make certain that something happens',
+        '/ɪnˈʃʊr/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'enter',
-    'to come or go into a place',
-    '/ˈɛntər/',
-    'verb'
-  );
+    (
+        'enter',
+        'to come or go into a place',
+        '/ˈɛntər/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'establish',
-    'to set up on a firm basis',
-    '/ɪˈstæblɪʃ/',
-    'verb'
-  );
+    (
+        'establish',
+        'to set up on a firm basis',
+        '/ɪˈstæblɪʃ/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'evaluate',
-    'to form an idea of the amount or value',
-    '/ɪˈvæljuˌeɪt/',
-    'verb'
-  );
+    (
+        'evaluate',
+        'to form an idea of the amount or value',
+        '/ɪˈvæljuˌeɪt/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'examine',
-    'to inspect someone or something thoroughly',
-    '/ɪɡˈzæmən/',
-    'verb'
-  );
+    (
+        'examine',
+        'to inspect someone or something thoroughly',
+        '/ɪɡˈzæmən/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'exceed',
-    'to be greater in number than',
-    '/ɪkˈsid/',
-    'verb'
-  );
+    (
+        'exceed',
+        'to be greater in number than',
+        '/ɪkˈsid/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'exchange',
-    'to give something and receive something else',
-    '/ɪksˈtʃeɪndʒ/',
-    'verb'
-  );
+    (
+        'exchange',
+        'to give something and receive something else',
+        '/ɪksˈtʃeɪndʒ/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'exclude',
-    'to deny someone access to a place',
-    '/ɪksˈklud/',
-    'verb'
-  );
+    (
+        'exclude',
+        'to deny someone access to a place',
+        '/ɪksˈklud/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'excuse',
-    'to forgive someone for a fault',
-    '/ɪksˈkjuz/',
-    'verb'
-  );
+    (
+        'excuse',
+        'to forgive someone for a fault',
+        '/ɪksˈkjuz/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'execute',
-    'to carry out or put into effect',
-    '/ˈɛksəˌkjut/',
-    'verb'
-  );
+    (
+        'execute',
+        'to carry out or put into effect',
+        '/ˈɛksəˌkjut/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'exercise',
-    'to use or apply a faculty or right',
-    '/ˈɛksərˌsaɪz/',
-    'verb'
-  );
+    (
+        'exercise',
+        'to use or apply a faculty or right',
+        '/ˈɛksərˌsaɪz/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'exist',
-    'to have objective reality or being',
-    '/ɪɡˈzɪst/',
-    'verb'
-  );
+    (
+        'exist',
+        'to have objective reality or being',
+        '/ɪɡˈzɪst/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'expand',
-    'to become or make larger or more extensive',
-    '/ɪkˈspænd/',
-    'verb'
-  );
+    (
+        'expand',
+        'to become or make larger or more extensive',
+        '/ɪkˈspænd/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'expect',
-    'to regard something as likely to happen',
-    '/ɪkˈspɛkt/',
-    'verb'
-  );
+    (
+        'expect',
+        'to regard something as likely to happen',
+        '/ɪkˈspɛkt/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'experience',
-    'to encounter or undergo an event',
-    '/ɪkˈspɪriəns/',
-    'verb'
-  );
+    (
+        'experience',
+        'to encounter or undergo an event',
+        '/ɪkˈspɪriəns/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'explain',
-    'to make something clear by describing it',
-    '/ɪkˈspleɪn/',
-    'verb'
-  );
+    (
+        'explain',
+        'to make something clear by describing it',
+        '/ɪkˈspleɪn/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'explore',
-    'to investigate systematically',
-    '/ɪkˈsplɔr/',
-    'verb'
-  );
+    (
+        'explore',
+        'to investigate systematically',
+        '/ɪkˈsplɔr/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'express',
-    'to convey a thought or feeling in words',
-    '/ɪkˈsprɛs/',
-    'verb'
-  );
+    (
+        'express',
+        'to convey a thought or feeling in words',
+        '/ɪkˈsprɛs/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'extend',
-    'to cause to cover a larger area',
-    '/ɪkˈstɛnd/',
-    'verb'
-  );
+    (
+        'extend',
+        'to cause to cover a larger area',
+        '/ɪkˈstɛnd/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'face',
-    'to confront and deal with a problem',
-    '/feɪs/',
-    'verb'
-  );
+    (
+        'face',
+        'to confront and deal with a problem',
+        '/feɪs/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'fail',
-    'to be unsuccessful in achieving a goal',
-    '/feɪl/',
-    'verb'
-  );
+    (
+        'fail',
+        'to be unsuccessful in achieving a goal',
+        '/feɪl/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'fall',
-    'to move downward under the force of gravity',
-    '/fɔl/',
-    'verb'
-  );
+    (
+        'fall',
+        'to move downward under the force of gravity',
+        '/fɔl/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'fear',
-    'to be afraid of someone or something',
-    '/fɪr/',
-    'verb'
-  );
+    (
+        'fear',
+        'to be afraid of someone or something',
+        '/fɪr/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'feature',
-    'to have as an important aspect',
-    '/ˈfitʃər/',
-    'verb'
-  );
+    (
+        'feature',
+        'to have as an important aspect',
+        '/ˈfitʃər/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'feed',
-    'to give food to a person or animal',
-    '/fid/',
-    'verb'
-  );
+    (
+        'feed',
+        'to give food to a person or animal',
+        '/fid/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'feel',
-    'to experience an emotion or sensation',
-    '/fil/',
-    'verb'
-  );
+    (
+        'feel',
+        'to experience an emotion or sensation',
+        '/fil/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'fight',
-    'to engage in battle or combat',
-    '/faɪt/',
-    'verb'
-  );
+    (
+        'fight',
+        'to engage in battle or combat',
+        '/faɪt/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  ('fill', 'to make or become full', '/fɪl/', 'verb');
+    (
+        'fill',
+        'to make or become full',
+        '/fɪl/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'find',
-    'to discover or perceive by chance',
-    '/faɪnd/',
-    'verb'
-  );
+    (
+        'find',
+        'to discover or perceive by chance',
+        '/faɪnd/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'finish',
-    'to bring a task to an end',
-    '/ˈfɪnɪʃ/',
-    'verb'
-  );
+    (
+        'finish',
+        'to bring a task to an end',
+        '/ˈfɪnɪʃ/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'fire',
-    'to discharge a gun or missile',
-    '/ˈfaɪər/',
-    'verb'
-  );
+    (
+        'fire',
+        'to discharge a gun or missile',
+        '/ˈfaɪər/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'fit',
-    'to be the right shape and size for',
-    '/fɪt/',
-    'verb'
-  );
+    (
+        'fit',
+        'to be the right shape and size for',
+        '/fɪt/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'fix',
-    'to repair something that is broken',
-    '/fɪks/',
-    'verb'
-  );
+    (
+        'fix',
+        'to repair something that is broken',
+        '/fɪks/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'fly',
-    'to move through the air using wings',
-    '/flaɪ/',
-    'verb'
-  );
+    (
+        'fly',
+        'to move through the air using wings',
+        '/flaɪ/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'focus',
-    'to concentrate attention on something',
-    '/ˈfoʊkəs/',
-    'verb'
-  );
+    (
+        'focus',
+        'to concentrate attention on something',
+        '/ˈfoʊkəs/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'follow',
-    'to go or come after a person or thing',
-    '/ˈfɑloʊ/',
-    'verb'
-  );
+    (
+        'follow',
+        'to go or come after a person or thing',
+        '/ˈfɑloʊ/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'force',
-    'to make someone do something against their will',
-    '/fɔrs/',
-    'verb'
-  );
+    (
+        'force',
+        'to make someone do something against their will',
+        '/fɔrs/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'forget',
-    'to fail to remember something',
-    '/fərˈɡɛt/',
-    'verb'
-  );
+    (
+        'forget',
+        'to fail to remember something',
+        '/fərˈɡɛt/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'form',
-    'to bring together parts to create something',
-    '/fɔrm/',
-    'verb'
-  );
+    (
+        'form',
+        'to bring together parts to create something',
+        '/fɔrm/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'found',
-    'to establish an institution or organization',
-    '/faʊnd/',
-    'verb'
-  );
+    (
+        'found',
+        'to establish an institution or organization',
+        '/faʊnd/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'gain',
-    'to obtain or secure something desired',
-    '/ɡeɪn/',
-    'verb'
-  );
+    (
+        'gain',
+        'to obtain or secure something desired',
+        '/ɡeɪn/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'generate',
-    'to cause something to arise or come about',
-    '/ˈdʒɛnəˌreɪt/',
-    'verb'
-  );
+    (
+        'generate',
+        'to cause something to arise or come about',
+        '/ˈdʒɛnəˌreɪt/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  ('get', 'to come to have or hold', '/ɡɛt/', 'verb');
+    (
+        'get',
+        'to come to have or hold',
+        '/ɡɛt/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'give',
-    'to freely transfer possession of something',
-    '/ɡɪv/',
-    'verb'
-  );
+    (
+        'give',
+        'to freely transfer possession of something',
+        '/ɡɪv/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'go',
-    'to move from one place to another',
-    '/ɡoʊ/',
-    'verb'
-  );
+    (
+        'go',
+        'to move from one place to another',
+        '/ɡoʊ/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'grab',
-    'to take hold of suddenly and roughly',
-    '/ɡræb/',
-    'verb'
-  );
+    (
+        'grab',
+        'to take hold of suddenly and roughly',
+        '/ɡræb/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'grow',
-    'to increase in size or amount',
-    '/ɡroʊ/',
-    'verb'
-  );
+    (
+        'grow',
+        'to increase in size or amount',
+        '/ɡroʊ/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'guarantee',
-    'to provide a formal assurance',
-    '/ˌɡærənˈti/',
-    'verb'
-  );
+    (
+        'guarantee',
+        'to provide a formal assurance',
+        '/ˌɡærənˈti/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'guess',
-    'to estimate without sufficient information',
-    '/ɡɛs/',
-    'verb'
-  );
+    (
+        'guess',
+        'to estimate without sufficient information',
+        '/ɡɛs/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'guide',
-    'to show the way to someone',
-    '/ɡaɪd/',
-    'verb'
-  );
+    (
+        'guide',
+        'to show the way to someone',
+        '/ɡaɪd/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'handle',
-    'to manage a situation or problem',
-    '/ˈhændəl/',
-    'verb'
-  );
+    (
+        'handle',
+        'to manage a situation or problem',
+        '/ˈhændəl/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'hang',
-    'to attach something from above',
-    '/hæŋ/',
-    'verb'
-  );
+    (
+        'hang',
+        'to attach something from above',
+        '/hæŋ/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'happen',
-    'to take place or occur',
-    '/ˈhæpən/',
-    'verb'
-  );
+    (
+        'happen',
+        'to take place or occur',
+        '/ˈhæpən/',
+        'verb'
+    );
 
 INSERT INTO
-  words (word, definition, pronunciation, word_type)
+    words (word, definition, pronunciation, word_type)
 VALUES
-  (
-    'have',
-    'to possess or own something',
-    '/hæv/',
-    'verb'
-  );
+    (
+        'have',
+        'to possess or own something',
+        '/hæv/',
+        'verb'
+    );

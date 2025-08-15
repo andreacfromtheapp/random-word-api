@@ -1,1 +1,1 @@
-CREATE INDEX IF NOT EXISTS IX_words ON words (word);
+CREATE INDEX IF NOT EXISTS ix_words ON words (word);

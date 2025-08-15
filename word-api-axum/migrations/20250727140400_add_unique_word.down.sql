@@ -1,1 +1,1 @@
-DROP INDEX IF EXISTS IX_words;
+DROP INDEX IF EXISTS ix_words;
