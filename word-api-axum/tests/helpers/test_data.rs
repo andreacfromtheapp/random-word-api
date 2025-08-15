@@ -2,6 +2,12 @@
 //!
 //! Provides database operations and streamlined word creation functions
 //! for integration tests. Uses source validation and types directly.
+//!
+//! # Key Features
+//! - Unique test data generation to prevent conflicts
+//! - Source validation integration for realistic testing
+//! - Support for all grammatical word types
+//! - Database operation helpers for test setup
 
 use anyhow::{Context, Result};
 use sqlx::{Pool, Sqlite};
@@ -15,6 +21,8 @@ use word_api_axum::models::word::{
 // === Database Operations ===
 
 /// Counts the total number of words in the database
+///
+/// Used for verifying database state and ensuring test isolation.
 #[allow(dead_code)]
 pub async fn count_words(pool: &Pool<Sqlite>) -> Result<i64> {
     let count = sqlx::query_scalar!("SELECT COUNT(*) as count FROM words")
@@ -28,6 +36,9 @@ pub async fn count_words(pool: &Pool<Sqlite>) -> Result<i64> {
 // === Test Word Creation ===
 
 /// Generate unique IPA suffix for pronunciations
+///
+/// Creates deterministic but unique IPA characters based on suffix hash
+/// to ensure pronunciation uniqueness across test cases.
 fn get_unique_ipa(suffix: &str) -> String {
     let mut hasher = DefaultHasher::new();
     suffix.hash(&mut hasher);
@@ -39,6 +50,9 @@ fn get_unique_ipa(suffix: &str) -> String {
 }
 
 /// Creates a basic test word (noun type)
+///
+/// Generates a validated test word with guaranteed uniqueness through
+/// suffix-based naming. All fields pass source validation requirements.
 #[allow(dead_code)]
 pub fn create_basic_test_word(suffix: &str) -> UpsertWord {
     let clean_suffix = suffix.replace(['_', '-', ' '], "");
@@ -76,7 +90,10 @@ pub fn create_basic_test_word(suffix: &str) -> UpsertWord {
     upsert
 }
 
-/// Creates a test word of a specific type
+/// Creates a test word of a specific grammatical type
+///
+/// Generates type-specific test data with appropriate word patterns
+/// for each grammatical category. Ensures uniqueness and validation compliance.
 #[allow(dead_code)]
 pub fn create_typed_test_word(word_type: &str, suffix: &str) -> UpsertWord {
     let clean_suffix = suffix.replace(['_', '-', ' '], "");

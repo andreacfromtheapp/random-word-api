@@ -1,7 +1,15 @@
 //! Admin API integration tests
 //!
-//! Tests for admin endpoints including CRUD operations, validation,
-//! error handling, and request format validation.
+//! Comprehensive test suite for administrative endpoints covering:
+//! - CRUD operations (create, read, update, delete words)
+//! - Input validation and error handling
+//! - Request format validation and malformed data handling
+//! - Database constraint enforcement (uniqueness, foreign keys)
+//! - Batch operations and parallel request testing
+//! - Authentication and authorization scenarios
+//!
+//! Uses isolated test databases to prevent test interference and
+//! validates both success and failure paths for all admin operations.
 
 use anyhow::Result;
 use axum::http::StatusCode;
@@ -16,12 +24,18 @@ use helpers::{
 };
 use word_api_axum::models::word::{GrammaticalType, LanguageCode};
 
-/// Create a test word for admin testing
+/// Creates a basic test word with noun type for admin endpoint testing
+///
+/// Generates a unique word using the provided suffix to avoid database
+/// conflicts during parallel test execution.
 fn create_test_word(suffix: &str) -> UpsertWord {
     helpers::test_data::create_basic_test_word(suffix)
 }
 
-/// Create a test word of a specific type for admin testing
+/// Creates a test word of a specific grammatical type for admin testing
+///
+/// Validates the word type against source validation rules and ensures
+/// uniqueness through suffix-based naming.
 fn create_validated_test_word(word_type: &str, suffix: &str) -> UpsertWord {
     helpers::test_data::create_typed_test_word(word_type, suffix)
 }

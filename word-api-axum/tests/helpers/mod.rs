@@ -1,9 +1,13 @@
 //! Test helper utilities for integration testing
 //!
-//! Provides streamlined server creation functions for different test scenarios:
+//! Provides optimized server creation functions for different test scenarios:
 //! - `create_test_server()` - Isolated in-memory database for write operations
 //! - `create_test_server_streamlined()` - In-memory database for read-only tests
 //! - `create_test_server_memory()` - In-memory database with direct pool access
+//! - `create_test_server_with_pool()` - Server creation with pool return for advanced testing
+//!
+//! Each function creates a complete test environment with database migrations
+//! and proper state initialization for comprehensive API testing.
 
 use anyhow::{Context, Result};
 use axum_test::TestServer;

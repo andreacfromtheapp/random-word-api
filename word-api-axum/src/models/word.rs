@@ -13,17 +13,25 @@ use validator::{Validate, ValidationError};
 
 use crate::error::{AppError, PathError};
 
-///  Type-based retrieval supports common grammatical categories
+/// Grammatical word types supported by the API
 ///
-/// - Nouns for entity-based word requests
-/// - Verbs for action-based word requests
-/// - Adjectives for descriptive word requests
-/// - Adverbs for modifier-based word requests
+/// Represents the complete set of grammatical categories available for word classification
+/// and type-based retrieval. Each type corresponds to a specific linguistic function.
 ///
-/// Methods include language parameter validation to ensure:
-/// - Only supported grammatical types are processed
-/// - Proper error handling for unsupported grammatical types
-/// - Future extensibility for additional grammatical types support
+/// # Supported Types
+/// - `Noun` - People, places, things, concepts (e.g., "cat", "freedom", "London")
+/// - `Verb` - Actions, states, occurrences (e.g., "run", "think", "exist")
+/// - `Adjective` - Descriptive words, qualities (e.g., "red", "beautiful", "quick")
+/// - `Adverb` - Modifiers for verbs, adjectives, other adverbs (e.g., "quickly", "very")
+/// - `Pronoun` - Words replacing nouns (e.g., "he", "she", "it", "they")
+/// - `Preposition` - Relationship words (e.g., "in", "on", "under", "between")
+/// - `Conjunction` - Connecting words (e.g., "and", "but", "or", "because")
+/// - `Interjection` - Exclamatory words (e.g., "wow", "ouch", "hello")
+/// - `Article` - Definite and indefinite articles (e.g., "the", "a", "an")
+///
+/// # Usage
+/// Used for filtering random word requests by grammatical category and
+/// validating word type parameters in API endpoints.
 #[derive(Debug, PartialEq, EnumString)]
 pub enum GrammaticalType {
     #[strum(serialize = "noun")]
@@ -375,6 +383,9 @@ pub struct UpsertWord {
 }
 
 /// Validates a word field using Merriam-Webster lemma rules
+///
+/// Ensures the word meets dictionary standards for lemmas including
+/// proper character usage and formatting requirements.
 fn validate_word(text: &str) -> Result<(), ValidationError> {
     if !is_valid_lemma(text) {
         return Err(ValidationError::new("invalid_lemma"));
@@ -383,6 +394,9 @@ fn validate_word(text: &str) -> Result<(), ValidationError> {
 }
 
 /// Validates a definition field for appropriate dictionary content
+///
+/// Checks that the definition contains only acceptable characters
+/// for dictionary definitions including letters, numbers, and punctuation.
 fn validate_definition(text: &str) -> Result<(), ValidationError> {
     if !is_valid_definition(text) {
         return Err(ValidationError::new("invalid_definition"));
@@ -391,6 +405,9 @@ fn validate_definition(text: &str) -> Result<(), ValidationError> {
 }
 
 /// Validates a pronunciation field for IPA phonetic notation
+///
+/// Ensures the pronunciation follows International Phonetic Alphabet
+/// standards with proper forward slash delimiters.
 fn validate_pronunciation(text: &str) -> Result<(), ValidationError> {
     if !is_valid_pronunciation(text) {
         return Err(ValidationError::new("invalid_pronunciation"));
@@ -398,7 +415,10 @@ fn validate_pronunciation(text: &str) -> Result<(), ValidationError> {
     Ok(())
 }
 
-/// Validates a word_type field for allowed grammatical types (noun, verb, adjective, adverb)
+/// Validates a word_type field for allowed grammatical types
+///
+/// Checks that the word type is one of the supported grammatical categories:
+/// noun, verb, adjective, adverb, pronoun, preposition, conjunction, interjection, article.
 pub fn validate_word_type(text: &str) -> Result<(), ValidationError> {
     let _ =
         GrammaticalType::from_str(text).map_err(|_| ValidationError::new("invalid_word_type"))?;
@@ -440,6 +460,9 @@ impl UpsertWord {
 }
 
 /// Validates a Merriam-Webster lemma using regex pattern matching
+///
+/// Accepts alphanumeric characters, hyphens, apostrophes, periods,
+/// and common accented characters used in English dictionaries.
 pub fn is_valid_lemma(lemma: &str) -> bool {
     use regex::Regex;
     use std::sync::OnceLock;
@@ -465,6 +488,9 @@ pub fn is_valid_lemma(lemma: &str) -> bool {
 }
 
 /// Validates a definition string for dictionary-appropriate content
+///
+/// Allows letters, numbers, whitespace, and standard punctuation
+/// commonly used in dictionary definitions.
 pub fn is_valid_definition(definition: &str) -> bool {
     use regex::Regex;
     use std::sync::OnceLock;
@@ -488,6 +514,9 @@ pub fn is_valid_definition(definition: &str) -> bool {
 }
 
 /// Validates a pronunciation string using International Phonetic Alphabet (IPA) notation
+///
+/// Requires forward slash delimiters and accepts IPA vowels, consonants,
+/// stress markers, and diacritics commonly used in English pronunciation guides.
 pub fn is_valid_pronunciation(pronunciation: &str) -> bool {
     use regex::Regex;
     use std::sync::OnceLock;

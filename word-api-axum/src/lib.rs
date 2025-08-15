@@ -56,7 +56,13 @@ pub fn init_tracing() {
         .init();
 }
 
-/// Configure the database pool
+/// Configure the database pool with optimized settings
+///
+/// Creates a SQLite connection pool with:
+/// - WAL mode for better concurrency
+/// - Connection pooling with timeouts
+/// - Automatic database creation
+/// - Migration execution
 pub async fn init_dbpool(db_url: &str) -> Result<sqlx::Pool<sqlx::Sqlite>, SqlxError> {
     let dbpool = SqlitePoolOptions::new()
         .max_connections(10)
@@ -77,7 +83,10 @@ pub async fn init_dbpool(db_url: &str) -> Result<sqlx::Pool<sqlx::Sqlite>, SqlxE
     Ok(dbpool)
 }
 
-/// Check if provided env-file or config are non-existent and exit gracefully
+/// Validates file existence for configuration files
+///
+/// Checks if the specified configuration file exists and is readable.
+/// Used for validating --config and --env-file arguments before processing.
 pub fn does_file_exist(file_name: &Path, file_kind: &str) -> Result<(), AppError> {
     std::fs::read(file_name)
         .with_context(|| format!("couldn't read {file_kind} file '{file_name:?}'"))?;
@@ -85,7 +94,11 @@ pub fn does_file_exist(file_name: &Path, file_kind: &str) -> Result<(), AppError
     Ok(())
 }
 
-/// Main application logic - extracted from main() for better testability and reusability
+/// Main application logic with configuration handling and server startup
+///
+/// Processes CLI arguments, initializes configuration from multiple sources,
+/// sets up database connections, and starts the HTTP server with all routes.
+/// Extracted from main() for better testability and reusability.
 pub async fn run_app(cli: cli::Cli) -> Result<(), AppError> {
     use routes::create_router;
 

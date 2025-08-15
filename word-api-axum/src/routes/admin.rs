@@ -2,6 +2,13 @@
 //!
 //! Configures CRUD endpoints for word management under `/admin/{lang}/words`.
 //! Includes CORS configuration for development and production use.
+//!
+//! # Routes
+//! - `GET /admin/{lang}/words` - List all words (admin only)
+//! - `POST /admin/{lang}/words` - Create new word (admin only)
+//! - `GET /admin/{lang}/words/{id}` - Get word by ID (admin only)
+//! - `PUT /admin/{lang}/words/{id}` - Update word by ID (admin only)
+//! - `DELETE /admin/{lang}/words/{id}` - Delete word by ID (admin only)
 
 // Admin routes configuration
 use axum::{routing::get, Router};

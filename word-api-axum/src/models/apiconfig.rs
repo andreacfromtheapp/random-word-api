@@ -1,7 +1,13 @@
 //! Server configuration management with multi-source support
 //!
-//! Supports configuration via CLI arguments, TOML files, and environment variables.
-//! Includes utilities for generating default configuration files.
+//! Supports configuration via CLI arguments, TOML files, and environment variables
+//! with clear precedence rules. Includes utilities for generating default
+//! configuration files and comprehensive validation.
+//!
+//! # Configuration Sources (highest to lowest precedence)
+//! 1. Environment files (.env)
+//! 2. TOML configuration files
+//! 3. CLI arguments (default)
 
 // Application configuration
 use serde::{Deserialize, Serialize};
@@ -10,6 +16,9 @@ use std::{fmt, net::IpAddr, path::PathBuf};
 use crate::cli::Cli;
 
 /// Main API configuration structure containing all runtime settings
+///
+/// Holds server binding information, database connection details,
+/// and OpenAPI documentation interface settings.
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ApiConfig {
     pub address: IpAddr,
@@ -19,6 +28,9 @@ pub struct ApiConfig {
 }
 
 /// File format types for configuration file generation
+///
+/// Specifies the output format when generating configuration files
+/// via the `gen-config` and `gen-env-file` commands.
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub enum FileKind {
     /// TOML configuration file format
@@ -29,6 +41,8 @@ pub enum FileKind {
 
 impl ApiConfig {
     /// Creates a new ApiConfig instance with specified values
+    ///
+    /// Used internally for constructing configuration from various sources.
     pub fn new(address: IpAddr, port: u16, database_url: String, openapi: OpenApiDocs) -> Self {
         Self {
             address,
@@ -39,6 +53,9 @@ impl ApiConfig {
     }
 
     /// Generates a configuration file with default values
+    ///
+    /// Creates either a TOML config file or environment variable file
+    /// based on the specified `FileKind`. Used by CLI commands.
     pub fn gen_file(file: &PathBuf, kind: FileKind) -> Result<(), anyhow::Error> {
         use std::fs::File;
         use std::io::prelude::*;
@@ -81,6 +98,9 @@ impl ApiConfig {
     }
 
     /// Creates ApiConfig from environment variable file
+    ///
+    /// Loads configuration from a .env file using the dotenvy crate.
+    /// Environment variables override any existing system variables.
     pub fn from_env_file(file: &PathBuf) -> Result<Self, anyhow::Error> {
         use std::str::FromStr;
 
@@ -102,6 +122,9 @@ impl ApiConfig {
     }
 
     /// Creates ApiConfig from TOML configuration file
+    ///
+    /// Parses a TOML file and deserializes it into ApiConfig.
+    /// Provides structured configuration with sections and type safety.
     pub fn from_config_file(file: &PathBuf) -> Result<Self, anyhow::Error> {
         // read the config file line by line and store it in a String
         let file_content = std::fs::read(file)?
@@ -127,6 +150,9 @@ impl ApiConfig {
     }
 
     /// Creates ApiConfig directly from command-line arguments
+    ///
+    /// Uses CLI argument values without any file-based configuration.
+    /// This is the lowest precedence configuration source.
     pub fn from_cli_args(cli: &Cli) -> Result<Self, anyhow::Error> {
         // set the variables as needed
         Ok(Self::new(
@@ -144,6 +170,9 @@ impl ApiConfig {
 }
 
 /// Formats ApiConfig as environment variable file content
+///
+/// Converts configuration to .env file format for easy sharing
+/// and deployment configuration management.
 impl fmt::Display for ApiConfig {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(
@@ -155,6 +184,9 @@ impl fmt::Display for ApiConfig {
 }
 
 /// Provides default configuration values for development and testing
+///
+/// Safe defaults suitable for local development with minimal setup.
+/// Production deployments should use explicit configuration files.
 impl Default for ApiConfig {
     fn default() -> Self {
         use std::str::FromStr;
@@ -169,6 +201,9 @@ impl Default for ApiConfig {
 }
 
 /// OpenAPI documentation interface configuration
+///
+/// Controls which API documentation interfaces are enabled.
+/// Multiple interfaces can be enabled simultaneously.
 #[derive(Default, Debug, Serialize, Deserialize, Clone)]
 pub struct OpenApiDocs {
     pub enable_swagger_ui: bool,
@@ -179,6 +214,9 @@ pub struct OpenApiDocs {
 
 impl OpenApiDocs {
     /// Creates a new OpenApiDocs configuration with specified interface settings
+    ///
+    /// Each boolean flag controls whether the corresponding documentation
+    /// interface endpoint will be available in the API.
     pub fn new(
         enable_swagger_ui: bool,
         enable_redoc: bool,
@@ -195,6 +233,9 @@ impl OpenApiDocs {
 }
 
 /// Formats OpenApiDocs as environment variable section
+///
+/// Generates environment variable format for OpenAPI documentation
+/// settings with descriptive section header.
 impl fmt::Display for OpenApiDocs {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(

@@ -1,8 +1,12 @@
 //! Word API integration tests
 //!
-//! Tests word retrieval endpoints, error handling, API consistency,
-//! and database integration scenarios. Covers all word types and
-//! validates response formats and edge cases.
+//! Comprehensive test suite for public word retrieval endpoints covering:
+//! - Random word retrieval with and without type filtering
+//! - All supported grammatical types (noun, verb, adjective, etc.)
+//! - Error handling for invalid languages and word types
+//! - Response format validation and API consistency
+//! - Database integration scenarios including empty database handling
+//! - Parallel request testing for reliability and performance validation
 
 use anyhow::Result;
 use axum::http::StatusCode;
@@ -15,6 +19,9 @@ use helpers::{
 use word_api_axum::models::word::{GrammaticalType, LanguageCode};
 
 // === Core Word Retrieval Tests ===
+
+/// Tests word retrieval across multiple endpoints in parallel for efficiency
+/// Validates basic functionality, all word types, and response format consistency
 
 #[tokio::test]
 async fn test_word_retrieval_parallel() -> Result<()> {
@@ -150,6 +157,9 @@ async fn test_word_retrieval_parallel() -> Result<()> {
 
 // === Error Handling Tests (Parallelized) ===
 
+/// Tests error scenarios including invalid languages, word types, and endpoints
+/// Validates proper HTTP status codes and error message content
+
 #[tokio::test]
 async fn test_error_handling_parallel() -> Result<()> {
     // Run error handling tests in parallel
@@ -199,6 +209,9 @@ async fn test_error_handling_parallel() -> Result<()> {
 }
 
 // === Database and Edge Case Tests ===
+
+/// Tests edge cases including empty databases and multiple concurrent requests
+/// Ensures API reliability under various database states and load conditions
 
 #[tokio::test]
 async fn test_empty_database_scenario() -> Result<()> {
@@ -309,10 +322,15 @@ async fn test_api_consistency_parallel() -> Result<()> {
     Ok(())
 }
 
-// === Handler Unit Tests ===
-// Tests handler logic directly without full HTTP integration
+// === API Consistency and Reliability Tests ===
 
-// === Workflow and Edge Case Tests ===
+/// Tests API consistency across multiple parallel requests
+/// Validates that the API maintains consistent behavior under concurrent load
+
+// === User Workflow and Integration Tests ===
+
+/// Tests realistic user workflows and comprehensive edge case scenarios
+/// Validates end-to-end functionality across different API endpoints
 
 #[tokio::test]
 async fn test_workflow_and_edge_cases_parallel() -> Result<()> {

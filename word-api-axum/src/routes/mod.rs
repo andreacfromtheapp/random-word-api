@@ -1,13 +1,21 @@
 //! HTTP route configuration and middleware setup
 //!
 //! Combines all route modules with appropriate CORS settings and middleware.
-//! Includes optional OpenAPI documentation interfaces.
+//! Includes optional OpenAPI documentation interfaces and request tracing.
 //!
-//! # Route groups
-//! - `/admin` - Administrative endpoints
-//! - `/health` - Health checks
-//! - `/{lang}/word` - Public word endpoints
-//! - OpenAPI docs (SwaggerUI, Redoc, etc.)
+//! # Route Groups
+//! - `/admin/{lang}/words` - Administrative CRUD endpoints (requires auth)
+//! - `/health/alive` and `/health/ready` - Health check endpoints
+//! - `/{lang}/random` and `/{lang}/{type}` - Public word retrieval endpoints
+//! - `/swagger-ui`, `/redoc`, `/scalar`, `/rapidoc` - OpenAPI documentation interfaces
+//!
+//! # CORS Configuration
+//! Configured for development (localhost:5173) and production (speak-and-spell.netlify.app)
+//! with appropriate method allowlists per route group.
+//!
+//! # Middleware
+//! - HTTP request tracing for observability
+//! - CORS headers for cross-origin requests
 
 // Routes module
 use axum::Router;
@@ -34,13 +42,13 @@ pub async fn create_router(shared_state: AppState) -> Router {
     // Add admin routes under /admin
     let admin_routes = create_admin_routes(shared_state.clone(), &origins);
 
-    // Add admin routes under /admin
+    // Add health routes under /health
     let health_routes = create_health_routes(shared_state.clone(), &origins);
 
     // Add API Docs under /swagger-ui, /rapidoc, /scalar, and /redoc
     let apidocs_routes = create_apidocs_routes(shared_state.clone(), &origins);
 
-    // Add public routes under /{lang}/word
+    // Add public word routes under /{lang}
     let word_routes = create_word_routes(shared_state.clone(), &origins);
 
     // Setup top-level router

@@ -1,7 +1,8 @@
 //! Error types and HTTP response conversion
 //!
 //! Centralizes error handling for the API with automatic conversion to
-//! appropriate HTTP status codes and JSON error responses.
+//! appropriate HTTP status codes and JSON error responses. Provides
+//! structured error types for database operations and path validation.
 
 // Error handling helpers
 use axum::{
@@ -47,24 +48,30 @@ where
     }
 }
 
-/// Database operation errors
+/// Database operation errors with detailed categorization
+///
+/// Wraps SQLx errors to provide consistent error handling across
+/// database operations including connections, queries, and migrations.
 #[derive(thiserror::Error, Debug)]
 pub enum SqlxError {
     /// Database runtime errors (connections, queries, constraints)
     #[error("database error: {0}")]
     Db(#[from] sqlx::Error),
     /// Database migration errors (schema updates, version conflicts)
-    #[error("database error: {0}")]
+    #[error("database migration error: {0}")]
     Migrate(#[from] sqlx::migrate::MigrateError),
 }
 
 /// Path validation errors for API route parameters
+///
+/// Handles validation failures for URL path parameters including
+/// language codes and grammatical word types.
 #[derive(thiserror::Error, Debug)]
 pub enum PathError {
-    /// Invalid language code in URL path
-    #[error("invalid API Path: {0}")]
+    /// Invalid language code in URL path (must be supported language like 'en')
+    #[error("invalid language code: {0}")]
     InvalidPath(String),
-    /// Invalid word type parameter in URL path
+    /// Invalid word type parameter in URL path (must be valid grammatical type)
     #[error("invalid word type: {0}")]
     InvalidWordType(String),
 }
@@ -113,11 +120,14 @@ mod tests {
     #[test]
     fn test_path_error_variants() {
         let path_error = PathError::InvalidPath("invalid_lang".to_string());
-        assert_eq!(format!("{path_error}"), "invalid API Path: invalid_lang");
+        assert_eq!(
+            format!("{path_error}"),
+            "invalid language code: invalid_lang"
+        );
 
         // Test conversion to AppError
         let app_error = AppError::from(path_error);
-        assert!(format!("{}", app_error.0).contains("invalid API Path"));
+        assert!(format!("{}", app_error.0).contains("invalid language code"));
     }
 
     #[test]

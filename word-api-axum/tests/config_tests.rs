@@ -2,6 +2,13 @@
 //!
 //! Tests configuration file generation, validation, and server initialization
 //! using existing source code APIs and infrastructure.
+//!
+//! # Test Coverage
+//! - Configuration file generation (TOML and environment formats)
+//! - Multi-source configuration loading with precedence rules
+//! - Configuration validation and error handling
+//! - Default value verification and type safety
+//! - File existence validation and error propagation
 
 use anyhow::Result;
 use std::fs;
@@ -16,9 +23,7 @@ async fn test_config_creation() -> Result<()> {
     // Test server creation with default configuration
     let _server = helpers::create_test_server_streamlined().await?;
 
-    // If we reach this point, server creation was successful
-    // No assertion needed as the function would have returned early with an error if it failed
-
+    // Server creation validates configuration loading and database initialization
     Ok(())
 }
 
@@ -112,7 +117,7 @@ async fn test_environment_file_loading() -> Result<()> {
 
 #[tokio::test]
 async fn test_configuration_simple_precedence() -> Result<()> {
-    // Test configuration precedence logic with simple string comparisons
+    // Test configuration precedence logic: env file > config file > CLI args
 
     // Simulate config file values (TOML defaults)
     let config_db_url = "sqlite://config.db";
@@ -291,19 +296,19 @@ async fn test_configuration_precedence_logic() -> Result<()> {
 async fn test_file_existence_validation() -> Result<()> {
     use word_api_axum::does_file_exist;
 
-    // Test with existing file (should pass)
+    // Test with existing file (should pass validation)
     let existing_file = NamedTempFile::new()?;
     fs::write(existing_file.path(), "test content")?;
 
     let result = does_file_exist(existing_file.path(), "test");
     assert!(result.is_ok(), "Existing file should pass validation");
 
-    // Test with non-existent file (should fail)
+    // Test with non-existent file (should fail with descriptive error)
     let non_existent_path = PathBuf::from("/tmp/definitely_does_not_exist_12345.txt");
     let result = does_file_exist(&non_existent_path, "test");
     assert!(result.is_err(), "Non-existent file should fail validation");
 
-    // Test error message contains file info
+    // Verify error message contains file type information
     if let Err(err) = result {
         let error_msg = format!("{err:?}");
         assert!(error_msg.contains("test"), "Error should mention file kind");
