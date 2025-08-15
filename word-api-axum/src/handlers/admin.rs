@@ -58,7 +58,7 @@ pub async fn word_list(
 ///
 /// # Request Body
 ///
-/// JSON object with required fields: `word`, `definition`, `pronunciation`, `word_type`.
+/// JSON object with required fields: `word`, `definition`, `pronunciation`, `wordType`.
 /// All fields must pass validation (valid lemma, dictionary text, IPA notation, allowed grammatical types).
 ///
 /// # Returns
@@ -148,7 +148,7 @@ pub async fn word_read(
 ///
 /// # Request Body
 ///
-/// JSON object with required fields: `word`, `definition`, `pronunciation`, `word_type`.
+/// JSON object with required fields: `word`, `definition`, `pronunciation`, `wordType`.
 /// Must pass same validation as word creation.
 ///
 /// # Returns
