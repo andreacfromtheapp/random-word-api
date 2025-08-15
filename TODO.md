@@ -38,6 +38,7 @@
   - Note: adding these _late_ because as I was learning Axum and most of the API
     related tech/code, I wouldn't have known what to TDD. Now that I do, the
     next API will take advantage of TDD as well.
+
   - Disclaimer: I used Zed AI and guided the process to add all tests.
 - [x] Improve `rustdoc` documentation
   - Disclaimer: I used Zed AI and guided the process to write all docs.
