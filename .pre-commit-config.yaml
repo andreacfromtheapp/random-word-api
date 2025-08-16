@@ -56,6 +56,6 @@ repos:
       - id: kingfisher
         name: kingfisher scan
         description: detect secrets in your data.
-        entry: kingfisher scan . --exclude '*node_modules' --exclude '*target' --no-update-check --git-history none
+        entry: kingfisher scan . --exclude '*node_modules' --exclude '*target' --no-update-check
         language: system
         stages: ["pre-commit", "pre-push"]
