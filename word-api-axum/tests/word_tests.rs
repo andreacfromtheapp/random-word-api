@@ -326,9 +326,6 @@ async fn test_api_consistency_parallel() -> Result<()> {
 
 /// Tests API consistency across multiple parallel requests
 /// Validates that the API maintains consistent behavior under concurrent load
-
-// === User Workflow and Integration Tests ===
-
 /// Tests realistic user workflows and comprehensive edge case scenarios
 /// Validates end-to-end functionality across different API endpoints
 
