@@ -103,10 +103,7 @@ pub fn does_file_exist(file_name: &Path, file_kind: &str) -> Result<(), AppError
 /// sets up database connections, and starts the HTTP server with all routes.
 /// Extracted from main() for better testability and reusability.
 pub async fn run_app(cli: cli::Cli) -> Result<(), AppError> {
-    use axum_server::tls_rustls::RustlsConfig;
-    use rcgen::{generate_simple_self_signed, CertifiedKey};
     use routes::create_router;
-    use std::net::SocketAddr;
 
     // Handle setup commands first
     match &cli.command {
@@ -157,49 +154,15 @@ pub async fn run_app(cli: cli::Cli) -> Result<(), AppError> {
     // Setup top-level router (includes SwaggerUI)
     let router = create_router(shared_state).await;
 
-    // Without Rustls START
-    // // Instantiate a listener on the socket address and port
-    // let listener = tokio::net::TcpListener::bind((apiconfig.address, apiconfig.port))
-    //     .await
-    //     .context("couldn't bind TCP listener")?;
-
-    // // Serve the API
-    // axum::serve(listener, router)
-    //     .await
-    //     .context("couldn't start the API server")?;
-    // Without Rustls END
-
-    // WITH Rustls START
-    // Setup the bind address and port
-    let socket_addr = SocketAddr::from((apiconfig.address, apiconfig.port));
-
-    // Install Rustls ring
-    rustls::crypto::ring::default_provider()
-        .install_default()
-        .expect("couldn't initialize crypto ring");
-
-    // all the domains for TLS certs
-    let subject_alt_names = vec!["localhost".to_string()];
-
-    // Generate the certificates
-    let CertifiedKey { cert, signing_key } =
-        generate_simple_self_signed(subject_alt_names).unwrap();
-
-    // Ready the cert and key
-    let cert = cert.pem();
-    let key = signing_key.serialize_pem();
-
-    // Initialize the TLS config
-    let tls_config = RustlsConfig::from_pem(cert.into_bytes(), key.into_bytes())
+    // Instantiate a listener on the socket address and port
+    let listener = tokio::net::TcpListener::bind((apiconfig.address, apiconfig.port))
         .await
-        .context("couldn't initialize rustls")?;
+        .context("couldn't bind TCP listener")?;
 
     // Serve the API
-    axum_server::bind_rustls(socket_addr, tls_config)
-        .serve(router.into_make_service())
+    axum::serve(listener, router)
         .await
         .context("couldn't start the API server")?;
-    // WITH Rustls END
 
     Ok(())
 }
