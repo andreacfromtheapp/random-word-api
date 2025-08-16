@@ -40,14 +40,15 @@
     next API will take advantage of TDD as well.
 
   - Disclaimer: I used Zed AI and guided the process to add all tests.
+
 - [x] Improve `rustdoc` documentation
   - Disclaimer: I used Zed AI and guided the process to write all docs.
 
 ## Part 2
 
-- [ ] TLS:
-  - [ ] <https://github.com/rustls/rustls/>
-  - [ ] <https://github.com/rustls/rcgen>
+- [x] TLS:
+  - [x] <https://github.com/rustls/rustls/>
+  - [x] <https://github.com/rustls/rcgen>
 - [ ] Authentication
 
 ## Part 3
