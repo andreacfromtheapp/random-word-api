@@ -304,7 +304,7 @@ async fn test_api_consistency_parallel() -> Result<()> {
         async {
             let server = create_test_server_streamlined().await?;
             // Batch test word API endpoints (health checks handled in health_tests.rs)
-            let test_endpoints = vec!["/en/random", "/admin/en/words"];
+            let test_endpoints = vec!["/en/random"];
             for endpoint in test_endpoints {
                 let response = server.get(endpoint).await;
                 assert!(
@@ -335,11 +335,9 @@ async fn test_workflow_and_edge_cases_parallel() -> Result<()> {
     let (workflow_result, edge_cases_result) = tokio::join!(
         async {
             let server = create_test_server_streamlined().await?;
-            // Test user workflow: get word -> check admin (health checks handled in health_tests.rs)
+            // Test user workflow: get word (health checks handled in health_tests.rs)
             let word_response = server.get("/en/random").await;
             assert_eq!(word_response.status_code(), StatusCode::OK);
-            let admin_response = server.get("/admin/en/words").await;
-            assert!(admin_response.status_code() <= StatusCode::OK);
             Ok::<(), anyhow::Error>(())
         },
         async {

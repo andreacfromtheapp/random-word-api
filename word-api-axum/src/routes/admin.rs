@@ -2,6 +2,7 @@
 //!
 //! Configures CRUD endpoints for word management under `/admin/{lang}/words`.
 //! Includes CORS configuration for development and production use.
+//! All routes require admin authentication via JWT token.
 //!
 //! # Routes
 //! - `GET /admin/{lang}/words` - List all words (admin only)
@@ -11,10 +12,11 @@
 //! - `DELETE /admin/{lang}/words/{id}` - Delete word by ID (admin only)
 
 // Admin routes configuration
-use axum::{routing::get, Router};
+use axum::{middleware, routing::get, Router};
 use http::{HeaderValue, Method};
 use tower_http::cors::CorsLayer;
 
+use crate::auth::admin_auth_middleware;
 use crate::handlers::admin::*;
 use crate::state::AppState;
 
@@ -28,7 +30,11 @@ pub fn create_admin_routes(shared_state: AppState, origins: &[HeaderValue]) -> R
                 .route(
                     "/{lang}/words/{id}",
                     get(word_read).put(word_update).delete(word_delete),
-                ),
+                )
+                .layer(middleware::from_fn_with_state(
+                    shared_state.clone(),
+                    admin_auth_middleware,
+                )),
         )
         .with_state(shared_state)
         .layer(

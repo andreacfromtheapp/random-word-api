@@ -112,6 +112,7 @@ mod tests {
             port: 3000,
             database_url: "sqlite:test.db".to_string(),
             openapi: OpenApiDocs::default(),
+            jwt_secret: "test_secret".to_string(),
         };
 
         assert_eq!(config.address.to_string(), "127.0.0.1");

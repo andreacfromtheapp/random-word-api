@@ -46,10 +46,11 @@
 
 ## Part 2
 
-- [x] TLS:
+- [x] TLS (I've learned it and removed it. Better left to the proxy):
   - [x] <https://github.com/rustls/rustls/>
   - [x] <https://github.com/rustls/rcgen>
-- [ ] Authentication
+- [x] Authentication with database credentials
+- [x] Authorization with JWT on protected endpoints
 
 ## Part 3
 

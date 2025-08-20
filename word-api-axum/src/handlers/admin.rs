@@ -2,12 +2,11 @@
 //!
 //! Provides CRUD operations for word database management. All endpoints
 //! require authentication and return JSON responses.
-use axum::extract::{Path, State};
-use axum::Json;
-
 use crate::error::AppError;
 use crate::models::word::{UpsertWord, Word};
 use crate::state::AppState;
+use axum::extract::{Path, State};
+use axum::Json;
 
 /// Lists all words in the database.
 ///
@@ -29,9 +28,13 @@ use crate::state::AppState;
     path = "/{lang}/words",
     operation_id = "admin_words_list_all",
     tag = "administration_endpoints",
-
+    security(
+        ("bearer_auth" = [])
+    ),
     responses(
         (status = 200, description = "Listed every single word successfully", body = [Word]),
+        (status = 401, description = "Unauthorized - Invalid or missing authentication token"),
+        (status = 403, description = "Forbidden - Admin privileges required"),
         (status = 404, description = "Couldn't list words. Does your database contain any?"),
         (status = 500, description = "Internal server error")
     ),
@@ -73,10 +76,14 @@ pub async fn word_list(
     path = "/{lang}/words",
     operation_id = "admin_words_create",
     tag = "administration_endpoints",
-
+    security(
+        ("bearer_auth" = [])
+    ),
     request_body(content = UpsertWord, description = "Word data to add to the database with validation. Must include word, definition, pronunciation, and word_type fields", content_type = "application/json"),
     responses(
         (status = 200, description = "Word successfully created and added to the database", body = [Word]),
+        (status = 401, description = "Unauthorized - Invalid or missing authentication token"),
+        (status = 403, description = "Forbidden - Admin privileges required"),
         (status = 415, description = "Please provide a valid word with all required fields (word, definition, pronunciation, word_type) in your JSON body"),
         (status = 422, description = "Validation failed - ensure word, definition, pronunciation are properly formatted and word_type is one of: noun, verb, adjective, adverb"),
         (status = 500, description = "Internal server error"),
@@ -86,11 +93,11 @@ pub async fn word_list(
     )
 )]
 pub async fn word_create(
-    State(state): State<AppState>,
     Path(lang): Path<String>,
-    Json(new_word): Json<UpsertWord>,
+    State(state): State<AppState>,
+    Json(word): Json<UpsertWord>,
 ) -> Result<Json<Vec<Word>>, AppError> {
-    Word::create(state.dbpool, &lang, new_word)
+    Word::create(state.dbpool, &lang, word)
         .await
         .map(Json::from)
 }
@@ -117,9 +124,13 @@ pub async fn word_create(
     path = "/{lang}/words/{id}",
     operation_id = "admin_words_read_by_id",
     tag = "administration_endpoints",
-
+    security(
+        ("bearer_auth" = [])
+    ),
     responses (
         (status = 200, description = "Word with specified ID returned successfully", body = [Word]),
+        (status = 401, description = "Unauthorized - Invalid or missing authentication token"),
+        (status = 403, description = "Forbidden - Admin privileges required"),
         (status = 404, description = "Couldn't find the word with {id}"),
         (status = 500, description = "Internal server error"),
     ),
@@ -163,11 +174,16 @@ pub async fn word_read(
     path = "/{lang}/words/{id}",
     operation_id = "admin_words_update_by_id",
     tag = "administration_endpoints",
-
+    security(
+        ("bearer_auth" = [])
+    ),
     request_body(content = UpsertWord, description = "Word data to update in the database. Must include word, definition, pronunciation, and word_type fields", content_type = "application/json"),
     responses (
         (status = 200, description = "Word with {id} updated successfully", body = [Word]),
+        (status = 401, description = "Unauthorized - Invalid or missing authentication token"),
+        (status = 403, description = "Forbidden - Admin privileges required"),
         (status = 404, description = "Couldn't find the word with {id}"),
+        (status = 422, description = "Validation failed - invalid word data provided"),
         (status = 500, description = "Internal server error"),
     ),
     params(
@@ -207,9 +223,13 @@ pub async fn word_update(
     path = "/{lang}/words/{id}",
     operation_id = "admin_words_delete_by_id",
     tag = "administration_endpoints",
-
+    security(
+        ("bearer_auth" = [])
+    ),
     responses (
         (status = 200, description = "Word successfully deleted from the database"),
+        (status = 401, description = "Unauthorized - Invalid or missing authentication token"),
+        (status = 403, description = "Forbidden - Admin privileges required"),
         (status = 404, description = "Couldn't find the word with {id}"),
         (status = 500, description = "Internal server error"),
     ),

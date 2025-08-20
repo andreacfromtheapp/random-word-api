@@ -17,6 +17,9 @@ use std::sync::{Arc, Mutex};
 /// Define default tracing log levels. Uses `RUST_LOG` when unset.
 pub const TRACING_LOG_LEVELS: &str = "sqlx=info,tower_http=debug,info";
 
+/// Authentication and authorization utilities
+pub mod auth;
+
 /// CLI argument parsing and configuration
 pub mod cli;
 

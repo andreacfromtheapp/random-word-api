@@ -66,6 +66,7 @@ async fn create_server_with_pool(pool: Pool<Sqlite>) -> Result<TestServer> {
             enable_scalar: false,
             enable_rapidoc: false,
         },
+        jwt_secret: "test_jwt_secret".to_string(),
     };
 
     let state = AppState {

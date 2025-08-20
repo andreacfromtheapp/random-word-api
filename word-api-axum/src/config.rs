@@ -25,6 +25,8 @@ pub struct ApiConfig {
     pub port: u16,
     pub database_url: String,
     pub openapi: OpenApiDocs,
+    #[serde(default = "default_jwt_secret")]
+    pub jwt_secret: String,
 }
 
 /// File format types for configuration file generation
@@ -39,16 +41,28 @@ pub enum FileKind {
     EnvFile,
 }
 
+/// Default JWT secret for development/testing - should be overridden in production
+fn default_jwt_secret() -> String {
+    "default_jwt_secret_change_in_production".to_string()
+}
+
 impl ApiConfig {
     /// Creates a new ApiConfig instance with specified values
     ///
     /// Used internally for constructing configuration from various sources.
-    pub fn new(address: IpAddr, port: u16, database_url: String, openapi: OpenApiDocs) -> Self {
+    pub fn new(
+        address: IpAddr,
+        port: u16,
+        database_url: String,
+        openapi: OpenApiDocs,
+        jwt_secret: String,
+    ) -> Self {
         Self {
             address,
             port,
             database_url,
             openapi,
+            jwt_secret,
         }
     }
 
@@ -118,6 +132,8 @@ impl ApiConfig {
                 bool::from_str(&dotenvy::var("ENABLE_SCALAR")?)?,
                 bool::from_str(&dotenvy::var("ENABLE_RAPIDOC")?)?,
             ),
+            dotenvy::var("JWT_SECRET")
+                .unwrap_or_else(|_| "default_jwt_secret_change_in_production".to_string()),
         ))
     }
 
@@ -146,6 +162,7 @@ impl ApiConfig {
                 my_configs.openapi.enable_scalar,
                 my_configs.openapi.enable_rapidoc,
             ),
+            my_configs.jwt_secret,
         ))
     }
 
@@ -165,6 +182,8 @@ impl ApiConfig {
                 cli.arg.with_scalar,
                 cli.arg.with_rapidoc,
             ),
+            std::env::var("JWT_SECRET")
+                .unwrap_or_else(|_| "default_jwt_secret_change_in_production".to_string()),
         ))
     }
 }
@@ -177,8 +196,8 @@ impl fmt::Display for ApiConfig {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(
             f,
-            "BIND_ADDR=\"{}\"\nBIND_PORT={}\nDATABASE_URL={}\n\n{}",
-            self.address, self.port, self.database_url, self.openapi
+            "BIND_ADDR=\"{}\"\nBIND_PORT={}\nDATABASE_URL={}\nJWT_SECRET={}\n\n{}",
+            self.address, self.port, self.database_url, self.jwt_secret, self.openapi
         )
     }
 }
@@ -196,6 +215,7 @@ impl Default for ApiConfig {
             port: u16::from_str("3000").unwrap(),
             database_url: "sqlite:random-words.db".to_string(),
             openapi: OpenApiDocs::default(),
+            jwt_secret: "default_jwt_secret_change_in_production".to_string(),
         }
     }
 }
@@ -256,7 +276,13 @@ mod tests {
     fn test_api_config_new() {
         let address = IpAddr::from_str("127.0.0.1").unwrap();
         let openapi = OpenApiDocs::new(true, false, true, false);
-        let config = ApiConfig::new(address, 8080, "sqlite:test.db".to_string(), openapi);
+        let config = ApiConfig::new(
+            address,
+            8080,
+            "sqlite:test.db".to_string(),
+            openapi,
+            "test_jwt_secret".to_string(),
+        );
 
         assert_eq!(config.address, address);
         assert_eq!(config.port, 8080);
@@ -269,7 +295,13 @@ mod tests {
     fn test_api_config_new_ipv4_custom() {
         let address = IpAddr::V4(Ipv4Addr::new(192, 168, 1, 100));
         let openapi = OpenApiDocs::new(false, true, true, false);
-        let config = ApiConfig::new(address, 9000, "sqlite:ipv4_test.db".to_string(), openapi);
+        let config = ApiConfig::new(
+            address,
+            9000,
+            "sqlite:ipv4_test.db".to_string(),
+            openapi,
+            "test_jwt_secret".to_string(),
+        );
 
         assert_eq!(config.address, address);
         assert_eq!(config.port, 9000);
@@ -286,6 +318,7 @@ mod tests {
             8080,
             "sqlite:test.db".to_string(),
             OpenApiDocs::default(),
+            "test_jwt_secret".to_string(),
         );
 
         assert_eq!(config.address, IpAddr::V4(Ipv4Addr::LOCALHOST));
@@ -300,6 +333,7 @@ mod tests {
             3000,
             "sqlite:test.db".to_string(),
             OpenApiDocs::default(),
+            "test_jwt_secret".to_string(),
         );
 
         assert_eq!(config.address, IpAddr::V4(Ipv4Addr::UNSPECIFIED));
@@ -314,6 +348,7 @@ mod tests {
             8080,
             "sqlite:test.db".to_string(),
             OpenApiDocs::default(),
+            "test_jwt_secret".to_string(),
         );
 
         assert_eq!(config.address, IpAddr::V4(Ipv4Addr::BROADCAST));
@@ -349,7 +384,13 @@ mod tests {
     fn test_api_config_display_ipv4() {
         let address = IpAddr::V4(Ipv4Addr::new(172, 16, 0, 1));
         let openapi = OpenApiDocs::new(true, false, true, false);
-        let config = ApiConfig::new(address, 8080, "sqlite:ipv4_display.db".to_string(), openapi);
+        let config = ApiConfig::new(
+            address,
+            8080,
+            "sqlite:ipv4_display.db".to_string(),
+            openapi,
+            "test_jwt_secret".to_string(),
+        );
 
         let output = format!("{config}");
         assert!(output.contains("BIND_ADDR=\"172.16.0.1\""));
@@ -372,6 +413,7 @@ mod tests {
                 8080,
                 "sqlite:test.db".to_string(),
                 OpenApiDocs::default(),
+                "test_jwt_secret".to_string(),
             );
             assert_eq!(config.address, address);
 
@@ -386,7 +428,13 @@ mod tests {
     fn test_api_config_new_ipv6() {
         let address = IpAddr::V6(Ipv6Addr::new(0x2001, 0xdb8, 0, 0, 0, 0, 0, 1));
         let openapi = OpenApiDocs::new(false, true, false, true);
-        let config = ApiConfig::new(address, 9000, "sqlite:ipv6_test.db".to_string(), openapi);
+        let config = ApiConfig::new(
+            address,
+            9000,
+            "sqlite:ipv6_test.db".to_string(),
+            openapi,
+            "test_jwt_secret".to_string(),
+        );
 
         assert_eq!(config.address, address);
         assert_eq!(config.port, 9000);
@@ -403,6 +451,7 @@ mod tests {
             8080,
             "sqlite:test.db".to_string(),
             OpenApiDocs::default(),
+            "test_jwt_secret".to_string(),
         );
 
         assert_eq!(config.address, IpAddr::V6(Ipv6Addr::LOCALHOST));
@@ -417,6 +466,7 @@ mod tests {
             3000,
             "sqlite:test.db".to_string(),
             OpenApiDocs::default(),
+            "test_jwt_secret".to_string(),
         );
 
         assert_eq!(config.address, IpAddr::V6(Ipv6Addr::UNSPECIFIED));
@@ -455,7 +505,13 @@ mod tests {
     fn test_api_config_display_ipv6() {
         let address = IpAddr::V6(Ipv6Addr::new(0x2001, 0xdb8, 0, 0, 0, 0, 0, 1));
         let openapi = OpenApiDocs::new(true, false, false, true);
-        let config = ApiConfig::new(address, 8080, "sqlite:ipv6_display.db".to_string(), openapi);
+        let config = ApiConfig::new(
+            address,
+            8080,
+            "sqlite:ipv6_display.db".to_string(),
+            openapi,
+            "test_jwt_secret".to_string(),
+        );
 
         let output = format!("{config}");
         assert!(output.contains("BIND_ADDR=\"2001:db8::1\""));
@@ -500,7 +556,13 @@ mod tests {
     fn test_api_config_display() {
         let address = IpAddr::from_str("192.168.1.1").unwrap();
         let openapi = OpenApiDocs::new(true, false, true, false);
-        let config = ApiConfig::new(address, 9000, "sqlite:display_test.db".to_string(), openapi);
+        let config = ApiConfig::new(
+            address,
+            9000,
+            "sqlite:display_test.db".to_string(),
+            openapi,
+            "test_jwt_secret".to_string(),
+        );
 
         let output = format!("{config}");
         assert!(output.contains("BIND_ADDR=\"192.168.1.1\""));

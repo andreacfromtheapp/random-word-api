@@ -27,6 +27,32 @@ impl IntoResponse for AppError {
                 }
             };
             (StatusCode::BAD_REQUEST, message).into_response()
+        } else if let Some(auth_error) = self.0.downcast_ref::<AuthError>() {
+            // AuthError should return appropriate HTTP status codes
+            let (status, message) = match auth_error {
+                AuthError::InvalidToken => {
+                    (StatusCode::UNAUTHORIZED, "Invalid authentication token")
+                }
+                AuthError::MissingToken => {
+                    (StatusCode::UNAUTHORIZED, "Missing authorization token")
+                }
+                AuthError::TokenExpired => {
+                    (StatusCode::UNAUTHORIZED, "Authentication token expired")
+                }
+                AuthError::InvalidCredentials => (StatusCode::UNAUTHORIZED, "Invalid credentials"),
+                AuthError::UserNotFound => (StatusCode::UNAUTHORIZED, "User not found"),
+                AuthError::ValidationFailed => (StatusCode::BAD_REQUEST, "Validation failed"),
+                AuthError::UsernameExists => (StatusCode::BAD_REQUEST, "Username already exists"),
+                AuthError::DatabaseError(_) => (
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    "Authentication database error",
+                ),
+                AuthError::InternalError(_) => (
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    "Internal authentication error",
+                ),
+            };
+            (status, message).into_response()
         } else {
             // All other errors return 500 Internal Server Error
             (
@@ -74,6 +100,41 @@ pub enum PathError {
     /// Invalid word type parameter in URL path (must be valid grammatical type)
     #[error("invalid word type: {0}")]
     InvalidWordType(String),
+}
+
+/// Authentication and authorization errors for JWT tokens and user operations
+///
+/// Handles authentication failures including token validation, user credentials,
+/// and authorization checks for protected endpoints.
+#[derive(thiserror::Error, Debug)]
+pub enum AuthError {
+    /// JWT token is malformed, invalid signature, or corrupted
+    #[error("invalid authentication token")]
+    InvalidToken,
+    /// Authorization header missing from request
+    #[error("missing authorization token")]
+    MissingToken,
+    /// JWT token has expired and needs renewal
+    #[error("authentication token expired")]
+    TokenExpired,
+    /// Username/password combination is incorrect
+    #[error("invalid credentials")]
+    InvalidCredentials,
+    /// User account not found in database
+    #[error("user not found")]
+    UserNotFound,
+    /// Request validation failed (username/password format, etc.)
+    #[error("validation failed")]
+    ValidationFailed,
+    /// Username already exists in the system
+    #[error("username already exists")]
+    UsernameExists,
+    /// Database operation failed during authentication
+    #[error("authentication database error")]
+    DatabaseError(#[from] sqlx::Error),
+    /// Internal server error during authentication
+    #[error("internal authentication error")]
+    InternalError(#[from] anyhow::Error),
 }
 
 #[cfg(test)]
@@ -140,5 +201,117 @@ mod tests {
         let error_string = format!("{}", app_error.0);
         // Just check that the context is preserved
         assert!(error_string.contains("failed to read file"));
+    }
+
+    #[test]
+    fn test_auth_error_variants() {
+        // Test InvalidToken
+        let auth_error = AuthError::InvalidToken;
+        assert_eq!(format!("{auth_error}"), "invalid authentication token");
+
+        // Test MissingToken
+        let auth_error = AuthError::MissingToken;
+        assert_eq!(format!("{auth_error}"), "missing authorization token");
+
+        // Test TokenExpired
+        let auth_error = AuthError::TokenExpired;
+        assert_eq!(format!("{auth_error}"), "authentication token expired");
+
+        // Test InvalidCredentials
+        let auth_error = AuthError::InvalidCredentials;
+        assert_eq!(format!("{auth_error}"), "invalid credentials");
+
+        // Test UserNotFound
+        let auth_error = AuthError::UserNotFound;
+        assert_eq!(format!("{auth_error}"), "user not found");
+
+        // Test ValidationFailed
+        let auth_error = AuthError::ValidationFailed;
+        assert_eq!(format!("{auth_error}"), "validation failed");
+
+        // Test UsernameExists
+        let auth_error = AuthError::UsernameExists;
+        assert_eq!(format!("{auth_error}"), "username already exists");
+
+        // Test DatabaseError conversion
+        let sqlx_error = sqlx::Error::RowNotFound;
+        let auth_error = AuthError::DatabaseError(sqlx_error);
+        assert!(format!("{auth_error}").contains("authentication database error"));
+
+        // Test InternalError conversion
+        let anyhow_error = anyhow::anyhow!("internal auth failure");
+        let auth_error = AuthError::InternalError(anyhow_error);
+        assert!(format!("{auth_error}").contains("internal authentication error"));
+    }
+
+    #[test]
+    fn test_auth_error_into_app_error() {
+        // Test that AuthError can be converted to AppError
+        let auth_error = AuthError::InvalidToken;
+        let app_error = AppError::from(auth_error);
+        assert!(format!("{}", app_error.0).contains("invalid authentication token"));
+    }
+
+    #[test]
+    fn test_auth_error_http_responses() {
+        // Test InvalidToken response
+        let error = AppError(anyhow::Error::from(AuthError::InvalidToken));
+        let response = error.into_response();
+        assert_eq!(response.status(), StatusCode::UNAUTHORIZED);
+
+        // Test MissingToken response
+        let error = AppError(anyhow::Error::from(AuthError::MissingToken));
+        let response = error.into_response();
+        assert_eq!(response.status(), StatusCode::UNAUTHORIZED);
+
+        // Test TokenExpired response
+        let error = AppError(anyhow::Error::from(AuthError::TokenExpired));
+        let response = error.into_response();
+        assert_eq!(response.status(), StatusCode::UNAUTHORIZED);
+
+        // Test InvalidCredentials response
+        let error = AppError(anyhow::Error::from(AuthError::InvalidCredentials));
+        let response = error.into_response();
+        assert_eq!(response.status(), StatusCode::UNAUTHORIZED);
+
+        // Test UserNotFound response
+        let error = AppError(anyhow::Error::from(AuthError::UserNotFound));
+        let response = error.into_response();
+        assert_eq!(response.status(), StatusCode::UNAUTHORIZED);
+
+        // Test ValidationFailed response
+        let error = AppError(anyhow::Error::from(AuthError::ValidationFailed));
+        let response = error.into_response();
+        assert_eq!(response.status(), StatusCode::BAD_REQUEST);
+
+        // Test UsernameExists response
+        let error = AppError(anyhow::Error::from(AuthError::UsernameExists));
+        let response = error.into_response();
+        assert_eq!(response.status(), StatusCode::BAD_REQUEST);
+
+        // Test DatabaseError response
+        let sqlx_error = sqlx::Error::RowNotFound;
+        let error = AppError(anyhow::Error::from(AuthError::DatabaseError(sqlx_error)));
+        let response = error.into_response();
+        assert_eq!(response.status(), StatusCode::INTERNAL_SERVER_ERROR);
+
+        // Test InternalError response
+        let anyhow_error = anyhow::anyhow!("auth internal error");
+        let error = AppError(anyhow::Error::from(AuthError::InternalError(anyhow_error)));
+        let response = error.into_response();
+        assert_eq!(response.status(), StatusCode::INTERNAL_SERVER_ERROR);
+    }
+
+    #[test]
+    fn test_auth_error_from_conversions() {
+        // Test conversion from sqlx::Error
+        let sqlx_error = sqlx::Error::RowNotFound;
+        let auth_error = AuthError::from(sqlx_error);
+        assert!(matches!(auth_error, AuthError::DatabaseError(_)));
+
+        // Test conversion from anyhow::Error
+        let anyhow_error = anyhow::anyhow!("test error");
+        let auth_error = AuthError::from(anyhow_error);
+        assert!(matches!(auth_error, AuthError::InternalError(_)));
     }
 }

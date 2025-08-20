@@ -12,7 +12,8 @@
 //! validates both success and failure paths for all admin operations.
 
 use anyhow::Result;
-use axum::http::StatusCode;
+use axum::http::{HeaderName, StatusCode};
+use axum_test::TestServer;
 use serde_json::json;
 
 use word_api_axum::models::word::UpsertWord;
@@ -23,6 +24,23 @@ use helpers::{
     create_test_server_streamlined, // For read-only operations using shared database
 };
 use word_api_axum::models::word::{GrammaticalType, LanguageCode};
+
+/// Helper function to create an authenticated admin user and return the JWT token
+async fn create_authenticated_admin(server: &TestServer) -> Result<String> {
+    let register_response = server
+        .post("/auth/register")
+        .json(&json!({
+            "username": "admin_test_user",
+            "password": "secure_admin_password_123",
+            "is_admin": true
+        }))
+        .await;
+
+    register_response.assert_status(StatusCode::CREATED);
+    let register_body: serde_json::Value = register_response.json();
+    let token = register_body["token"].as_str().unwrap().to_string();
+    Ok(token)
+}
 
 /// Creates a basic test word with noun type for admin endpoint testing
 ///
@@ -44,6 +62,7 @@ fn create_validated_test_word(word_type: &str, suffix: &str) -> UpsertWord {
 async fn test_admin_create_word_success() -> Result<()> {
     let server = create_test_server().await?;
     let language = LanguageCode::English;
+    let token = create_authenticated_admin(&server).await?;
 
     let word_data = create_test_word("1");
     let body = json!({
@@ -55,6 +74,10 @@ async fn test_admin_create_word_success() -> Result<()> {
 
     let response = server
         .post(&format!("/admin/{language}/words"))
+        .add_header(
+            HeaderName::from_static("authorization"),
+            format!("Bearer {}", token),
+        )
         .json(&body)
         .await;
 
@@ -77,8 +100,15 @@ async fn test_admin_create_word_success() -> Result<()> {
 async fn test_admin_list_words_optimized() -> Result<()> {
     let server = create_test_server_streamlined().await?;
     let language = LanguageCode::English;
+    let token = create_authenticated_admin(&server).await?;
 
-    let response = server.get(&format!("/admin/{language}/words")).await;
+    let response = server
+        .get(&format!("/admin/{language}/words"))
+        .add_header(
+            HeaderName::from_static("authorization"),
+            format!("Bearer {}", token),
+        )
+        .await;
     assert_eq!(response.status_code(), StatusCode::OK);
 
     let json: serde_json::Value = response.json();
@@ -157,6 +187,7 @@ async fn test_admin_validation_batch() -> Result<()> {
     let server = create_test_server_streamlined().await?;
     let language = LanguageCode::English;
     let word_type = GrammaticalType::Noun;
+    let token = create_authenticated_admin(&server).await?;
 
     // Use source validation by testing cases that should fail according to source ALLOWED_WORD_TYPES
     let invalid_bodies = vec![
@@ -171,6 +202,10 @@ async fn test_admin_validation_batch() -> Result<()> {
     for invalid_body in invalid_bodies {
         let response = server
             .post(&format!("/admin/{language}/words"))
+            .add_header(
+                HeaderName::from_static("authorization"),
+                format!("Bearer {}", token),
+            )
             .json(&invalid_body)
             .await;
         assert!(response.status_code() >= StatusCode::BAD_REQUEST);
@@ -185,6 +220,7 @@ async fn test_admin_update_streamlined() -> Result<()> {
     let language = LanguageCode::English;
     let type_noun = GrammaticalType::Noun;
     let type_verb = GrammaticalType::Verb;
+    let token = create_authenticated_admin(&server).await?;
 
     // Streamlined create-update-verify workflow
     let word_data = create_validated_test_word(type_noun.type_name(), "update");
@@ -198,6 +234,10 @@ async fn test_admin_update_streamlined() -> Result<()> {
     // CREATE
     let create_response = server
         .post(&format!("/admin/{language}/words"))
+        .add_header(
+            HeaderName::from_static("authorization"),
+            format!("Bearer {}", token),
+        )
         .json(&create_body)
         .await;
     assert_eq!(create_response.status_code(), StatusCode::OK);
@@ -216,6 +256,10 @@ async fn test_admin_update_streamlined() -> Result<()> {
 
     let update_response = server
         .put(&format!("/admin/{language}/words/{id}"))
+        .add_header(
+            HeaderName::from_static("authorization"),
+            format!("Bearer {}", token),
+        )
         .json(&update_body)
         .await;
     assert_eq!(update_response.status_code(), StatusCode::OK);
@@ -228,6 +272,7 @@ async fn test_admin_delete_streamlined() -> Result<()> {
     let server = create_test_server().await?;
     let language = LanguageCode::English;
     let type_noun = GrammaticalType::Noun;
+    let token = create_authenticated_admin(&server).await?;
 
     // Streamlined create-delete workflow
     let word_data = create_validated_test_word(type_noun.type_name(), "delete");
@@ -241,6 +286,10 @@ async fn test_admin_delete_streamlined() -> Result<()> {
     // CREATE
     let create_response = server
         .post(&format!("/admin/{language}/words"))
+        .add_header(
+            HeaderName::from_static("authorization"),
+            format!("Bearer {}", token),
+        )
         .json(&body)
         .await;
     assert_eq!(create_response.status_code(), StatusCode::OK);
@@ -251,11 +300,21 @@ async fn test_admin_delete_streamlined() -> Result<()> {
     // DELETE
     let delete_response = server
         .delete(&format!("/admin/{language}/words/{id}"))
+        .add_header(
+            HeaderName::from_static("authorization"),
+            format!("Bearer {}", token),
+        )
         .await;
     assert_eq!(delete_response.status_code(), StatusCode::OK);
 
     // VERIFY deletion (should return empty array or appropriate response)
-    let verify_response = server.get(&format!("/admin/{language}/words/{id}")).await;
+    let verify_response = server
+        .get(&format!("/admin/{language}/words/{id}"))
+        .add_header(
+            HeaderName::from_static("authorization"),
+            format!("Bearer {}", token),
+        )
+        .await;
     assert_eq!(verify_response.status_code(), StatusCode::OK);
 
     Ok(())
@@ -266,6 +325,7 @@ async fn test_admin_nonexistent_operations_batch() -> Result<()> {
     let server = create_test_server_streamlined().await?;
     let language = LanguageCode::English;
     let word_type = GrammaticalType::Noun;
+    let token = create_authenticated_admin(&server).await?;
 
     // Batch test all nonexistent operations for efficiency
     let nonexistent_id = 99999;
@@ -273,12 +333,20 @@ async fn test_admin_nonexistent_operations_batch() -> Result<()> {
     // GET nonexistent
     let get_response = server
         .get(&format!("/admin/{language}/words/{nonexistent_id}"))
+        .add_header(
+            HeaderName::from_static("authorization"),
+            format!("Bearer {}", token),
+        )
         .await;
     assert_eq!(get_response.status_code(), StatusCode::OK);
 
     // DELETE nonexistent (should succeed)
     let delete_response = server
         .delete(&format!("/admin/{language}/words/{nonexistent_id}"))
+        .add_header(
+            HeaderName::from_static("authorization"),
+            format!("Bearer {}", token),
+        )
         .await;
     assert_eq!(delete_response.status_code(), StatusCode::OK);
 
@@ -291,6 +359,10 @@ async fn test_admin_nonexistent_operations_batch() -> Result<()> {
     });
     let update_response = server
         .put(&format!("/admin/{language}/words/{nonexistent_id}"))
+        .add_header(
+            HeaderName::from_static("authorization"),
+            format!("Bearer {}", token),
+        )
         .json(&update_body)
         .await;
     assert_eq!(
@@ -305,6 +377,7 @@ async fn test_admin_nonexistent_operations_batch() -> Result<()> {
 async fn test_admin_request_validation_batch() -> Result<()> {
     let server = create_test_server_streamlined().await?;
     let language = LanguageCode::English;
+    let token = create_authenticated_admin(&server).await?;
 
     // Test request format validation (distinct from data validation)
     let test_cases = vec![
@@ -322,6 +395,10 @@ async fn test_admin_request_validation_batch() -> Result<()> {
     for (body, content_type) in test_cases {
         let response = server
             .post(&format!("/admin/{language}/words"))
+            .add_header(
+                HeaderName::from_static("authorization"),
+                format!("Bearer {}", token),
+            )
             .text(body)
             .content_type(content_type)
             .await;
@@ -338,6 +415,7 @@ async fn test_admin_request_validation_batch() -> Result<()> {
 async fn test_admin_duplicate_prevention() -> Result<()> {
     let server = create_test_server().await?;
     let language = LanguageCode::English;
+    let token = create_authenticated_admin(&server).await?;
 
     // Create a word
     let word_data = create_test_word("duplicate_test");
@@ -350,6 +428,10 @@ async fn test_admin_duplicate_prevention() -> Result<()> {
 
     let first_response = server
         .post(&format!("/admin/{language}/words"))
+        .add_header(
+            HeaderName::from_static("authorization"),
+            format!("Bearer {}", token),
+        )
         .json(&body)
         .await;
     assert_eq!(first_response.status_code(), StatusCode::OK);
@@ -357,6 +439,10 @@ async fn test_admin_duplicate_prevention() -> Result<()> {
     // Try to create the same word again - should fail due to UNIQUE constraints
     let duplicate_response = server
         .post(&format!("/admin/{language}/words"))
+        .add_header(
+            HeaderName::from_static("authorization"),
+            format!("Bearer {}", token),
+        )
         .json(&body)
         .await;
 
@@ -371,6 +457,7 @@ async fn test_source_validation_integration() -> Result<()> {
     // Test that admin endpoints leverage source ALLOWED_WORD_TYPES validation
     let server = create_test_server_streamlined().await?;
     let language = LanguageCode::English;
+    let token = create_authenticated_admin(&server).await?;
 
     // Test that types not in source ALLOWED_WORD_TYPES are rejected
     let invalid_types = ["determiner", "particle"];
@@ -384,6 +471,10 @@ async fn test_source_validation_integration() -> Result<()> {
 
         let response = server
             .post(&format!("/admin/{language}/words"))
+            .add_header(
+                HeaderName::from_static("authorization"),
+                format!("Bearer {}", token),
+            )
             .json(&invalid_body)
             .await;
 

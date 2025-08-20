@@ -22,12 +22,14 @@ use axum::Router;
 use tower_http::trace::TraceLayer;
 
 pub mod admin;
+pub mod auth;
 pub mod healthcheck;
 pub mod openapi;
 pub mod word;
 
 use crate::state::AppState;
 use admin::create_admin_routes;
+use auth::create_auth_routes;
 use healthcheck::create_health_routes;
 use openapi::create_apidocs_routes;
 use word::create_word_routes;
@@ -42,6 +44,9 @@ pub async fn create_router(shared_state: AppState) -> Router {
     // Add admin routes under /admin
     let admin_routes = create_admin_routes(shared_state.clone(), &origins);
 
+    // Add auth routes under /auth
+    let auth_routes = create_auth_routes(shared_state.clone(), &origins);
+
     // Add health routes under /health
     let health_routes = create_health_routes(shared_state.clone(), &origins);
 
@@ -54,6 +59,7 @@ pub async fn create_router(shared_state: AppState) -> Router {
     // Setup top-level router
     Router::new()
         .merge(admin_routes)
+        .merge(auth_routes)
         .merge(health_routes)
         .merge(apidocs_routes)
         .merge(word_routes)
