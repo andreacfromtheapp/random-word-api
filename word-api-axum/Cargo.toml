@@ -61,4 +61,5 @@ uuid = { version = "1.18.0", features = ["v4", "serde"] }
 
 [dev-dependencies]
 axum-test = "17.3.0"
+futures = "0.3.31"
 tempfile = "3.21.0"

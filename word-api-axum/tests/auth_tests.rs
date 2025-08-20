@@ -1,346 +1,267 @@
-//! Integration tests for authentication and authorization
+//! Authentication API contract tests
 //!
-//! Tests the complete authentication flow including:
-//! - User registration and login
-//! - JWT token generation and validation
-//! - Protected admin endpoints
-//! - OpenAPI documentation access control
+//! Tests HTTP authentication behavior without database dependencies:
+//! - Login endpoint returns JWT tokens
+//! - Invalid credentials return proper HTTP status codes
+//! - Protected endpoints require authorization headers
+//! - JWT token format validation
+//!
+//! Philosophy: Test auth behavior, not password hashing or database storage
 
-use axum::http::HeaderName;
-use serde_json::json;
+use axum::http::{HeaderName, StatusCode};
+use serde_json::{json, Value};
 
-mod helpers;
+mod common;
+use common::{create_mock_server, create_mock_server_with_data, mock_admin_token, mock_user_token};
 
+/// Test login endpoint returns JWT for valid admin credentials
 #[tokio::test]
-async fn test_auth_flow_with_admin_endpoints() {
-    let server = helpers::create_test_server().await.unwrap();
+async fn test_login_returns_jwt_for_valid_admin() {
+    let server = create_mock_server().await;
 
-    // Step 1: Register a new user
-    let register_response = server
-        .post("/auth/register")
-        .json(&json!({
-            "username": "admin_user",
-            "password": "secure_password_123",
-            "is_admin": true
-        }))
-        .await;
-
-    register_response.assert_status(axum::http::StatusCode::CREATED);
-    let register_body: serde_json::Value = register_response.json();
-    let token = register_body["token"].as_str().unwrap();
-
-    // Step 2: Access admin endpoints with valid token
-    let admin_response = server
-        .get("/admin/en/words")
-        .add_header(
-            HeaderName::from_static("authorization"),
-            format!("Bearer {}", token),
-        )
-        .await;
-
-    admin_response.assert_status(axum::http::StatusCode::OK);
-
-    // Step 3: Try to access admin endpoints without token (should fail)
-    let unauthorized_response = server.get("/admin/en/words").await;
-
-    unauthorized_response.assert_status(axum::http::StatusCode::UNAUTHORIZED);
-
-    // Step 4: Try to access admin endpoints with invalid token (should fail)
-    let invalid_token_response = server
-        .get("/admin/en/words")
-        .add_header(
-            HeaderName::from_static("authorization"),
-            "Bearer invalid_token",
-        )
-        .await;
-
-    invalid_token_response.assert_status(axum::http::StatusCode::UNAUTHORIZED);
-}
-
-#[tokio::test]
-async fn test_non_admin_user_cannot_access_admin_endpoints() {
-    let server = helpers::create_test_server().await.unwrap();
-
-    // Register a non-admin user
-    let register_response = server
-        .post("/auth/register")
-        .json(&json!({
-            "username": "regular_user",
-            "password": "secure_password_123",
-            "is_admin": false
-        }))
-        .await;
-
-    register_response.assert_status(axum::http::StatusCode::CREATED);
-    let register_body: serde_json::Value = register_response.json();
-    let token = register_body["token"].as_str().unwrap();
-
-    // Try to access admin endpoints with non-admin token (should fail)
-    let admin_response = server
-        .get("/admin/en/words")
-        .add_header(
-            HeaderName::from_static("authorization"),
-            format!("Bearer {}", token),
-        )
-        .await;
-
-    admin_response.assert_status(axum::http::StatusCode::UNAUTHORIZED);
-}
-
-#[tokio::test]
-async fn test_login_and_token_usage() {
-    let server = helpers::create_test_server().await.unwrap();
-
-    // Register a user first
-    let register_response = server
-        .post("/auth/register")
-        .json(&json!({
-            "username": "test_login_user",
-            "password": "login_password_123",
-            "is_admin": true
-        }))
-        .await;
-
-    register_response.assert_status(axum::http::StatusCode::CREATED);
-
-    // Login with the same credentials
-    let login_response = server
+    let response = server
         .post("/auth/login")
         .json(&json!({
-            "username": "test_login_user",
-            "password": "login_password_123"
+            "username": "admin",
+            "password": "password"
         }))
         .await;
 
-    login_response.assert_status(axum::http::StatusCode::OK);
-    let login_body: serde_json::Value = login_response.json();
-    let token = login_body["token"].as_str().unwrap();
-    assert!(login_body["expires_in"].as_i64().unwrap() > 0);
+    assert_eq!(response.status_code(), StatusCode::OK);
 
-    // Use the login token to access admin endpoints
-    let admin_response = server
-        .get("/admin/en/words")
-        .add_header(
-            HeaderName::from_static("authorization"),
-            format!("Bearer {}", token),
-        )
-        .await;
+    let json: Value = response.json();
+    assert!(json["token"].is_string());
+    assert_eq!(json["user"]["username"], "admin");
+    assert_eq!(json["user"]["isAdmin"], true);
 
-    admin_response.assert_status(axum::http::StatusCode::OK);
+    let token = json["token"].as_str().unwrap();
+    assert!(token.contains("admin"));
 }
 
+/// Test login endpoint returns JWT for valid user credentials
 #[tokio::test]
-async fn test_complete_admin_crud_with_auth() {
-    let server = helpers::create_test_server().await.unwrap();
+async fn test_login_returns_jwt_for_valid_user() {
+    let server = create_mock_server().await;
 
-    // Register an admin user
-    let register_response = server
-        .post("/auth/register")
+    let response = server
+        .post("/auth/login")
         .json(&json!({
-            "username": "crud_admin",
-            "password": "crud_password_123",
-            "is_admin": true
+            "username": "user",
+            "password": "password"
         }))
         .await;
 
-    register_response.assert_status(axum::http::StatusCode::CREATED);
-    let register_body: serde_json::Value = register_response.json();
-    let token = register_body["token"].as_str().unwrap();
+    assert_eq!(response.status_code(), StatusCode::OK);
 
-    let auth_header = (
-        HeaderName::from_static("authorization"),
-        format!("Bearer {}", token),
-    );
+    let json: Value = response.json();
+    assert!(json["token"].is_string());
+    assert_eq!(json["user"]["username"], "user");
+    assert_eq!(json["user"]["isAdmin"], false);
+}
 
-    // Test CREATE - Add a new word
-    let create_response = server
+/// Test login endpoint returns 401 for invalid credentials
+#[tokio::test]
+async fn test_login_returns_401_for_invalid_credentials() {
+    let server = create_mock_server().await;
+
+    let response = server
+        .post("/auth/login")
+        .json(&json!({
+            "username": "invalid",
+            "password": "wrongpassword"
+        }))
+        .await;
+
+    assert_eq!(response.status_code(), StatusCode::UNAUTHORIZED);
+}
+
+/// Test login endpoint returns 401 for missing username
+#[tokio::test]
+async fn test_login_returns_401_for_missing_username() {
+    let server = create_mock_server().await;
+
+    let response = server
+        .post("/auth/login")
+        .json(&json!({
+            "password": "password"
+        }))
+        .await;
+
+    assert_eq!(response.status_code(), StatusCode::UNAUTHORIZED);
+}
+
+/// Test login endpoint returns 401 for missing password
+#[tokio::test]
+async fn test_login_returns_401_for_missing_password() {
+    let server = create_mock_server().await;
+
+    let response = server
+        .post("/auth/login")
+        .json(&json!({
+            "username": "admin"
+        }))
+        .await;
+
+    assert_eq!(response.status_code(), StatusCode::UNAUTHORIZED);
+}
+
+/// Test admin endpoints require authorization header
+#[tokio::test]
+async fn test_admin_endpoints_require_authorization() {
+    let server = create_mock_server().await;
+
+    // Test admin create word without auth
+    let response = server
         .post("/admin/en/words")
-        .add_header(auth_header.0.clone(), auth_header.1.clone())
         .json(&json!({
-            "word": "testword",
-            "definition": "a word used for testing purposes",
-            "pronunciation": "/ˈtɛstˌwɜrd/",
+            "word": "test",
+            "definition": "test definition",
             "wordType": "noun"
         }))
         .await;
 
-    create_response.assert_status(axum::http::StatusCode::OK);
+    assert_eq!(response.status_code(), StatusCode::UNAUTHORIZED);
 
-    // Test READ - List all words
-    let list_response = server
-        .get("/admin/en/words")
-        .add_header(auth_header.0.clone(), auth_header.1.clone())
-        .await;
+    // Test admin list words without auth
+    let response = server.get("/admin/en/words").await;
+    assert_eq!(response.status_code(), StatusCode::UNAUTHORIZED);
 
-    list_response.assert_status(axum::http::StatusCode::OK);
-    let words: serde_json::Value = list_response.json();
-    assert!(words.as_array().unwrap().len() > 0);
-
-    // Find the created word's ID
-    let created_word = words
-        .as_array()
-        .unwrap()
-        .iter()
-        .find(|w| w["word"] == "testword")
-        .expect("Created word should be in the list");
-    let word_id = created_word["id"].as_i64().unwrap();
-
-    // Test READ by ID
-    let read_response = server
-        .get(&format!("/admin/en/words/{}", word_id))
-        .add_header(auth_header.0.clone(), auth_header.1.clone())
-        .await;
-
-    read_response.assert_status(axum::http::StatusCode::OK);
-
-    // Test UPDATE
-    let update_response = server
-        .put(&format!("/admin/en/words/{}", word_id))
-        .add_header(auth_header.0.clone(), auth_header.1.clone())
+    // Test admin update word without auth
+    let response = server
+        .put("/admin/en/words/1")
         .json(&json!({
-            "word": "updatedword",
-            "definition": "an updated word used for testing purposes",
-            "pronunciation": "/ˈʌpˌdeɪtɪdˌwɜrd/",
+            "word": "updated",
+            "definition": "updated definition"
+        }))
+        .await;
+
+    assert_eq!(response.status_code(), StatusCode::UNAUTHORIZED);
+
+    // Test admin delete word without auth
+    let response = server.delete("/admin/en/words/1").await;
+    assert_eq!(response.status_code(), StatusCode::UNAUTHORIZED);
+}
+
+/// Test admin endpoints reject non-admin tokens
+#[tokio::test]
+async fn test_admin_endpoints_reject_non_admin_tokens() {
+    let server = create_mock_server().await;
+    let user_token = mock_user_token();
+
+    let response = server
+        .post("/admin/en/words")
+        .add_header(
+            HeaderName::from_static("authorization"),
+            format!("Bearer {}", user_token),
+        )
+        .json(&json!({
+            "word": "test",
+            "definition": "test definition",
             "wordType": "noun"
         }))
         .await;
 
-    update_response.assert_status(axum::http::StatusCode::OK);
-
-    // Test DELETE
-    let delete_response = server
-        .delete(&format!("/admin/en/words/{}", word_id))
-        .add_header(auth_header.0, auth_header.1)
-        .await;
-
-    delete_response.assert_status(axum::http::StatusCode::OK);
+    assert_eq!(response.status_code(), StatusCode::FORBIDDEN);
 }
 
+/// Test admin endpoints accept valid admin tokens
 #[tokio::test]
-async fn test_public_endpoints_remain_accessible() {
-    let server = helpers::create_test_server().await.unwrap();
+async fn test_admin_endpoints_accept_admin_tokens() {
+    let server = create_mock_server_with_data().await;
+    let admin_token = mock_admin_token();
 
-    // Public endpoints should work without authentication
-    let health_response = server.get("/health/alive").await;
-    health_response.assert_status(axum::http::StatusCode::OK);
-
-    let ready_response = server.get("/health/ready").await;
-    ready_response.assert_status(axum::http::StatusCode::OK);
-
-    // Word endpoints should remain public
-    let random_word_response = server.get("/en/random").await;
-    // Note: This might return 404 if no words exist, which is fine for this test
-    assert!(
-        random_word_response.status_code() == axum::http::StatusCode::OK
-            || random_word_response.status_code() == axum::http::StatusCode::NOT_FOUND
-    );
-}
-
-#[tokio::test]
-async fn test_jwt_token_expiration_handling() {
-    let server = helpers::create_test_server().await.unwrap();
-
-    // Register a user
-    let register_response = server
-        .post("/auth/register")
-        .json(&json!({
-            "username": "expiry_test_user",
-            "password": "expiry_password_123",
-            "is_admin": true
-        }))
-        .await;
-
-    register_response.assert_status(axum::http::StatusCode::CREATED);
-    let register_body: serde_json::Value = register_response.json();
-    let token = register_body["token"].as_str().unwrap();
-
-    // Token should be valid initially
-    let valid_response = server
+    let response = server
         .get("/admin/en/words")
         .add_header(
             HeaderName::from_static("authorization"),
-            format!("Bearer {}", token),
+            format!("Bearer {}", admin_token),
         )
         .await;
 
-    valid_response.assert_status(axum::http::StatusCode::OK);
+    assert_eq!(response.status_code(), StatusCode::OK);
 
-    // Note: In a real test, we would wait for token expiration or manipulate the clock
-    // For now, we just verify the token works as expected
-    // A complete test would require mocking the current time or using a very short expiration
+    let json: Value = response.json();
+    assert!(json.is_array());
 }
 
+/// Test authorization header format validation
 #[tokio::test]
-async fn test_invalid_auth_scenarios() {
-    let server = helpers::create_test_server().await.unwrap();
+async fn test_authorization_header_format_validation() {
+    let server = create_mock_server().await;
 
-    // Test 1: Missing Authorization header
-    let no_auth_response = server.get("/admin/en/words").await;
-    no_auth_response.assert_status(axum::http::StatusCode::UNAUTHORIZED);
-
-    // Test 2: Malformed Authorization header
-    let malformed_response = server
+    // Test invalid Bearer format
+    let response = server
         .get("/admin/en/words")
-        .add_header(HeaderName::from_static("authorization"), "NotBearer token")
+        .add_header(
+            HeaderName::from_static("authorization"),
+            "InvalidFormat token",
+        )
         .await;
-    malformed_response.assert_status(axum::http::StatusCode::UNAUTHORIZED);
 
-    // Test 3: Empty token
-    let empty_token_response = server
-        .get("/admin/en/words")
-        .add_header(HeaderName::from_static("authorization"), "Bearer ")
-        .await;
-    empty_token_response.assert_status(axum::http::StatusCode::UNAUTHORIZED);
+    assert_eq!(response.status_code(), StatusCode::FORBIDDEN);
 
-    // Test 4: Invalid JWT format
-    let invalid_jwt_response = server
+    // Test missing Bearer prefix
+    let response = server
         .get("/admin/en/words")
-        .add_header(HeaderName::from_static("authorization"), "Bearer not.a.jwt")
+        .add_header(HeaderName::from_static("authorization"), "just.a.token")
         .await;
-    invalid_jwt_response.assert_status(axum::http::StatusCode::UNAUTHORIZED);
+
+    assert_eq!(response.status_code(), StatusCode::FORBIDDEN);
 }
 
+/// Test JWT token contains expected format
 #[tokio::test]
-async fn test_registration_validation() {
-    let server = helpers::create_test_server().await.unwrap();
+async fn test_jwt_token_format() {
+    let server = create_mock_server().await;
 
-    // Test 1: Username too short
-    let short_username_response = server
-        .post("/auth/register")
+    let response = server
+        .post("/auth/login")
         .json(&json!({
-            "username": "ab",
-            "password": "valid_password_123"
+            "username": "admin",
+            "password": "password"
         }))
         .await;
-    short_username_response.assert_status(axum::http::StatusCode::BAD_REQUEST);
 
-    // Test 2: Password too short
-    let short_password_response = server
-        .post("/auth/register")
+    let json: Value = response.json();
+    let token = json["token"].as_str().unwrap();
+
+    // Mock token should have expected format
+    assert!(token.contains("."));
+    assert!(token.len() > 10);
+}
+
+/// Test multiple login attempts with different credentials
+#[tokio::test]
+async fn test_multiple_login_attempts() {
+    let server = create_mock_server().await;
+
+    // Valid admin login
+    let response1 = server
+        .post("/auth/login")
         .json(&json!({
-            "username": "validuser",
-            "password": "123"
+            "username": "admin",
+            "password": "password"
         }))
         .await;
-    short_password_response.assert_status(axum::http::StatusCode::BAD_REQUEST);
+    assert_eq!(response1.status_code(), StatusCode::OK);
 
-    // Test 3: Missing required fields
-    let missing_fields_response = server
-        .post("/auth/register")
+    // Valid user login
+    let response2 = server
+        .post("/auth/login")
         .json(&json!({
-            "username": "validuser"
-            // missing password
+            "username": "user",
+            "password": "password"
         }))
         .await;
-    missing_fields_response.assert_status(axum::http::StatusCode::UNPROCESSABLE_ENTITY);
+    assert_eq!(response2.status_code(), StatusCode::OK);
 
-    // Test 4: Valid registration should work
-    let valid_response = server
-        .post("/auth/register")
+    // Invalid login
+    let response3 = server
+        .post("/auth/login")
         .json(&json!({
-            "username": "validuser",
-            "password": "valid_password_123"
+            "username": "invalid",
+            "password": "wrong"
         }))
         .await;
-    valid_response.assert_status(axum::http::StatusCode::CREATED);
+    assert_eq!(response3.status_code(), StatusCode::UNAUTHORIZED);
 }

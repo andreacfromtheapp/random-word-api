@@ -8,7 +8,7 @@ use validator::Validate;
 
 use crate::auth::{JwtManager, PasswordHelper, UserRepository};
 use crate::error::{AppError, AuthError};
-use crate::models::user::{AuthResponse, LoginRequest, RegisterRequest};
+use crate::models::user::{AuthResponse, LoginRequest};
 use crate::state::AppState;
 
 /// User login endpoint
@@ -69,72 +69,10 @@ pub async fn login(
     Ok(Json(response))
 }
 
-/// User registration endpoint
-///
-/// Creates a new user account with the provided credentials.
-/// Only admin users can create other admin accounts.
-#[utoipa::path(
-    post,
-    path = "/auth/register",
-    request_body = RegisterRequest,
-    responses(
-        (status = 201, description = "User created successfully - JWT token returned", body = AuthResponse),
-        (status = 400, description = "Bad request - validation failed, malformed JSON, or username already exists"),
-        (status = 422, description = "Validation failed - username too short (min 3 chars) or password too short (min 8 chars)"),
-        (status = 500, description = "Internal server error - database or authentication system failure")
-    ),
-    tag = "auth_endpoints"
-)]
-pub async fn register(
-    State(state): State<AppState>,
-    Json(request): Json<RegisterRequest>,
-) -> Result<impl IntoResponse, AppError> {
-    // Validate request data
-    request
-        .validate()
-        .map_err(|_| AuthError::ValidationFailed)?;
-
-    // Check if username already exists
-    if UserRepository::find_by_username(&state.dbpool, &request.username)
-        .await?
-        .is_some()
-    {
-        return Err(AuthError::UsernameExists.into());
-    }
-
-    // Hash the password
-    let password_hash =
-        PasswordHelper::hash_password(&request.password).map_err(AuthError::InternalError)?;
-
-    // Create the user (non-admin by default)
-    let is_admin = request.is_admin.unwrap_or(false);
-    let user =
-        UserRepository::create_user(&state.dbpool, &request.username, &password_hash, is_admin)
-            .await?;
-
-    // Get JWT secret from config
-    let jwt_secret = {
-        let config = state
-            .apiconfig
-            .lock()
-            .map_err(|e| AuthError::InternalError(anyhow::anyhow!("Config lock failed: {}", e)))?;
-        config.jwt_secret.clone()
-    };
-
-    // Generate JWT token
-    let token = JwtManager::generate_token(&user, &jwt_secret).map_err(AuthError::InternalError)?;
-
-    let response = AuthResponse {
-        token,
-        expires_in: JwtManager::get_expiration_seconds(),
-    };
-
-    Ok((axum::http::StatusCode::CREATED, Json(response)))
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::auth::UserRepository;
     use crate::config::ApiConfig;
     use axum_test::TestServer;
     use serde_json::json;
@@ -165,76 +103,43 @@ mod tests {
 
         let app = axum::Router::new()
             .route("/auth/login", axum::routing::post(login))
-            .route("/auth/register", axum::routing::post(register))
             .with_state(state);
 
         TestServer::new(app).unwrap()
     }
 
     #[tokio::test]
-    async fn test_register_success() {
-        let server = create_test_app().await;
-
-        let request_body = json!({
-            "username": "testuser",
-            "password": "testpassword123"
-        });
-
-        let response = server.post("/auth/register").json(&request_body).await;
-
-        response.assert_status(axum::http::StatusCode::CREATED);
-
-        let body: serde_json::Value = response.json();
-        assert!(body.get("token").is_some());
-        assert!(body.get("expires_in").is_some());
-    }
-
-    #[tokio::test]
-    async fn test_register_duplicate_username() {
-        let server = create_test_app().await;
-
-        let request_body = json!({
-            "username": "testuser",
-            "password": "testpassword123"
-        });
-
-        // First registration should succeed
-        let response = server.post("/auth/register").json(&request_body).await;
-        response.assert_status(axum::http::StatusCode::CREATED);
-
-        // Second registration with same username should fail
-        let response = server.post("/auth/register").json(&request_body).await;
-        response.assert_status(axum::http::StatusCode::BAD_REQUEST);
-    }
-
-    #[tokio::test]
-    async fn test_register_invalid_data() {
-        let server = create_test_app().await;
-
-        let request_body = json!({
-            "username": "ab", // Too short
-            "password": "123" // Too short
-        });
-
-        let response = server.post("/auth/register").json(&request_body).await;
-
-        response.assert_status(axum::http::StatusCode::BAD_REQUEST);
-    }
-
-    #[tokio::test]
     async fn test_login_success() {
-        let server = create_test_app().await;
+        // Create a test user using UserRepository to avoid SQL compilation issues
+        let temp_db = NamedTempFile::new().unwrap();
+        let db_url = format!("sqlite:{}", temp_db.path().display());
+        let dbpool = crate::init_dbpool(&db_url).await.unwrap();
+        sqlx::migrate!("./migrations").run(&dbpool).await.unwrap();
 
-        // First register a user
-        let register_body = json!({
-            "username": "logintest",
-            "password": "loginpassword123"
-        });
+        let password_hash = PasswordHelper::hash_password("loginpassword123").unwrap();
+        let _user = UserRepository::create_user(&dbpool, "logintest", &password_hash, false)
+            .await
+            .unwrap();
 
-        let response = server.post("/auth/register").json(&register_body).await;
-        response.assert_status(axum::http::StatusCode::CREATED);
+        let config = ApiConfig {
+            address: "127.0.0.1".parse().unwrap(),
+            port: 3000,
+            database_url: db_url,
+            openapi: crate::config::OpenApiDocs::default(),
+            jwt_secret: "test_secret_key".to_string(),
+        };
 
-        // Then try to login
+        let state = AppState {
+            apiconfig: Arc::new(Mutex::new(config)),
+            dbpool,
+        };
+
+        let app = axum::Router::new()
+            .route("/auth/login", axum::routing::post(login))
+            .with_state(state);
+
+        let server = TestServer::new(app).unwrap();
+
         let login_body = json!({
             "username": "logintest",
             "password": "loginpassword123"
@@ -265,18 +170,35 @@ mod tests {
 
     #[tokio::test]
     async fn test_login_wrong_password() {
-        let server = create_test_app().await;
+        let temp_db = NamedTempFile::new().unwrap();
+        let db_url = format!("sqlite:{}", temp_db.path().display());
+        let dbpool = crate::init_dbpool(&db_url).await.unwrap();
+        sqlx::migrate!("./migrations").run(&dbpool).await.unwrap();
 
-        // Register a user
-        let register_body = json!({
-            "username": "wrongpwtest",
-            "password": "correctpassword123"
-        });
+        let password_hash = PasswordHelper::hash_password("correctpassword123").unwrap();
+        let _user = UserRepository::create_user(&dbpool, "wrongpwtest", &password_hash, false)
+            .await
+            .unwrap();
 
-        let response = server.post("/auth/register").json(&register_body).await;
-        response.assert_status(axum::http::StatusCode::CREATED);
+        let config = ApiConfig {
+            address: "127.0.0.1".parse().unwrap(),
+            port: 3000,
+            database_url: db_url,
+            openapi: crate::config::OpenApiDocs::default(),
+            jwt_secret: "test_secret_key".to_string(),
+        };
 
-        // Try to login with wrong password
+        let state = AppState {
+            apiconfig: Arc::new(Mutex::new(config)),
+            dbpool,
+        };
+
+        let app = axum::Router::new()
+            .route("/auth/login", axum::routing::post(login))
+            .with_state(state);
+
+        let server = TestServer::new(app).unwrap();
+
         let login_body = json!({
             "username": "wrongpwtest",
             "password": "wrongpassword123"

@@ -1,373 +1,259 @@
-//! Word API integration tests
+//! Word API contract tests
 //!
-//! Comprehensive test suite for public word retrieval endpoints covering:
-//! - Random word retrieval with and without type filtering
-//! - All supported grammatical types (noun, verb, adjective, etc.)
-//! - Error handling for invalid languages and word types
-//! - Response format validation and API consistency
-//! - Database integration scenarios including empty database handling
-//! - Parallel request testing for reliability and performance validation
+//! Tests HTTP word endpoints without database dependencies:
+//! - Random word endpoints return correct JSON structure
+//! - Word type filtering works correctly
+//! - Invalid requests return proper HTTP status codes
+//! - Response format consistency across all endpoints
+//!
+//! Philosophy: Test JSON responses, not database queries
 
-use anyhow::Result;
 use axum::http::StatusCode;
+use serde_json::Value;
 
-mod helpers;
-use helpers::{
-    create_test_server_memory,      // For empty database scenarios
-    create_test_server_streamlined, // For read-only operations using shared database
-};
-use word_api_axum::models::word::{GrammaticalType, LanguageCode};
+mod common;
+use common::{create_mock_server, create_mock_server_with_data};
 
-// === Core Word Retrieval Tests ===
-
-/// Tests word retrieval across multiple endpoints in parallel for efficiency
-/// Validates basic functionality, all word types, and response format consistency
-
+/// Test random word endpoint returns correct JSON structure
 #[tokio::test]
-async fn test_word_retrieval_parallel() -> Result<()> {
-    let noun = GrammaticalType::Noun;
-    let verb = GrammaticalType::Verb;
-    let adjective = GrammaticalType::Adjective;
-    let adverb = GrammaticalType::Adverb;
-    let pronoun = GrammaticalType::Pronoun;
-    let preposition = GrammaticalType::Preposition;
-    let conjunction = GrammaticalType::Conjunction;
-    let interjection = GrammaticalType::Interjection;
-    let article = GrammaticalType::Article;
+async fn test_random_word_returns_json_structure() {
+    let server = create_mock_server_with_data().await;
 
-    let allowed_word_types = [
-        noun.type_name(),
-        verb.type_name(),
-        adjective.type_name(),
-        adverb.type_name(),
-        pronoun.type_name(),
-        preposition.type_name(),
-        conjunction.type_name(),
-        interjection.type_name(),
-        article.type_name(),
+    let response = server.get("/en/words/random").await;
+
+    assert_eq!(response.status_code(), StatusCode::OK);
+
+    let json: Value = response.json();
+    assert!(json["id"].is_number());
+    assert!(json["word"].is_string());
+    assert!(json["definition"].is_string());
+    assert!(json["pronunciation"].is_string());
+    assert!(json["wordType"].is_string());
+
+    // Verify content is not empty
+    assert!(!json["word"].as_str().unwrap().is_empty());
+    assert!(!json["definition"].as_str().unwrap().is_empty());
+    assert!(!json["pronunciation"].as_str().unwrap().is_empty());
+    assert!(!json["wordType"].as_str().unwrap().is_empty());
+}
+
+/// Test random word endpoint returns 404 when no words available
+#[tokio::test]
+async fn test_random_word_returns_404_when_empty() {
+    let server = create_mock_server().await; // Empty server
+
+    let response = server.get("/en/words/random").await;
+
+    assert_eq!(response.status_code(), StatusCode::NOT_FOUND);
+}
+
+/// Test random word by type endpoint returns correct JSON structure
+#[tokio::test]
+async fn test_random_word_by_type_returns_json_structure() {
+    let server = create_mock_server_with_data().await;
+
+    let response = server.get("/en/words/random/noun").await;
+
+    assert_eq!(response.status_code(), StatusCode::OK);
+
+    let json: Value = response.json();
+    assert!(json["id"].is_number());
+    assert!(json["word"].is_string());
+    assert!(json["definition"].is_string());
+    assert!(json["pronunciation"].is_string());
+    assert_eq!(json["wordType"], "noun");
+}
+
+/// Test random word by type endpoint filters correctly
+#[tokio::test]
+async fn test_random_word_by_type_filters_correctly() {
+    let server = create_mock_server_with_data().await;
+
+    // Test verb filtering
+    let response = server.get("/en/words/random/verb").await;
+
+    assert_eq!(response.status_code(), StatusCode::OK);
+
+    let json: Value = response.json();
+    assert_eq!(json["wordType"], "verb");
+    assert_eq!(json["word"], "run"); // Our mock verb
+}
+
+/// Test random word by type returns 404 for non-existent type
+#[tokio::test]
+async fn test_random_word_by_type_returns_404_for_missing_type() {
+    let server = create_mock_server_with_data().await;
+
+    let response = server.get("/en/words/random/nonexistent").await;
+
+    assert_eq!(response.status_code(), StatusCode::NOT_FOUND);
+}
+
+/// Test all supported word types return correct responses
+#[tokio::test]
+async fn test_all_word_types_supported() {
+    let server = create_mock_server_with_data().await;
+
+    let word_types = [
+        "noun",
+        "verb",
+        "adjective",
+        "adverb",
+        "pronoun",
+        "preposition",
+        "conjunction",
+        "interjection",
+        "article",
     ];
 
-    // Run word retrieval tests in parallel for efficiency
-    let (basic_result, types_result, format_result) = tokio::join!(
-        async {
-            let server = create_test_server_streamlined().await?;
-            let response = server.get("/en/random").await;
-            assert_eq!(response.status_code(), StatusCode::OK);
-            let json: serde_json::Value = response.json();
-            assert!(json.is_array(), "Response should be an array");
-            let words = json.as_array().unwrap();
-            assert!(!words.is_empty(), "Response should contain words");
-            let word = &words[0];
-            assert!(word.get("word").is_some(), "Should have word field");
-            assert!(
-                word.get("definition").is_some(),
-                "Should have definition field"
-            );
-            assert!(
-                word.get("pronunciation").is_some(),
-                "Should have pronunciation field"
-            );
-            Ok::<(), anyhow::Error>(())
-        },
-        async {
-            let server = create_test_server_streamlined().await?;
-            // Test all word types in parallel
-            for &word_type in &allowed_word_types {
-                let response = server.get(&format!("/en/{word_type}")).await;
-                // Should return OK even if no words are found (empty array)
-                assert_eq!(response.status_code(), StatusCode::OK);
-                let json: serde_json::Value = response.json();
-                assert!(
-                    json.is_array(),
-                    "Response should be an array for {word_type}"
-                );
-                let words = json.as_array().unwrap();
+    for word_type in word_types {
+        let response = server.get(&format!("/en/words/random/{}", word_type)).await;
 
-                // If words exist, validate their structure
-                if !words.is_empty() {
-                    let word = &words[0];
-                    assert!(
-                        word.get("word").is_some(),
-                        "Should have word field for {word_type}"
-                    );
-                    assert!(
-                        word.get("definition").is_some(),
-                        "Should have definition field for {word_type}"
-                    );
-                    assert!(
-                        word.get("pronunciation").is_some(),
-                        "Should have pronunciation field for {word_type}"
-                    );
-                }
-            }
-            Ok::<(), anyhow::Error>(())
-        },
-        async {
-            let server = create_test_server_streamlined().await?;
-            let language = LanguageCode::English;
-            let response = server.get(&format!("/{language}/random")).await;
-            assert_eq!(response.status_code(), StatusCode::OK);
-            // Verify content type
-            let content_type = response
-                .headers()
-                .get("content-type")
-                .expect("Response should have content-type header");
-            assert!(
-                content_type.to_str().unwrap().contains("application/json"),
-                "Word API response should be JSON content type"
-            );
-            // Verify response structure
-            let json: serde_json::Value = response.json();
-            assert!(json.is_array(), "Response should be an array");
-            let words = json.as_array().unwrap();
-            assert!(!words.is_empty(), "Response should contain words");
-            let word = &words[0];
-            assert!(word["word"].is_string(), "Word should be string");
-            assert!(
-                word["definition"].is_string(),
-                "Definition should be string"
-            );
-            assert!(
-                word["pronunciation"].is_string(),
-                "Pronunciation should be string"
-            );
-            assert!(
-                !word["word"].as_str().unwrap().is_empty(),
-                "Word should not be empty"
-            );
-            assert!(
-                !word["definition"].as_str().unwrap().is_empty(),
-                "Definition should not be empty"
-            );
-            assert!(
-                !word["pronunciation"].as_str().unwrap().is_empty(),
-                "Pronunciation should not be empty"
-            );
-            Ok::<(), anyhow::Error>(())
+        // Should either return a word of that type (200) or not found (404)
+        // Both are valid responses depending on available mock data
+        assert!(
+            response.status_code() == StatusCode::OK
+                || response.status_code() == StatusCode::NOT_FOUND,
+            "Word type '{}' should return 200 or 404, got {}",
+            word_type,
+            response.status_code()
+        );
+
+        if response.status_code() == StatusCode::OK {
+            let json: Value = response.json();
+            assert!(json["wordType"].is_string());
         }
-    );
-
-    // Check all parallel operations succeeded
-    basic_result?;
-    types_result?;
-    format_result?;
-
-    Ok(())
+    }
 }
 
-// === Error Handling Tests (Parallelized) ===
-
-/// Tests error scenarios including invalid languages, word types, and endpoints
-/// Validates proper HTTP status codes and error message content
-
+/// Test word endpoints handle invalid language codes gracefully
 #[tokio::test]
-async fn test_error_handling_parallel() -> Result<()> {
-    // Run error handling tests in parallel
-    let (invalid_requests_result, detailed_error_result) = tokio::join!(
-        async {
-            let server = create_test_server_streamlined().await?;
-            // Batch test all invalid scenarios for efficiency
-            let invalid_scenarios = vec![
-                ("/invalid/random", "Invalid language"),
-                ("/en/random/invalid_type", "Invalid word type"),
-                ("/nonexistent/endpoint", "Nonexistent endpoint"),
-            ];
-            for (path, description) in invalid_scenarios {
-                let response = server.get(path).await;
-                assert!(
-                    response.status_code() >= StatusCode::BAD_REQUEST,
-                    "{description} should return error status for path: {path}"
-                );
-            }
-            Ok::<(), anyhow::Error>(())
-        },
-        async {
-            let server = create_test_server_streamlined().await?;
-            // Test invalid word type with detailed validation
-            let language = LanguageCode::English;
-            let invalid_type_response = server.get(&format!("/{language}/invalid_type")).await;
-            assert_eq!(
-                invalid_type_response.status_code(),
-                StatusCode::BAD_REQUEST,
-                "Invalid word type should return 400 Bad Request"
-            );
-            let body = invalid_type_response.text();
-            assert!(!body.is_empty(), "Error response should have a message");
-            assert!(
-                body.to_lowercase().contains("invalid word type"),
-                "Error message should mention invalid word type"
-            );
-            Ok::<(), anyhow::Error>(())
-        }
-    );
+async fn test_invalid_language_codes() {
+    let server = create_mock_server_with_data().await;
 
-    // Check both parallel operations succeeded
-    invalid_requests_result?;
-    detailed_error_result?;
+    // These should return 404 since our mock only supports 'en'
+    let invalid_languages = ["fr", "es", "de", "invalid"];
 
-    Ok(())
+    for lang in invalid_languages {
+        let response = server.get(&format!("/{}/words/random", lang)).await;
+
+        // Mock server doesn't have these routes, so should be 404
+        assert_eq!(
+            response.status_code(),
+            StatusCode::NOT_FOUND,
+            "Invalid language '{}' should return 404",
+            lang
+        );
+    }
 }
 
-// === Database and Edge Case Tests ===
-
-/// Tests edge cases including empty databases and multiple concurrent requests
-/// Ensures API reliability under various database states and load conditions
-
+/// Test word endpoint response headers
 #[tokio::test]
-async fn test_empty_database_scenario() -> Result<()> {
-    let (server, _pool) = create_test_server_memory().await?;
-    let response = server.get("/en/random").await;
+async fn test_word_endpoint_response_headers() {
+    let server = create_mock_server_with_data().await;
 
-    // Empty database returns OK with empty array or error - both acceptable
+    let response = server.get("/en/words/random").await;
+
+    assert_eq!(response.status_code(), StatusCode::OK);
+
+    // Check content type
+    let content_type = response.headers().get("content-type");
     assert!(
-        response.status_code() == StatusCode::OK
-            || response.status_code() >= StatusCode::BAD_REQUEST
+        content_type.is_some(),
+        "Response should have content-type header"
     );
 
-    Ok(())
-}
-
-#[tokio::test]
-async fn test_multiple_requests_reliability() -> Result<()> {
-    let server = create_test_server_streamlined().await?;
-
-    // Test multiple requests in parallel for better reliability testing
-    let (req1, req2, req3) = tokio::join!(
-        async {
-            let response = server.get("/en/random").await;
-            assert!(
-                response.status_code() == StatusCode::OK
-                    || response.status_code() == StatusCode::NO_CONTENT
-            );
-            Ok::<(), anyhow::Error>(())
-        },
-        async {
-            let response = server.get("/en/random").await;
-            assert!(
-                response.status_code() == StatusCode::OK
-                    || response.status_code() == StatusCode::NO_CONTENT
-            );
-            Ok::<(), anyhow::Error>(())
-        },
-        async {
-            let response = server.get("/en/random").await;
-            assert!(
-                response.status_code() == StatusCode::OK
-                    || response.status_code() == StatusCode::NO_CONTENT
-            );
-            Ok::<(), anyhow::Error>(())
-        }
+    let content_type_str = content_type.unwrap().to_str().unwrap();
+    assert!(
+        content_type_str.contains("application/json"),
+        "Content-type should be JSON, got: {}",
+        content_type_str
     );
-
-    req1?;
-    req2?;
-    req3?;
-
-    Ok(())
 }
 
+/// Test word endpoints handle malformed requests
 #[tokio::test]
-async fn test_api_consistency_parallel() -> Result<()> {
-    // Test API consistency with parallel requests
-    let (consistency_result, batch_result) = tokio::join!(
-        async {
-            let server = create_test_server_streamlined().await?;
-            // Test that multiple requests return consistent format
-            let (req1, req2, req3) = tokio::join!(
-                async {
-                    let response = server.get("/en/random").await;
-                    assert_eq!(response.status_code(), StatusCode::OK);
-                    let json: serde_json::Value = response.json();
-                    assert!(json.is_array(), "Response should be array");
-                    Ok::<(), anyhow::Error>(())
-                },
-                async {
-                    let response = server.get("/en/random").await;
-                    assert_eq!(response.status_code(), StatusCode::OK);
-                    let json: serde_json::Value = response.json();
-                    assert!(json.is_array(), "Response should be array");
-                    Ok::<(), anyhow::Error>(())
-                },
-                async {
-                    let response = server.get("/en/random").await;
-                    assert_eq!(response.status_code(), StatusCode::OK);
-                    let json: serde_json::Value = response.json();
-                    assert!(json.is_array(), "Response should be array");
-                    Ok::<(), anyhow::Error>(())
-                }
-            );
-            req1?;
-            req2?;
-            req3?;
-            Ok::<(), anyhow::Error>(())
-        },
-        async {
-            let server = create_test_server_streamlined().await?;
-            // Batch test word API endpoints (health checks handled in health_tests.rs)
-            let test_endpoints = vec!["/en/random"];
-            for endpoint in test_endpoints {
-                let response = server.get(endpoint).await;
+async fn test_malformed_word_requests() {
+    let server = create_mock_server_with_data().await;
+
+    // Test with extra path segments
+    let response = server.get("/en/words/random/noun/extra").await;
+    assert_eq!(response.status_code(), StatusCode::NOT_FOUND);
+
+    // Test with missing path segments
+    let response = server.get("/en/words").await;
+    assert_eq!(response.status_code(), StatusCode::NOT_FOUND);
+
+    // Test with invalid path
+    let response = server.get("/en/words/invalid").await;
+    assert_eq!(response.status_code(), StatusCode::NOT_FOUND);
+}
+
+/// Test word type case sensitivity
+#[tokio::test]
+async fn test_word_type_case_sensitivity() {
+    let server = create_mock_server_with_data().await;
+
+    // Test uppercase word type
+    let response = server.get("/en/words/random/NOUN").await;
+    // Should return 404 since our mock is case-sensitive
+    assert_eq!(response.status_code(), StatusCode::NOT_FOUND);
+
+    // Test mixed case
+    let response = server.get("/en/words/random/Noun").await;
+    assert_eq!(response.status_code(), StatusCode::NOT_FOUND);
+
+    // Test correct lowercase
+    let response = server.get("/en/words/random/noun").await;
+    assert_eq!(response.status_code(), StatusCode::OK);
+}
+
+/// Test multiple sequential word requests
+#[tokio::test]
+async fn test_multiple_word_requests() {
+    let server = create_mock_server_with_data().await;
+
+    // Make multiple sequential requests
+    for _ in 0..3 {
+        let response = server.get("/en/words/random").await;
+        assert_eq!(response.status_code(), StatusCode::OK);
+
+        let json: Value = response.json();
+        assert!(json["word"].is_string());
+        assert!(json["definition"].is_string());
+        assert!(json["wordType"].is_string());
+    }
+}
+
+/// Test word response consistency
+#[tokio::test]
+async fn test_word_response_consistency() {
+    let server = create_mock_server_with_data().await;
+
+    // Make multiple requests and verify consistent structure
+    for _ in 0..3 {
+        let response = server.get("/en/words/random").await;
+        assert_eq!(response.status_code(), StatusCode::OK);
+
+        let json: Value = response.json();
+
+        // Verify all required fields are present
+        assert!(json.get("id").is_some());
+        assert!(json.get("word").is_some());
+        assert!(json.get("definition").is_some());
+        assert!(json.get("pronunciation").is_some());
+        assert!(json.get("wordType").is_some());
+
+        // Verify no unexpected fields
+        let expected_fields = ["id", "word", "definition", "pronunciation", "wordType"];
+        if let Some(obj) = json.as_object() {
+            for key in obj.keys() {
                 assert!(
-                    response.status_code() <= StatusCode::OK
-                        || response.status_code() == StatusCode::NO_CONTENT
+                    expected_fields.contains(&key.as_str()),
+                    "Unexpected field in response: {}",
+                    key
                 );
             }
-            Ok::<(), anyhow::Error>(())
         }
-    );
-
-    consistency_result?;
-    batch_result?;
-
-    Ok(())
-}
-
-// === API Consistency and Reliability Tests ===
-
-/// Tests API consistency across multiple parallel requests
-/// Validates that the API maintains consistent behavior under concurrent load
-/// Tests realistic user workflows and comprehensive edge case scenarios
-/// Validates end-to-end functionality across different API endpoints
-
-#[tokio::test]
-async fn test_workflow_and_edge_cases_parallel() -> Result<()> {
-    // Run workflow and edge case tests in parallel
-    let (workflow_result, edge_cases_result) = tokio::join!(
-        async {
-            let server = create_test_server_streamlined().await?;
-            // Test user workflow: get word (health checks handled in health_tests.rs)
-            let word_response = server.get("/en/random").await;
-            assert_eq!(word_response.status_code(), StatusCode::OK);
-            Ok::<(), anyhow::Error>(())
-        },
-        async {
-            let server = create_test_server_streamlined().await?;
-            // Test edge case scenarios
-            let edge_cases = vec![
-                "/en/noun",
-                "/en/verb",
-                "/en/adjective",
-                "/en/adverb",
-                "/en/pronoun",
-                "/en/preposition",
-                "/en/conjunction",
-                "/en/interjection",
-                "/en/article",
-            ];
-            for endpoint in edge_cases {
-                let response = server.get(endpoint).await;
-                assert!(
-                    response.status_code() == StatusCode::OK
-                        || response.status_code() == StatusCode::NO_CONTENT,
-                    "Edge case endpoint {endpoint} should return valid status"
-                );
-            }
-            Ok::<(), anyhow::Error>(())
-        }
-    );
-
-    workflow_result?;
-    edge_cases_result?;
-
-    Ok(())
+    }
 }

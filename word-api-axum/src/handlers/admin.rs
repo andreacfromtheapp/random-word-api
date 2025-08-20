@@ -1,7 +1,7 @@
 //! Administrative word management endpoints. Require authentication and administrative privileges.
 //!
-//! Provides CRUD operations for word database management. All endpoints
-//! require authentication and return JSON responses.
+//! Provides CRUD operations for word database management and user management.
+//! All endpoints require authentication and return JSON responses.
 use crate::error::AppError;
 use crate::models::word::{UpsertWord, Word};
 use crate::state::AppState;

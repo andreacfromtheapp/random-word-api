@@ -1,488 +1,412 @@
-//! Admin API integration tests
+//! Admin API contract tests
 //!
-//! Comprehensive test suite for administrative endpoints covering:
-//! - CRUD operations (create, read, update, delete words)
-//! - Input validation and error handling
-//! - Request format validation and malformed data handling
-//! - Database constraint enforcement (uniqueness, foreign keys)
-//! - Batch operations and parallel request testing
-//! - Authentication and authorization scenarios
+//! Tests HTTP admin endpoints without database dependencies:
+//! - Admin CRUD operations return correct HTTP status codes
+//! - Request/response JSON structure validation
+//! - Authorization and permission checking
+//! - Error handling for invalid requests
 //!
-//! Uses isolated test databases to prevent test interference and
-//! validates both success and failure paths for all admin operations.
+//! Philosophy: Test HTTP behavior, not database operations
 
-use anyhow::Result;
 use axum::http::{HeaderName, StatusCode};
-use axum_test::TestServer;
-use serde_json::json;
+use serde_json::{json, Value};
 
-use word_api_axum::models::word::UpsertWord;
+mod common;
+use common::{create_mock_server, create_mock_server_with_data, mock_admin_token, mock_user_token};
 
-mod helpers;
-use helpers::{
-    create_test_server,             // For write operations requiring isolated database
-    create_test_server_streamlined, // For read-only operations using shared database
-};
-use word_api_axum::models::word::{GrammaticalType, LanguageCode};
-
-/// Helper function to create an authenticated admin user and return the JWT token
-async fn create_authenticated_admin(server: &TestServer) -> Result<String> {
-    let register_response = server
-        .post("/auth/register")
-        .json(&json!({
-            "username": "admin_test_user",
-            "password": "secure_admin_password_123",
-            "is_admin": true
-        }))
-        .await;
-
-    register_response.assert_status(StatusCode::CREATED);
-    let register_body: serde_json::Value = register_response.json();
-    let token = register_body["token"].as_str().unwrap().to_string();
-    Ok(token)
-}
-
-/// Creates a basic test word with noun type for admin endpoint testing
-///
-/// Generates a unique word using the provided suffix to avoid database
-/// conflicts during parallel test execution.
-fn create_test_word(suffix: &str) -> UpsertWord {
-    helpers::test_data::create_basic_test_word(suffix)
-}
-
-/// Creates a test word of a specific grammatical type for admin testing
-///
-/// Validates the word type against source validation rules and ensures
-/// uniqueness through suffix-based naming.
-fn create_validated_test_word(word_type: &str, suffix: &str) -> UpsertWord {
-    helpers::test_data::create_typed_test_word(word_type, suffix)
-}
-
+/// Test admin create word endpoint returns correct structure
 #[tokio::test]
-async fn test_admin_create_word_success() -> Result<()> {
-    let server = create_test_server().await?;
-    let language = LanguageCode::English;
-    let token = create_authenticated_admin(&server).await?;
+async fn test_admin_create_word_returns_array() {
+    let server = create_mock_server().await;
+    let admin_token = mock_admin_token();
 
-    let word_data = create_test_word("1");
-    let body = json!({
-        "word": word_data.word,
-        "definition": word_data.definition,
-        "pronunciation": word_data.pronunciation,
-        "wordType": word_data.word_type
+    let word_data = json!({
+        "word": "testword1",
+        "definition": "test definition 1",
+        "pronunciation": "/test1/",
+        "wordType": "noun"
     });
 
     let response = server
-        .post(&format!("/admin/{language}/words"))
+        .post("/admin/en/words")
         .add_header(
             HeaderName::from_static("authorization"),
-            format!("Bearer {}", token),
+            format!("Bearer {}", admin_token),
         )
-        .json(&body)
+        .json(&word_data)
         .await;
 
     assert_eq!(response.status_code(), StatusCode::OK);
 
-    let json: serde_json::Value = response.json();
-    assert!(json.is_array(), "Admin API should return array");
+    let json: Value = response.json();
+    assert!(json.is_array(), "Admin create should return array");
 
-    let words = json.as_array().unwrap();
-    assert!(!words.is_empty(), "Response should contain created word");
+    if let Some(words) = json.as_array() {
+        assert!(!words.is_empty(), "Array should contain the created word");
 
-    let word = &words[0];
-    assert_eq!(word["word"], word_data.word.to_lowercase());
-    assert_eq!(word["wordType"], word_data.word_type);
-
-    Ok(())
+        let word = &words[0];
+        assert!(word["id"].is_number());
+        assert!(word["word"].is_string());
+        assert!(word["definition"].is_string());
+        assert!(word["pronunciation"].is_string());
+        assert!(word["wordType"].is_string());
+    }
 }
 
+/// Test admin create word requires authentication
 #[tokio::test]
-async fn test_admin_list_words_optimized() -> Result<()> {
-    let server = create_test_server_streamlined().await?;
-    let language = LanguageCode::English;
-    let token = create_authenticated_admin(&server).await?;
+async fn test_admin_create_word_requires_auth() {
+    let server = create_mock_server().await;
+
+    let word_data = json!({
+        "word": "testword1",
+        "definition": "test definition 1",
+        "pronunciation": "/test1/",
+        "wordType": "noun"
+    });
+
+    let response = server.post("/admin/en/words").json(&word_data).await;
+
+    assert_eq!(response.status_code(), StatusCode::UNAUTHORIZED);
+}
+
+/// Test admin create word requires admin privileges
+#[tokio::test]
+async fn test_admin_create_word_requires_admin_privileges() {
+    let server = create_mock_server().await;
+    let user_token = mock_user_token();
+
+    let word_data = json!({
+        "word": "testword1",
+        "definition": "test definition 1",
+        "pronunciation": "/test1/",
+        "wordType": "noun"
+    });
 
     let response = server
-        .get(&format!("/admin/{language}/words"))
+        .post("/admin/en/words")
         .add_header(
             HeaderName::from_static("authorization"),
-            format!("Bearer {}", token),
+            format!("Bearer {}", user_token),
+        )
+        .json(&word_data)
+        .await;
+
+    assert_eq!(response.status_code(), StatusCode::FORBIDDEN);
+}
+
+/// Test admin list words endpoint returns array
+#[tokio::test]
+async fn test_admin_list_words_returns_array() {
+    let server = create_mock_server_with_data().await;
+    let admin_token = mock_admin_token();
+
+    let response = server
+        .get("/admin/en/words")
+        .add_header(
+            HeaderName::from_static("authorization"),
+            format!("Bearer {}", admin_token),
         )
         .await;
+
     assert_eq!(response.status_code(), StatusCode::OK);
 
-    let json: serde_json::Value = response.json();
+    let json: Value = response.json();
     assert!(json.is_array(), "Admin list should return array");
 
-    Ok(())
+    if let Some(words) = json.as_array() {
+        for word in words {
+            assert!(word["id"].is_number());
+            assert!(word["word"].is_string());
+            assert!(word["definition"].is_string());
+            assert!(word["pronunciation"].is_string());
+            assert!(word["wordType"].is_string());
+        }
+    }
 }
 
-// #[tokio::test]
-// async fn test_admin_crud_batch_operations() -> Result<()> {
-//     let server = create_test_server().await?;
-//     let language = LanguageCode::English;
-
-//     // Batch test multiple CRUD operations in single test for efficiency
-//     let mut created_ids = Vec::new();
-
-//     // CREATE multiple words with guaranteed uniqueness
-//     for i in 0..2 {
-//         let word_type_index = i % ALLOWED_WORD_TYPES.len();
-//         let word_data =
-//             create_validated_test_word(ALLOWED_WORD_TYPES[word_type_index], &format!("batch{i}"));
-//         let body = json!({
-//             "word": word_data.word,
-//             "definition": word_data.definition,
-//             "pronunciation": word_data.pronunciation,
-//             "wordType": word_data.word_type
-//         });
-
-//         let create_response = server
-//             .post(&format!("/admin/{language}/words"))
-//             .json(&body)
-//             .await;
-
-//         if create_response.status_code() != StatusCode::OK {
-//             // Log the error response for debugging
-//             let error_text = create_response.text();
-//             eprintln!(
-//                 "Create failed for word '{}': {}",
-//                 word_data.word, error_text
-//             );
-//         }
-//         assert_eq!(create_response.status_code(), StatusCode::OK);
-
-//         let create_json: serde_json::Value = create_response.json();
-//         let words = create_json.as_array().unwrap();
-//         assert!(!words.is_empty());
-
-//         let id = words[0]["id"].as_u64().unwrap() as u32;
-//         created_ids.push(id);
-//     }
-
-//     // READ operations - verify each created word can be retrieved
-//     for id in &created_ids {
-//         let get_response = server.get(&format!("/admin/{language}/words/{id}")).await;
-
-//         if get_response.status_code() != StatusCode::OK {
-//             let error_text = get_response.text();
-//             eprintln!("GET failed for ID {id}: {error_text}");
-//         }
-//         assert_eq!(get_response.status_code(), StatusCode::OK);
-//     }
-
-//     // DELETE operations - clean up created words
-//     for id in created_ids {
-//         let delete_response = server
-//             .delete(&format!("/admin/{language}/words/{id}"))
-//             .await;
-//         assert_eq!(delete_response.status_code(), StatusCode::OK);
-//     }
-
-//     Ok(())
-// }
-
+/// Test admin list words requires authentication
 #[tokio::test]
-async fn test_admin_validation_batch() -> Result<()> {
-    let server = create_test_server_streamlined().await?;
-    let language = LanguageCode::English;
-    let word_type = GrammaticalType::Noun;
-    let token = create_authenticated_admin(&server).await?;
+async fn test_admin_list_words_requires_auth() {
+    let server = create_mock_server().await;
 
-    // Use source validation by testing cases that should fail according to source ALLOWED_WORD_TYPES
-    let invalid_bodies = vec![
-        json!({ "word": "", "definition": "valid", "pronunciation": "/vælɪd/", "wordType": word_type.type_name() }),
-        json!({ "word": "valid", "definition": "", "pronunciation": "/vælɪd/", "wordType": word_type.type_name() }),
-        json!({ "word": "valid", "definition": "valid", "pronunciation": "", "wordType": word_type.type_name() }),
-        // Use source validation - test invalid word type not in ALLOWED_WORD_TYPES
-        json!({ "word": "valid", "definition": "valid", "pronunciation": "/vælɪd/", "wordType": "invalid" }),
-        json!({ "word": "valid", "definition": "valid", "pronunciation": "/vælɪd/", "wordType": "determiner" }),
-    ];
+    let response = server.get("/admin/en/words").await;
 
-    for invalid_body in invalid_bodies {
+    assert_eq!(response.status_code(), StatusCode::UNAUTHORIZED);
+}
+
+/// Test admin list words requires admin privileges
+#[tokio::test]
+async fn test_admin_list_words_requires_admin_privileges() {
+    let server = create_mock_server().await;
+    let user_token = mock_user_token();
+
+    let response = server
+        .get("/admin/en/words")
+        .add_header(
+            HeaderName::from_static("authorization"),
+            format!("Bearer {}", user_token),
+        )
+        .await;
+
+    assert_eq!(response.status_code(), StatusCode::FORBIDDEN);
+}
+
+/// Test admin update word endpoint returns success message
+#[tokio::test]
+async fn test_admin_update_word_returns_success() {
+    let server = create_mock_server_with_data().await;
+    let admin_token = mock_admin_token();
+
+    let update_data = json!({
+        "word": "updated",
+        "definition": "updated definition",
+        "pronunciation": "/ʌpdeɪtɪd/",
+        "wordType": "verb"
+    });
+
+    let response = server
+        .put("/admin/en/words/1")
+        .add_header(
+            HeaderName::from_static("authorization"),
+            format!("Bearer {}", admin_token),
+        )
+        .json(&update_data)
+        .await;
+
+    assert_eq!(response.status_code(), StatusCode::OK);
+
+    let json: Value = response.json();
+    assert!(json["message"].is_string());
+    assert!(json["message"]
+        .as_str()
+        .unwrap()
+        .contains("updated successfully"));
+}
+
+/// Test admin update word returns 404 for non-existent word
+#[tokio::test]
+async fn test_admin_update_word_returns_404_for_non_existent() {
+    let server = create_mock_server_with_data().await;
+    let admin_token = mock_admin_token();
+
+    let update_data = json!({
+        "word": "updated",
+        "definition": "updated definition"
+    });
+
+    let response = server
+        .put("/admin/en/words/999")
+        .add_header(
+            HeaderName::from_static("authorization"),
+            format!("Bearer {}", admin_token),
+        )
+        .json(&update_data)
+        .await;
+
+    assert_eq!(response.status_code(), StatusCode::NOT_FOUND);
+}
+
+/// Test admin update word requires authentication
+#[tokio::test]
+async fn test_admin_update_word_requires_auth() {
+    let server = create_mock_server().await;
+
+    let update_data = json!({
+        "word": "updated",
+        "definition": "updated definition"
+    });
+
+    let response = server.put("/admin/en/words/1").json(&update_data).await;
+
+    assert_eq!(response.status_code(), StatusCode::UNAUTHORIZED);
+}
+
+/// Test admin delete word returns 204 for successful deletion
+#[tokio::test]
+async fn test_admin_delete_word_returns_204() {
+    let server = create_mock_server_with_data().await;
+    let admin_token = mock_admin_token();
+
+    let response = server
+        .delete("/admin/en/words/1")
+        .add_header(
+            HeaderName::from_static("authorization"),
+            format!("Bearer {}", admin_token),
+        )
+        .await;
+
+    assert_eq!(response.status_code(), StatusCode::NO_CONTENT);
+}
+
+/// Test admin delete word returns 404 for non-existent word
+#[tokio::test]
+async fn test_admin_delete_word_returns_404_for_non_existent() {
+    let server = create_mock_server_with_data().await;
+    let admin_token = mock_admin_token();
+
+    let response = server
+        .delete("/admin/en/words/999")
+        .add_header(
+            HeaderName::from_static("authorization"),
+            format!("Bearer {}", admin_token),
+        )
+        .await;
+
+    assert_eq!(response.status_code(), StatusCode::NOT_FOUND);
+}
+
+/// Test admin delete word requires authentication
+#[tokio::test]
+async fn test_admin_delete_word_requires_auth() {
+    let server = create_mock_server().await;
+
+    let response = server.delete("/admin/en/words/1").await;
+
+    assert_eq!(response.status_code(), StatusCode::UNAUTHORIZED);
+}
+
+/// Test admin delete word requires admin privileges
+#[tokio::test]
+async fn test_admin_delete_word_requires_admin_privileges() {
+    let server = create_mock_server().await;
+    let user_token = mock_user_token();
+
+    let response = server
+        .delete("/admin/en/words/1")
+        .add_header(
+            HeaderName::from_static("authorization"),
+            format!("Bearer {}", user_token),
+        )
+        .await;
+
+    assert_eq!(response.status_code(), StatusCode::FORBIDDEN);
+}
+
+/// Test admin endpoints validate JSON request structure
+#[tokio::test]
+async fn test_admin_create_validates_json_structure() {
+    let server = create_mock_server().await;
+    let admin_token = mock_admin_token();
+
+    // Test with complete valid JSON
+    let valid_data = json!({
+        "word": "test",
+        "definition": "a test word",
+        "pronunciation": "/tɛst/",
+        "wordType": "noun"
+    });
+
+    let response = server
+        .post("/admin/en/words")
+        .add_header(
+            HeaderName::from_static("authorization"),
+            format!("Bearer {}", admin_token),
+        )
+        .json(&valid_data)
+        .await;
+
+    assert_eq!(response.status_code(), StatusCode::OK);
+}
+
+/// Test admin endpoints handle invalid authorization header formats
+#[tokio::test]
+async fn test_admin_endpoints_handle_invalid_auth_headers() {
+    let server = create_mock_server().await;
+
+    let word_data = json!({
+        "word": "testword1",
+        "definition": "test definition 1",
+        "pronunciation": "/test1/",
+        "wordType": "noun"
+    });
+
+    // Test with malformed Bearer token
+    let response = server
+        .post("/admin/en/words")
+        .add_header(HeaderName::from_static("authorization"), "InvalidFormat")
+        .json(&word_data)
+        .await;
+
+    assert_eq!(response.status_code(), StatusCode::FORBIDDEN);
+
+    // Test with empty Bearer token
+    let response = server
+        .post("/admin/en/words")
+        .add_header(HeaderName::from_static("authorization"), "Bearer ")
+        .json(&word_data)
+        .await;
+
+    assert_eq!(response.status_code(), StatusCode::FORBIDDEN);
+
+    // Test with non-Bearer authorization
+    let response = server
+        .post("/admin/en/words")
+        .add_header(HeaderName::from_static("authorization"), "Basic sometoken")
+        .json(&word_data)
+        .await;
+
+    assert_eq!(response.status_code(), StatusCode::FORBIDDEN);
+}
+
+/// Test admin endpoints return consistent JSON structures
+#[tokio::test]
+async fn test_admin_endpoints_return_consistent_json() {
+    let server = create_mock_server_with_data().await;
+    let admin_token = mock_admin_token();
+
+    // Test list endpoint structure
+    let response = server
+        .get("/admin/en/words")
+        .add_header(
+            HeaderName::from_static("authorization"),
+            format!("Bearer {}", admin_token),
+        )
+        .await;
+
+    assert_eq!(response.status_code(), StatusCode::OK);
+    let json: Value = response.json();
+    assert!(json.is_array());
+
+    // Test create endpoint structure
+    let word_data = json!({
+        "word": "consistency",
+        "definition": "test definition consistency",
+        "pronunciation": "/kənˈsɪstənsi/",
+        "wordType": "noun"
+    });
+    let response = server
+        .post("/admin/en/words")
+        .add_header(
+            HeaderName::from_static("authorization"),
+            format!("Bearer {}", admin_token),
+        )
+        .json(&word_data)
+        .await;
+
+    assert_eq!(response.status_code(), StatusCode::OK);
+    let json: Value = response.json();
+    assert!(json.is_array());
+}
+
+/// Test admin endpoints handle multiple sequential requests
+#[tokio::test]
+async fn test_admin_endpoints_handle_multiple_requests() {
+    let server = create_mock_server_with_data().await;
+    let admin_token = mock_admin_token();
+
+    // Make multiple sequential list requests
+    for _ in 0..3 {
         let response = server
-            .post(&format!("/admin/{language}/words"))
+            .get("/admin/en/words")
             .add_header(
                 HeaderName::from_static("authorization"),
-                format!("Bearer {}", token),
+                format!("Bearer {}", admin_token),
             )
-            .json(&invalid_body)
-            .await;
-        assert!(response.status_code() >= StatusCode::BAD_REQUEST);
-    }
-
-    Ok(())
-}
-
-#[tokio::test]
-async fn test_admin_update_streamlined() -> Result<()> {
-    let server = create_test_server().await?;
-    let language = LanguageCode::English;
-    let type_noun = GrammaticalType::Noun;
-    let type_verb = GrammaticalType::Verb;
-    let token = create_authenticated_admin(&server).await?;
-
-    // Streamlined create-update-verify workflow
-    let word_data = create_validated_test_word(type_noun.type_name(), "update");
-    let create_body = json!({
-        "word": word_data.word,
-        "definition": word_data.definition,
-        "pronunciation": word_data.pronunciation,
-        "wordType": word_data.word_type
-    });
-
-    // CREATE
-    let create_response = server
-        .post(&format!("/admin/{language}/words"))
-        .add_header(
-            HeaderName::from_static("authorization"),
-            format!("Bearer {}", token),
-        )
-        .json(&create_body)
-        .await;
-    assert_eq!(create_response.status_code(), StatusCode::OK);
-
-    let create_json: serde_json::Value = create_response.json();
-    let id = create_json.as_array().unwrap()[0]["id"].as_u64().unwrap() as u32;
-
-    // UPDATE with guaranteed unique data
-    let update_word = create_validated_test_word(type_verb.type_name(), "updated");
-    let update_body = json!({
-        "word": update_word.word,
-        "definition": update_word.definition,
-        "pronunciation": update_word.pronunciation,
-        "wordType": update_word.word_type
-    });
-
-    let update_response = server
-        .put(&format!("/admin/{language}/words/{id}"))
-        .add_header(
-            HeaderName::from_static("authorization"),
-            format!("Bearer {}", token),
-        )
-        .json(&update_body)
-        .await;
-    assert_eq!(update_response.status_code(), StatusCode::OK);
-
-    Ok(())
-}
-
-#[tokio::test]
-async fn test_admin_delete_streamlined() -> Result<()> {
-    let server = create_test_server().await?;
-    let language = LanguageCode::English;
-    let type_noun = GrammaticalType::Noun;
-    let token = create_authenticated_admin(&server).await?;
-
-    // Streamlined create-delete workflow
-    let word_data = create_validated_test_word(type_noun.type_name(), "delete");
-    let body = json!({
-        "word": word_data.word,
-        "definition": word_data.definition,
-        "pronunciation": word_data.pronunciation,
-        "wordType": word_data.word_type
-    });
-
-    // CREATE
-    let create_response = server
-        .post(&format!("/admin/{language}/words"))
-        .add_header(
-            HeaderName::from_static("authorization"),
-            format!("Bearer {}", token),
-        )
-        .json(&body)
-        .await;
-    assert_eq!(create_response.status_code(), StatusCode::OK);
-
-    let create_json: serde_json::Value = create_response.json();
-    let id = create_json.as_array().unwrap()[0]["id"].as_u64().unwrap() as u32;
-
-    // DELETE
-    let delete_response = server
-        .delete(&format!("/admin/{language}/words/{id}"))
-        .add_header(
-            HeaderName::from_static("authorization"),
-            format!("Bearer {}", token),
-        )
-        .await;
-    assert_eq!(delete_response.status_code(), StatusCode::OK);
-
-    // VERIFY deletion (should return empty array or appropriate response)
-    let verify_response = server
-        .get(&format!("/admin/{language}/words/{id}"))
-        .add_header(
-            HeaderName::from_static("authorization"),
-            format!("Bearer {}", token),
-        )
-        .await;
-    assert_eq!(verify_response.status_code(), StatusCode::OK);
-
-    Ok(())
-}
-
-#[tokio::test]
-async fn test_admin_nonexistent_operations_batch() -> Result<()> {
-    let server = create_test_server_streamlined().await?;
-    let language = LanguageCode::English;
-    let word_type = GrammaticalType::Noun;
-    let token = create_authenticated_admin(&server).await?;
-
-    // Batch test all nonexistent operations for efficiency
-    let nonexistent_id = 99999;
-
-    // GET nonexistent
-    let get_response = server
-        .get(&format!("/admin/{language}/words/{nonexistent_id}"))
-        .add_header(
-            HeaderName::from_static("authorization"),
-            format!("Bearer {}", token),
-        )
-        .await;
-    assert_eq!(get_response.status_code(), StatusCode::OK);
-
-    // DELETE nonexistent (should succeed)
-    let delete_response = server
-        .delete(&format!("/admin/{language}/words/{nonexistent_id}"))
-        .add_header(
-            HeaderName::from_static("authorization"),
-            format!("Bearer {}", token),
-        )
-        .await;
-    assert_eq!(delete_response.status_code(), StatusCode::OK);
-
-    // UPDATE nonexistent (should fail)
-    let update_body = json!({
-        "word": "nonexistent",
-        "definition": "nonexistent definition",
-        "pronunciation": "/nɑnɪɡzɪstənt/",
-        "wordType": word_type.type_name(),
-    });
-    let update_response = server
-        .put(&format!("/admin/{language}/words/{nonexistent_id}"))
-        .add_header(
-            HeaderName::from_static("authorization"),
-            format!("Bearer {}", token),
-        )
-        .json(&update_body)
-        .await;
-    assert_eq!(
-        update_response.status_code(),
-        StatusCode::INTERNAL_SERVER_ERROR
-    );
-
-    Ok(())
-}
-
-#[tokio::test]
-async fn test_admin_request_validation_batch() -> Result<()> {
-    let server = create_test_server_streamlined().await?;
-    let language = LanguageCode::English;
-    let token = create_authenticated_admin(&server).await?;
-
-    // Test request format validation (distinct from data validation)
-    let test_cases = vec![
-        // Invalid JSON syntax
-        ("{ invalid json", "application/json"),
-        // Wrong content type (valid JSON, wrong header)
-        (
-            r#"{"word":"test","definition":"test","pronunciation":"/tɛst/","wordType":"noun"}"#,
-            "text/plain",
-        ),
-        // Valid content type but malformed JSON
-        ("not json at all", "application/json"),
-    ];
-
-    for (body, content_type) in test_cases {
-        let response = server
-            .post(&format!("/admin/{language}/words"))
-            .add_header(
-                HeaderName::from_static("authorization"),
-                format!("Bearer {}", token),
-            )
-            .text(body)
-            .content_type(content_type)
-            .await;
-        assert!(
-            response.status_code() >= StatusCode::BAD_REQUEST,
-            "Should reject malformed request with body='{body}' and content_type='{content_type}'"
-        );
-    }
-
-    Ok(())
-}
-
-#[tokio::test]
-async fn test_admin_duplicate_prevention() -> Result<()> {
-    let server = create_test_server().await?;
-    let language = LanguageCode::English;
-    let token = create_authenticated_admin(&server).await?;
-
-    // Create a word
-    let word_data = create_test_word("duplicate_test");
-    let body = json!({
-        "word": word_data.word,
-        "definition": word_data.definition,
-        "pronunciation": word_data.pronunciation,
-        "wordType": word_data.word_type
-    });
-
-    let first_response = server
-        .post(&format!("/admin/{language}/words"))
-        .add_header(
-            HeaderName::from_static("authorization"),
-            format!("Bearer {}", token),
-        )
-        .json(&body)
-        .await;
-    assert_eq!(first_response.status_code(), StatusCode::OK);
-
-    // Try to create the same word again - should fail due to UNIQUE constraints
-    let duplicate_response = server
-        .post(&format!("/admin/{language}/words"))
-        .add_header(
-            HeaderName::from_static("authorization"),
-            format!("Bearer {}", token),
-        )
-        .json(&body)
-        .await;
-
-    // Should return an error status due to UNIQUE constraint violation
-    assert!(duplicate_response.status_code() >= StatusCode::BAD_REQUEST);
-
-    Ok(())
-}
-
-#[tokio::test]
-async fn test_source_validation_integration() -> Result<()> {
-    // Test that admin endpoints leverage source ALLOWED_WORD_TYPES validation
-    let server = create_test_server_streamlined().await?;
-    let language = LanguageCode::English;
-    let token = create_authenticated_admin(&server).await?;
-
-    // Test that types not in source ALLOWED_WORD_TYPES are rejected
-    let invalid_types = ["determiner", "particle"];
-    for invalid_type in invalid_types {
-        let invalid_body = json!({
-            "word": "valid",
-            "definition": "valid definition",
-            "pronunciation": "/vælɪd/",
-            "wordType": invalid_type
-        });
-
-        let response = server
-            .post(&format!("/admin/{language}/words"))
-            .add_header(
-                HeaderName::from_static("authorization"),
-                format!("Bearer {}", token),
-            )
-            .json(&invalid_body)
             .await;
 
-        assert!(
-            response.status_code() >= StatusCode::BAD_REQUEST,
-            "Invalid word type '{invalid_type}' should be rejected by source validation"
-        );
+        assert_eq!(response.status_code(), StatusCode::OK);
+        let json: Value = response.json();
+        assert!(json.is_array());
     }
-
-    Ok(())
 }

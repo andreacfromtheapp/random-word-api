@@ -25,7 +25,6 @@ use crate::state::AppState;
         word_type,
         // Authentication endpoints
         login,
-        register,
         // Administrative endpoints
         word_list,
         word_create,

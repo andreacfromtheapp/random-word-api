@@ -5,13 +5,14 @@ the Random Word API.
 
 ## Overview
 
-The API now implements secure JWT (JSON Web Token) authentication for admin and
-OpenAPI documentation endpoints. This follows JWT best practices including:
+The API implements secure JWT (JSON Web Token) authentication for admin
+endpoints and OpenAPI documentation. This follows JWT best practices including:
 
 - Argon2 password hashing for secure credential storage
 - HS256 JWT tokens with configurable expiration (24 hours default)
 - Role-based access control (admin vs regular users)
 - Secure random salt generation using getrandom
+- **Manual user management** (no public registration for security)
 
 ## Protected Endpoints
 
@@ -33,11 +34,9 @@ OpenAPI documentation endpoints. This follows JWT best practices including:
 ### Public Endpoints (No Authentication Required)
 
 - `POST /auth/login` - User login
-- `POST /auth/register` - User registration
-- `GET /health/alive` - Health check
-- `GET /health/ready` - Readiness check
-- `GET /{lang}/random` - Get random word
-- `GET /{lang}/{type}` - Get random word by type
+- `GET /health` - Health check
+- `GET /{lang}/words/random` - Get random word
+- `GET /{lang}/words/random/{type}` - Get random word by type
 
 ## Configuration
 
@@ -55,37 +54,69 @@ jwt_secret = "your-secret-key-change-in-production"
 
 **Important**: Use a strong, randomly generated secret in production!
 
-## Usage Examples
+## User Management
 
-### 1. User Registration
+### Creating Users (Database Administration)
+
+Since public registration is disabled for security, users must be created
+directly in the database:
+
+```sql
+-- Create an admin user
+INSERT INTO users (username, password_hash, is_admin, created_at, updated_at)
+VALUES (
+    'admin_user',
+    '$argon2id$v=19$m=19456,t=2,p=1$SALT$HASH',  -- Use proper Argon2 hash
+    true,
+    datetime('now'),
+    datetime('now')
+);
+
+-- Create a regular user
+INSERT INTO users (username, password_hash, is_admin, created_at, updated_at)
+VALUES (
+    'regular_user',
+    '$argon2id$v=19$m=19456,t=2,p=1$SALT$HASH',  -- Use proper Argon2 hash
+    false,
+    datetime('now'),
+    datetime('now')
+);
+```
+
+### Generating Password Hashes
+
+Use a tool to generate Argon2 hashes for passwords:
 
 ```bash
-curl -X POST http://localhost:3000/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{
-    "username": "admin_user",
-    "password": "secure_password_123",
-    "is_admin": true
-  }'
+# Example using argon2 CLI tool
+echo -n "your_password" | argon2 some_salt -id -t 2 -m 19 -p 1
+
+# Or use online Argon2 generators (for development only)
+# For production, use secure server-side generation
 ```
 
-Response:
+### Database Access
 
-```json
-{
-  "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
-  "expires_in": 86400
-}
+Connect to your SQLite database:
+
+```bash
+# If using SQLite file
+sqlite3 word_api.db
+
+# Check existing users
+SELECT username, is_admin, created_at FROM users;
 ```
 
-### 2. User Login
+## Usage Examples
+
+### 1. User Login
 
 ```bash
 curl -X POST http://localhost:3000/auth/login \
   -H "Content-Type: application/json" \
   -d '{
     "username": "admin_user",
-    "password": "secure_password_123"
+    "password": "your_password"
   }'
 ```
 
@@ -94,13 +125,16 @@ Response:
 ```json
 {
   "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
-  "expires_in": 86400
+  "user": {
+    "username": "admin_user",
+    "isAdmin": true
+  }
 }
 ```
 
-### 3. Accessing Protected Admin Endpoints
+### 2. Accessing Protected Admin Endpoints
 
-Use the token from login/registration in the Authorization header:
+Use the token from login in the Authorization header:
 
 ```bash
 # List all words (admin only)
@@ -131,25 +165,25 @@ curl -X PUT http://localhost:3000/admin/en/words/1 \
 
 # Delete a word (admin only)
 curl -X DELETE http://localhost:3000/admin/en/words/1 \
-  -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJHUzI1NiJ9..."
+  -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
 ```
 
-### 4. Accessing Public Endpoints
+### 3. Accessing Public Endpoints
 
 No authentication required:
 
 ```bash
 # Get a random word
-curl -X GET http://localhost:3000/en/random
+curl -X GET http://localhost:3000/en/words/random
 
 # Get a random noun
-curl -X GET http://localhost:3000/en/noun
+curl -X GET http://localhost:3000/en/words/random/noun
 
 # Health check
-curl -X GET http://localhost:3000/health/alive
+curl -X GET http://localhost:3000/health
 ```
 
-### 5. Accessing Protected Documentation
+### 4. Accessing Protected Documentation
 
 ```bash
 # Swagger UI (requires authentication)
@@ -167,7 +201,7 @@ curl -X GET http://localhost:3000/redoc
 ```json
 // Missing token
 {
-  "error": "Missing authorization token"
+  "error": "Unauthorized"
 }
 
 // Invalid token
@@ -182,30 +216,21 @@ curl -X GET http://localhost:3000/redoc
 
 // Insufficient permissions (non-admin accessing admin endpoint)
 {
-  "error": "Invalid credentials"
+  "error": "Forbidden"
 }
 ```
 
-### Validation Errors
+### Login Errors
 
 ```json
-// Invalid registration data
-{
-  "error": "Validation failed",
-  "details": {
-    "username": ["Username must be at least 3 characters long"],
-    "password": ["Password must be at least 6 characters long"]
-  }
-}
-
-// Username already exists
-{
-  "error": "Username already exists"
-}
-
-// Invalid login credentials
+// Invalid credentials
 {
   "error": "Invalid credentials"
+}
+
+// Missing fields
+{
+  "error": "Username and password required"
 }
 ```
 
@@ -221,19 +246,20 @@ curl -X GET http://localhost:3000/redoc
 
 - Minimum 6 characters (consider increasing in production)
 - Use strong passwords with mixed case, numbers, and symbols
-- Consider implementing password complexity requirements
+- Hash passwords with Argon2id before storing
 
 ### 3. Token Security
 
 - Tokens expire after 24 hours by default
-- Store tokens securely on the client side (secure storage, not localStorage)
-- Implement token refresh mechanisms for long-running applications
+- Store tokens securely on the client side
+- Implement proper token refresh mechanisms
 
 ### 4. Admin Account Management
 
-- Create admin accounts carefully
+- Create admin accounts manually through database access
 - Regularly audit admin permissions
 - Use principle of least privilege
+- Monitor admin activity
 
 ## Integration Examples
 
@@ -253,7 +279,7 @@ async function login(username, password) {
   if (response.ok) {
     const data = await response.json();
     localStorage.setItem("jwt_token", data.token);
-    return data.token;
+    return data;
   } else {
     throw new Error("Login failed");
   }
@@ -281,6 +307,8 @@ async function createWord(word, definition, pronunciation, wordType) {
     return await response.json();
   } else if (response.status === 401) {
     throw new Error("Authentication required");
+  } else if (response.status === 403) {
+    throw new Error("Admin privileges required");
   } else {
     throw new Error("Request failed");
   }
@@ -300,7 +328,7 @@ def login(username, password):
     })
 
     if response.status_code == 200:
-        return response.json()['token']
+        return response.json()
     else:
         raise Exception('Login failed')
 
@@ -320,6 +348,8 @@ def create_word(token, word, definition, pronunciation, word_type):
         return response.json()
     elif response.status_code == 401:
         raise Exception('Authentication required')
+    elif response.status_code == 403:
+        raise Exception('Admin privileges required')
     else:
         raise Exception('Request failed')
 ```
@@ -330,10 +360,11 @@ def create_word(token, word, definition, pronunciation, word_type):
 
 1. **401 Unauthorized on admin endpoints**: Ensure you're including the JWT
    token in the Authorization header
-2. **Token expired**: Login again to get a new token
-3. **Invalid token format**: Ensure the token is prefixed with "Bearer "
-4. **Non-admin user accessing admin endpoints**: Check that the user account has
+2. **403 Forbidden on admin endpoints**: Check that the user account has
    `is_admin: true`
+3. **Token expired**: Login again to get a new token
+4. **Invalid token format**: Ensure the token is prefixed with "Bearer "
+5. **No users exist**: Create users manually in the database
 
 ### Debug Steps
 
@@ -341,6 +372,20 @@ def create_word(token, word, definition, pronunciation, word_type):
 2. Check that the Authorization header format is:
    `Authorization: Bearer <token>`
 3. Ensure the token hasn't expired (24 hour default)
-4. Verify the user has admin privileges for admin endpoints
+4. Verify the user exists and has admin privileges for admin endpoints
+5. Check database connection and user table structure
+
+### User Creation Troubleshooting
+
+```sql
+-- Check if users table exists
+.schema users
+
+-- Check existing users
+SELECT * FROM users;
+
+-- Verify password hash format
+SELECT username, password_hash FROM users WHERE username = 'your_username';
+```
 
 For additional support, check the server logs for detailed error messages.
