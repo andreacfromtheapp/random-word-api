@@ -6,8 +6,11 @@
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
+use sqlx::SqlitePool;
 use utoipa::ToSchema;
 use validator::Validate;
+
+use crate::error::AuthError;
 
 /// Database representation of a user
 #[derive(Debug, Clone, FromRow, Serialize, ToSchema)]
@@ -19,6 +22,48 @@ pub struct User {
     pub is_admin: bool,
     pub created_at: Option<DateTime<Utc>>,
     pub updated_at: Option<DateTime<Utc>>,
+}
+
+/// Database operations for user authentication
+impl User {
+    /// Find user by username
+    pub async fn find_by_username(
+        pool: &SqlitePool,
+        username: &str,
+    ) -> Result<Option<Self>, AuthError> {
+        sqlx::query_as("SELECT * FROM users WHERE username = $1")
+            .bind(username)
+            .fetch_optional(pool)
+            .await
+            .map_err(AuthError::DatabaseError)
+    }
+
+    /// Create a new user
+    pub async fn create_user(
+        pool: &SqlitePool,
+        username: &str,
+        password_hash: &str,
+        is_admin: bool,
+    ) -> Result<User, AuthError> {
+        let result = sqlx::query(
+            "INSERT INTO users (username, password_hash, is_admin) VALUES ($1, $2, $3) RETURNING *",
+        )
+        .bind(username)
+        .bind(password_hash)
+        .bind(is_admin)
+        .execute(pool)
+        .await
+        .map_err(AuthError::DatabaseError)?;
+
+        let user_id = result.last_insert_rowid();
+
+        // Fetch the created user
+        sqlx::query_as("SELECT * FROM users WHERE id = $1")
+            .bind(user_id)
+            .fetch_one(pool)
+            .await
+            .map_err(AuthError::DatabaseError)
+    }
 }
 
 /// User login request data

@@ -6,9 +6,9 @@
 use axum::{extract::State, response::IntoResponse, Json};
 use validator::Validate;
 
-use crate::auth::{JwtManager, PasswordHelper, UserRepository};
+use crate::auth::{JwtManager, PasswordHelper};
 use crate::error::{AppError, AuthError};
-use crate::models::user::{AuthResponse, LoginRequest};
+use crate::models::user::{AuthResponse, LoginRequest, User};
 use crate::state::AppState;
 
 /// User login endpoint
@@ -37,7 +37,7 @@ pub async fn login(
         .map_err(|_| AuthError::ValidationFailed)?;
 
     // Find user by username
-    let user = UserRepository::find_by_username(&state.dbpool, &request.username)
+    let user = User::find_by_username(&state.dbpool, &request.username)
         .await?
         .ok_or(AuthError::UserNotFound)?;
 
@@ -72,8 +72,8 @@ pub async fn login(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::auth::UserRepository;
     use crate::config::ApiConfig;
+    use crate::models::user::User;
     use axum_test::TestServer;
     use serde_json::json;
     use std::sync::{Arc, Mutex};
@@ -110,14 +110,14 @@ mod tests {
 
     #[tokio::test]
     async fn test_login_success() {
-        // Create a test user using UserRepository to avoid SQL compilation issues
+        // Create a test user using User to avoid SQL compilation issues
         let temp_db = NamedTempFile::new().unwrap();
         let db_url = format!("sqlite:{}", temp_db.path().display());
         let dbpool = crate::init_dbpool(&db_url).await.unwrap();
         sqlx::migrate!("./migrations").run(&dbpool).await.unwrap();
 
         let password_hash = PasswordHelper::hash_password("loginpassword123").unwrap();
-        let _user = UserRepository::create_user(&dbpool, "logintest", &password_hash, false)
+        let _user = User::create_user(&dbpool, "logintest", &password_hash, false)
             .await
             .unwrap();
 
@@ -176,7 +176,7 @@ mod tests {
         sqlx::migrate!("./migrations").run(&dbpool).await.unwrap();
 
         let password_hash = PasswordHelper::hash_password("correctpassword123").unwrap();
-        let _user = UserRepository::create_user(&dbpool, "wrongpwtest", &password_hash, false)
+        let _user = User::create_user(&dbpool, "wrongpwtest", &password_hash, false)
             .await
             .unwrap();
 

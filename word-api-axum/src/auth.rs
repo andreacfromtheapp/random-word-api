@@ -18,7 +18,6 @@ use axum::{
 use chrono::{Duration, Utc};
 use getrandom::fill;
 use jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, Validation};
-use sqlx::SqlitePool;
 use uuid::Uuid;
 
 use crate::error::{AppError, AuthError};
@@ -183,49 +182,6 @@ impl FromRequestParts<AppState> for AuthUser {
         }
 
         Ok(AuthUser::from(claims))
-    }
-}
-
-/// Database operations for user authentication
-pub struct UserRepository;
-
-impl UserRepository {
-    /// Find user by username
-    pub async fn find_by_username(
-        pool: &SqlitePool,
-        username: &str,
-    ) -> Result<Option<User>, AuthError> {
-        sqlx::query_as::<_, User>("SELECT * FROM users WHERE username = ?")
-            .bind(username)
-            .fetch_optional(pool)
-            .await
-            .map_err(AuthError::DatabaseError)
-    }
-
-    /// Create a new user
-    pub async fn create_user(
-        pool: &SqlitePool,
-        username: &str,
-        password_hash: &str,
-        is_admin: bool,
-    ) -> Result<User, AuthError> {
-        let result =
-            sqlx::query("INSERT INTO users (username, password_hash, is_admin) VALUES (?, ?, ?)")
-                .bind(username)
-                .bind(password_hash)
-                .bind(is_admin)
-                .execute(pool)
-                .await
-                .map_err(AuthError::DatabaseError)?;
-
-        let user_id = result.last_insert_rowid();
-
-        // Fetch the created user
-        sqlx::query_as::<_, User>("SELECT * FROM users WHERE id = ?")
-            .bind(user_id)
-            .fetch_one(pool)
-            .await
-            .map_err(AuthError::DatabaseError)
     }
 }
 
