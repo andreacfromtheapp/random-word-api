@@ -40,7 +40,7 @@ strum = { version = "0.27.2", features = ["derive"] }
 strum_macros = "0.27.2"
 tokio = { version = "1.47.1", features = ["macros", "rt-multi-thread"] }
 toml = "0.9.5"
-tower-http = { version = "0.6.6", features = ["trace", "cors"] }
+tower-http = { version = "0.6.6", features = ["trace", "cors", "compression-gzip", "compression-br"] }
 tracing = "0.1.41"
 tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
 utoipa = { version = "5.4.0", features = [
@@ -60,6 +60,6 @@ getrandom = "0.3.3"
 uuid = { version = "1.18.0", features = ["v4", "serde"] }
 
 [dev-dependencies]
-axum-test = "17.3.0"
+axum-test = "18.0.0"
 futures = "0.3.31"
 tempfile = "3.21.0"

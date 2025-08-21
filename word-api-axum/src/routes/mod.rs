@@ -19,6 +19,7 @@
 
 // Routes module
 use axum::Router;
+use tower_http::compression::CompressionLayer;
 use tower_http::trace::TraceLayer;
 
 pub mod admin;
@@ -40,6 +41,8 @@ pub async fn create_router(shared_state: AppState) -> Router {
         "http://localhost:5173".parse().unwrap(),
         "https://speak-and-spell.netlify.app/".parse().unwrap(),
     ];
+
+    let compression_layer = CompressionLayer::new().br(true).gzip(true);
 
     // Add admin routes under /admin
     let admin_routes = create_admin_routes(shared_state.clone(), &origins);
@@ -63,5 +66,6 @@ pub async fn create_router(shared_state: AppState) -> Router {
         .merge(health_routes)
         .merge(apidocs_routes)
         .merge(word_routes)
+        .layer(compression_layer)
         .layer(TraceLayer::new_for_http())
 }
