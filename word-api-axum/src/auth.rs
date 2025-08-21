@@ -24,9 +24,6 @@ use crate::error::{AppError, AuthError};
 use crate::models::user::{AuthUser, Claims, User};
 use crate::state::AppState;
 
-/// JWT token expiration time in hours
-const TOKEN_EXPIRATION_MINUTES: i64 = 5;
-
 /// Password hashing utilities using Argon2
 pub struct PasswordHelper;
 
@@ -80,9 +77,9 @@ impl JwtManager {
     /// - Unique JWT ID for replay attack prevention
     /// - Session ID for revocation capabilities
     /// - Token type specification for access control
-    pub fn generate_token(user: &User, secret: &str) -> Result<String> {
+    pub fn generate_token(user: &User, secret: &str, expiration_minutes: u64) -> Result<String> {
         let now = Utc::now();
-        let expiration = now + Duration::minutes(TOKEN_EXPIRATION_MINUTES);
+        let expiration = now + Duration::minutes(expiration_minutes as i64);
         let not_before = now;
 
         let claims = Claims {
@@ -132,8 +129,8 @@ impl JwtManager {
     }
 
     /// Get token expiration time in seconds
-    pub fn get_expiration_seconds() -> i64 {
-        TOKEN_EXPIRATION_MINUTES * 60
+    pub fn get_expiration_seconds(expiration_minutes: u64) -> i64 {
+        (expiration_minutes as i64) * 60
     }
 }
 
@@ -308,7 +305,7 @@ mod tests {
         let secret = "test_secret_key";
 
         // Generate token
-        let token = JwtManager::generate_token(&user, secret).unwrap();
+        let token = JwtManager::generate_token(&user, secret, 5).unwrap();
         assert!(!token.is_empty());
 
         // Validate token
@@ -332,7 +329,7 @@ mod tests {
         let wrong_secret = "wrong_secret_key";
 
         // Generate token with correct secret
-        let token = JwtManager::generate_token(&user, secret).unwrap();
+        let token = JwtManager::generate_token(&user, secret, 5).unwrap();
 
         // Try to validate with wrong secret
         let result = JwtManager::validate_token(&token, wrong_secret);
@@ -434,7 +431,7 @@ mod tests {
         let secret = "test_secret_key";
 
         // Generate valid admin token
-        let token = JwtManager::generate_token(&user, secret).unwrap();
+        let token = JwtManager::generate_token(&user, secret, 5).unwrap();
 
         // Test the core logic that middleware uses
         let claims = JwtManager::validate_token(&token, secret).unwrap();
@@ -458,7 +455,7 @@ mod tests {
         let secret = "test_secret_key";
 
         // Generate valid token for non-admin user
-        let token = JwtManager::generate_token(&user, secret).unwrap();
+        let token = JwtManager::generate_token(&user, secret, 5).unwrap();
 
         // Test the core logic that middleware uses
         let claims = JwtManager::validate_token(&token, secret).unwrap();

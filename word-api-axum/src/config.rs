@@ -25,8 +25,13 @@ pub struct ApiConfig {
     pub port: u16,
     pub database_url: String,
     pub openapi: OpenApiDocs,
-    #[serde(default = "default_jwt_secret")]
     pub jwt_secret: String,
+    #[serde(default = "default_jwt_expiration_minutes")]
+    pub jwt_expiration_minutes: u64,
+    #[serde(default = "default_rate_limit_per_second")]
+    pub rate_limit_per_second: u64,
+    #[serde(default = "default_security_headers_enabled")]
+    pub security_headers_enabled: bool,
 }
 
 /// File format types for configuration file generation
@@ -41,17 +46,46 @@ pub enum FileKind {
     EnvFile,
 }
 
-/// Default JWT secret for development/testing - should be overridden in production
-fn default_jwt_secret() -> String {
-    "default_jwt_secret_change_in_production".to_string()
+fn default_jwt_expiration_minutes() -> u64 {
+    5
+}
+
+fn default_rate_limit_per_second() -> u64 {
+    5
+}
+
+fn default_security_headers_enabled() -> bool {
+    true
 }
 
 impl ApiConfig {
+    /// Validates configuration values are within acceptable ranges
+    pub fn validate(&self) -> Result<(), anyhow::Error> {
+        // Validate JWT expiration (1 minute to 24 hours)
+        if self.jwt_expiration_minutes < 1 || self.jwt_expiration_minutes > 1440 {
+            return Err(anyhow::anyhow!(
+                "JWT expiration must be between 1 and 1440 minutes (24 hours), got: {}",
+                self.jwt_expiration_minutes
+            ));
+        }
+
+        // Validate rate limit (1 to 1000 requests per second)
+        if self.rate_limit_per_second < 1 || self.rate_limit_per_second > 1000 {
+            return Err(anyhow::anyhow!(
+                "Rate limit must be between 1 and 1000 requests per second, got: {}",
+                self.rate_limit_per_second
+            ));
+        }
+
+        Ok(())
+    }
+
     /// Creates a new ApiConfig instance with specified values
     ///
     /// Used internally for constructing configuration from various sources.
+    /// Creates a new API configuration with explicit parameters
     pub fn new(
-        address: IpAddr,
+        address: std::net::IpAddr,
         port: u16,
         database_url: String,
         openapi: OpenApiDocs,
@@ -63,6 +97,9 @@ impl ApiConfig {
             database_url,
             openapi,
             jwt_secret,
+            jwt_expiration_minutes: 5,
+            rate_limit_per_second: 5,
+            security_headers_enabled: true,
         }
     }
 
@@ -122,19 +159,32 @@ impl ApiConfig {
         dotenvy::from_filename_override(file)?;
 
         // set the variables as needed
-        Ok(Self::new(
-            IpAddr::from_str(&dotenvy::var("BIND_ADDR")?)?,
-            u16::from_str(&dotenvy::var("BIND_PORT")?)?,
-            dotenvy::var("DATABASE_URL")?,
-            OpenApiDocs::new(
+        let config = ApiConfig {
+            address: IpAddr::from_str(&dotenvy::var("BIND_ADDR")?)?,
+            port: u16::from_str(&dotenvy::var("BIND_PORT")?)?,
+            database_url: dotenvy::var("DATABASE_URL")?,
+            openapi: OpenApiDocs::new(
                 bool::from_str(&dotenvy::var("ENABLE_SWAGGER_UI")?)?,
                 bool::from_str(&dotenvy::var("ENABLE_REDOC")?)?,
                 bool::from_str(&dotenvy::var("ENABLE_SCALAR")?)?,
                 bool::from_str(&dotenvy::var("ENABLE_RAPIDOC")?)?,
             ),
-            dotenvy::var("JWT_SECRET")
+            jwt_secret: dotenvy::var("JWT_SECRET")
                 .unwrap_or_else(|_| "default_jwt_secret_change_in_production".to_string()),
-        ))
+            jwt_expiration_minutes: u64::from_str(
+                &dotenvy::var("JWT_EXPIRATION_MINUTES").unwrap_or_else(|_| "5".to_string()),
+            )?,
+            rate_limit_per_second: u64::from_str(
+                &dotenvy::var("RATE_LIMIT_PER_SECOND").unwrap_or_else(|_| "5".to_string()),
+            )?,
+            security_headers_enabled: bool::from_str(
+                &dotenvy::var("SECURITY_HEADERS_ENABLED").unwrap_or_else(|_| "true".to_string()),
+            )?,
+        };
+
+        // Validate configuration ranges
+        config.validate()?;
+        Ok(config)
     }
 
     /// Creates ApiConfig from TOML configuration file
@@ -151,19 +201,21 @@ impl ApiConfig {
         // parse the configuration String and store in model Struct
         let my_configs: Self = toml::from_str(&file_content)?;
 
-        // set the variables as needed
-        Ok(Self::new(
-            my_configs.address,
-            my_configs.port,
-            my_configs.database_url.clone(),
-            OpenApiDocs::new(
-                my_configs.openapi.enable_swagger_ui,
-                my_configs.openapi.enable_redoc,
-                my_configs.openapi.enable_scalar,
-                my_configs.openapi.enable_rapidoc,
-            ),
-            my_configs.jwt_secret,
-        ))
+        // Return parsed configuration directly with defaults for missing fields
+        let config = ApiConfig {
+            address: my_configs.address,
+            port: my_configs.port,
+            database_url: my_configs.database_url,
+            openapi: my_configs.openapi,
+            jwt_secret: my_configs.jwt_secret,
+            jwt_expiration_minutes: my_configs.jwt_expiration_minutes,
+            rate_limit_per_second: my_configs.rate_limit_per_second,
+            security_headers_enabled: my_configs.security_headers_enabled,
+        };
+
+        // Validate configuration ranges
+        config.validate()?;
+        Ok(config)
     }
 
     /// Creates ApiConfig directly from command-line arguments
@@ -172,19 +224,26 @@ impl ApiConfig {
     /// This is the lowest precedence configuration source.
     pub fn from_cli_args(cli: &Cli) -> Result<Self, anyhow::Error> {
         // set the variables as needed
-        Ok(Self::new(
-            cli.arg.address,
-            cli.arg.port,
-            cli.arg.database_url.clone(),
-            OpenApiDocs::new(
+        let config = ApiConfig {
+            address: cli.arg.address,
+            port: cli.arg.port,
+            database_url: cli.arg.database_url.clone(),
+            openapi: OpenApiDocs::new(
                 cli.arg.with_swagger_ui,
                 cli.arg.with_redoc,
                 cli.arg.with_scalar,
                 cli.arg.with_rapidoc,
             ),
-            std::env::var("JWT_SECRET")
+            jwt_secret: std::env::var("JWT_SECRET")
                 .unwrap_or_else(|_| "default_jwt_secret_change_in_production".to_string()),
-        ))
+            jwt_expiration_minutes: 5,
+            rate_limit_per_second: 5,
+            security_headers_enabled: true,
+        };
+
+        // Validate configuration ranges
+        config.validate()?;
+        Ok(config)
     }
 }
 
@@ -196,8 +255,8 @@ impl fmt::Display for ApiConfig {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(
             f,
-            "BIND_ADDR=\"{}\"\nBIND_PORT={}\nDATABASE_URL={}\nJWT_SECRET={}\n\n{}",
-            self.address, self.port, self.database_url, self.jwt_secret, self.openapi
+            "BIND_ADDR=\"{}\"\nBIND_PORT={}\nDATABASE_URL={}\nJWT_SECRET={}\nJWT_EXPIRATION_MINUTES={}\nRATE_LIMIT_PER_SECOND={}\nSECURITY_HEADERS_ENABLED={}\n\n{}",
+            self.address, self.port, self.database_url, self.jwt_secret, self.jwt_expiration_minutes, self.rate_limit_per_second, self.security_headers_enabled, self.openapi
         )
     }
 }
@@ -216,6 +275,9 @@ impl Default for ApiConfig {
             database_url: "sqlite:random-words.db".to_string(),
             openapi: OpenApiDocs::default(),
             jwt_secret: "default_jwt_secret_change_in_production".to_string(),
+            jwt_expiration_minutes: 5,
+            rate_limit_per_second: 5,
+            security_headers_enabled: true,
         }
     }
 }
@@ -364,6 +426,7 @@ mod tests {
         writeln!(temp_file, "address = \"10.0.0.1\"").unwrap();
         writeln!(temp_file, "port = 8080").unwrap();
         writeln!(temp_file, "database_url = \"sqlite:ipv4.db\"").unwrap();
+        writeln!(temp_file, "jwt_secret = \"test_secret_ipv4\"").unwrap();
         writeln!(temp_file, "[openapi]").unwrap();
         writeln!(temp_file, "enable_swagger_ui = false").unwrap();
         writeln!(temp_file, "enable_redoc = true").unwrap();
@@ -378,6 +441,10 @@ mod tests {
         assert_eq!(config.address, IpAddr::V4(Ipv4Addr::new(10, 0, 0, 1)));
         assert_eq!(config.port, 8080);
         assert_eq!(config.database_url, "sqlite:ipv4.db");
+        assert_eq!(config.jwt_secret, "test_secret_ipv4");
+        assert_eq!(config.jwt_expiration_minutes, 5);
+        assert_eq!(config.rate_limit_per_second, 5);
+        assert!(config.security_headers_enabled);
     }
 
     #[test]
@@ -479,14 +546,15 @@ mod tests {
         use tempfile::NamedTempFile;
 
         let mut temp_file = NamedTempFile::new().unwrap();
-        writeln!(temp_file, "address = \"2001:db8::1\"").unwrap();
-        writeln!(temp_file, "port = 8080").unwrap();
+        writeln!(temp_file, "address = \"::1\"").unwrap();
+        writeln!(temp_file, "port = 9090").unwrap();
         writeln!(temp_file, "database_url = \"sqlite:ipv6.db\"").unwrap();
+        writeln!(temp_file, "jwt_secret = \"test_secret_ipv6\"").unwrap();
         writeln!(temp_file, "[openapi]").unwrap();
         writeln!(temp_file, "enable_swagger_ui = true").unwrap();
-        writeln!(temp_file, "enable_redoc = true").unwrap();
+        writeln!(temp_file, "enable_redoc = false").unwrap();
         writeln!(temp_file, "enable_rapidoc = false").unwrap();
-        writeln!(temp_file, "enable_scalar = false").unwrap();
+        writeln!(temp_file, "enable_scalar = true").unwrap();
 
         let file_path = temp_file.path().to_path_buf();
         let result = ApiConfig::from_config_file(&file_path);
@@ -495,10 +563,14 @@ mod tests {
         let config = result.unwrap();
         assert_eq!(
             config.address,
-            IpAddr::V6(Ipv6Addr::new(0x2001, 0xdb8, 0, 0, 0, 0, 0, 1))
+            IpAddr::V6(Ipv6Addr::new(0, 0, 0, 0, 0, 0, 0, 1))
         );
-        assert_eq!(config.port, 8080);
+        assert_eq!(config.port, 9090);
         assert_eq!(config.database_url, "sqlite:ipv6.db");
+        assert_eq!(config.jwt_secret, "test_secret_ipv6");
+        assert_eq!(config.jwt_expiration_minutes, 5);
+        assert_eq!(config.rate_limit_per_second, 5);
+        assert!(config.security_headers_enabled);
     }
 
     #[test]
@@ -663,13 +735,14 @@ mod tests {
         use tempfile::NamedTempFile;
 
         let mut temp_file = NamedTempFile::new().unwrap();
-        writeln!(temp_file, "address = \"10.0.0.1\"").unwrap();
-        writeln!(temp_file, "port = 3000").unwrap();
-        writeln!(temp_file, "database_url = \"sqlite:toml.db\"").unwrap();
+        writeln!(temp_file, "address = \"127.0.0.1\"").unwrap();
+        writeln!(temp_file, "port = 4000").unwrap();
+        writeln!(temp_file, "database_url = \"sqlite:fromconfig.db\"").unwrap();
+        writeln!(temp_file, "jwt_secret = \"test_secret_config\"").unwrap();
         writeln!(temp_file, "[openapi]").unwrap();
         writeln!(temp_file, "enable_swagger_ui = true").unwrap();
-        writeln!(temp_file, "enable_redoc = false").unwrap();
-        writeln!(temp_file, "enable_rapidoc = true").unwrap();
+        writeln!(temp_file, "enable_redoc = true").unwrap();
+        writeln!(temp_file, "enable_rapidoc = false").unwrap();
         writeln!(temp_file, "enable_scalar = false").unwrap();
 
         let file_path = temp_file.path().to_path_buf();
@@ -677,11 +750,15 @@ mod tests {
 
         assert!(result.is_ok());
         let config = result.unwrap();
-        assert_eq!(config.address, IpAddr::V4(Ipv4Addr::new(10, 0, 0, 1)));
-        assert_eq!(config.port, 3000);
-        assert_eq!(config.database_url, "sqlite:toml.db");
+        assert_eq!(config.address, IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)));
+        assert_eq!(config.port, 4000);
+        assert_eq!(config.database_url, "sqlite:fromconfig.db");
+        assert_eq!(config.jwt_secret, "test_secret_config");
+        assert_eq!(config.jwt_expiration_minutes, 5);
+        assert_eq!(config.rate_limit_per_second, 5);
+        assert!(config.security_headers_enabled);
         assert!(config.openapi.enable_swagger_ui);
-        assert!(!config.openapi.enable_redoc);
+        assert!(config.openapi.enable_redoc);
     }
 
     #[test]

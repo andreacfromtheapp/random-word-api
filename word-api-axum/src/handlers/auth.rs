@@ -50,21 +50,22 @@ pub async fn login(
         return Err(AuthError::InvalidCredentials.into());
     }
 
-    // Get JWT secret from config
-    let jwt_secret = {
+    // Get JWT secret and expiration from config
+    let (jwt_secret, expiration_minutes) = {
         let config = state
             .apiconfig
             .lock()
             .map_err(|e| AuthError::InternalError(anyhow::anyhow!("Config lock failed: {}", e)))?;
-        config.jwt_secret.clone()
+        (config.jwt_secret.clone(), config.jwt_expiration_minutes)
     };
 
-    // Generate JWT token
-    let token = JwtManager::generate_token(&user, &jwt_secret).map_err(AuthError::InternalError)?;
+    // Generate JWT token with dynamic expiration
+    let token = JwtManager::generate_token(&user, &jwt_secret, expiration_minutes)
+        .map_err(AuthError::InternalError)?;
 
     let response = AuthResponse {
         token,
-        expires_in: JwtManager::get_expiration_seconds(),
+        expires_in: JwtManager::get_expiration_seconds(expiration_minutes),
     };
 
     Ok(Json(response))
@@ -95,6 +96,9 @@ mod tests {
             database_url: db_url,
             openapi: crate::config::OpenApiDocs::default(),
             jwt_secret: "test_secret_key".to_string(),
+            jwt_expiration_minutes: 5,
+            rate_limit_per_second: 5,
+            security_headers_enabled: true,
         };
 
         let state = AppState {
@@ -128,6 +132,9 @@ mod tests {
             database_url: db_url,
             openapi: crate::config::OpenApiDocs::default(),
             jwt_secret: "test_secret_key".to_string(),
+            jwt_expiration_minutes: 5,
+            rate_limit_per_second: 5,
+            security_headers_enabled: true,
         };
 
         let state = AppState {
@@ -187,6 +194,9 @@ mod tests {
             database_url: db_url,
             openapi: crate::config::OpenApiDocs::default(),
             jwt_secret: "test_secret_key".to_string(),
+            jwt_expiration_minutes: 5,
+            rate_limit_per_second: 5,
+            security_headers_enabled: true,
         };
 
         let state = AppState {
@@ -208,5 +218,68 @@ mod tests {
         let response = server.post("/auth/login").json(&login_body).await;
 
         response.assert_status(axum::http::StatusCode::UNAUTHORIZED);
+    }
+
+    #[tokio::test]
+    async fn test_login_uses_dynamic_jwt_expiration() {
+        use tempfile::NamedTempFile;
+
+        let temp_db = NamedTempFile::new().unwrap();
+        let db_url = format!("sqlite:{}", temp_db.path().display());
+
+        let dbpool = sqlx::SqlitePool::connect(&db_url).await.unwrap();
+        sqlx::migrate!("./migrations").run(&dbpool).await.unwrap();
+
+        // Create test user with properly hashed password
+        let password_hash =
+            crate::auth::PasswordHelper::hash_password("secure_password_123").unwrap();
+        sqlx::query(
+            "INSERT INTO users (username, password_hash, is_admin, created_at, updated_at)
+             VALUES (?, ?, ?, datetime('now'), datetime('now'))",
+        )
+        .bind("dynamictest")
+        .bind(password_hash)
+        .bind(true)
+        .execute(&dbpool)
+        .await
+        .unwrap();
+
+        // Create config with custom JWT expiration (10 minutes)
+        let config = ApiConfig {
+            address: "127.0.0.1".parse().unwrap(),
+            port: 3000,
+            database_url: db_url,
+            openapi: crate::config::OpenApiDocs::default(),
+            jwt_secret: "test_secret_key".to_string(),
+            jwt_expiration_minutes: 10, // Custom expiration
+            rate_limit_per_second: 5,
+            security_headers_enabled: true,
+        };
+
+        let state = AppState {
+            apiconfig: Arc::new(Mutex::new(config)),
+            dbpool,
+        };
+
+        let app = axum::Router::new()
+            .route("/auth/login", axum::routing::post(login))
+            .with_state(state);
+
+        let server = TestServer::new(app).unwrap();
+
+        let login_body = json!({
+            "username": "dynamictest",
+            "password": "secure_password_123"
+        });
+
+        let response = server.post("/auth/login").json(&login_body).await;
+
+        response.assert_status(axum::http::StatusCode::OK);
+
+        let response_json: serde_json::Value = response.json();
+
+        // Verify the expires_in matches our custom 10 minutes (600 seconds)
+        assert_eq!(response_json["expires_in"], 600);
+        assert!(response_json["token"].is_string());
     }
 }

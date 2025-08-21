@@ -113,6 +113,9 @@ mod tests {
             database_url: "sqlite:test.db".to_string(),
             openapi: OpenApiDocs::default(),
             jwt_secret: "test_secret".to_string(),
+            jwt_expiration_minutes: 5,
+            rate_limit_per_second: 5,
+            security_headers_enabled: true,
         };
 
         assert_eq!(config.address.to_string(), "127.0.0.1");

@@ -13,12 +13,16 @@
 //! Configured for development (localhost:5173) and production (speak-and-spell.netlify.app)
 //! with appropriate method allowlists per route group.
 //!
-//! # Middleware
+//! # Middleware Stack (applied globally)
+//! - Security headers (conditional)
+//! - Rate limiting per IP (conditional)
+//! - Request body size limits
+//! - Compression (gzip/brotli)
 //! - HTTP request tracing for observability
 //! - CORS headers for cross-origin requests
 
 // Routes module
-use axum::Router;
+use axum::{middleware, Router};
 use tower_http::compression::CompressionLayer;
 use tower_http::trace::TraceLayer;
 
@@ -28,6 +32,9 @@ pub mod healthcheck;
 pub mod openapi;
 pub mod word;
 
+use crate::middleware::{
+    create_body_limit_layer, get_burst_size, get_per_second, is_enabled, security_headers,
+};
 use crate::state::AppState;
 use admin::create_admin_routes;
 use auth::create_auth_routes;
@@ -41,6 +48,12 @@ pub async fn create_router(shared_state: AppState) -> Router {
         "http://localhost:5173".parse().unwrap(),
         "https://speak-and-spell.netlify.app/".parse().unwrap(),
     ];
+
+    // Get configuration for middleware setup
+    let config = {
+        let config_lock = shared_state.apiconfig.lock().unwrap();
+        config_lock.clone()
+    };
 
     let compression_layer = CompressionLayer::new().br(true).gzip(true);
 
@@ -59,13 +72,41 @@ pub async fn create_router(shared_state: AppState) -> Router {
     // Add public word routes under /{lang}
     let word_routes = create_word_routes(shared_state.clone(), &origins);
 
-    // Setup top-level router
-    Router::new()
+    // Create the base router with all routes
+    let mut router = Router::new()
         .merge(admin_routes)
         .merge(auth_routes)
         .merge(health_routes)
         .merge(apidocs_routes)
-        .merge(word_routes)
+        .merge(word_routes);
+
+    // Apply middleware stack in the correct order (inside-out):
+    // Security headers (outermost)
+    if config.security_headers_enabled {
+        router = router.layer(middleware::from_fn(security_headers));
+    }
+
+    // Rate limiting per IP
+    if is_enabled(&config) {
+        use std::sync::Arc;
+        use tower_governor::{governor::GovernorConfigBuilder, GovernorLayer};
+        let governor_conf = Arc::new(
+            GovernorConfigBuilder::default()
+                .per_second(get_per_second(&config))
+                .burst_size(get_burst_size(&config))
+                .finish()
+                .unwrap(),
+        );
+        router = router.layer(GovernorLayer {
+            config: governor_conf,
+        });
+    }
+
+    // Request body size limits
+    router = router
+        .layer(create_body_limit_layer())
         .layer(compression_layer)
-        .layer(TraceLayer::new_for_http())
+        .layer(TraceLayer::new_for_http());
+
+    router
 }

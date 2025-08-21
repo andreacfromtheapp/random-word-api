@@ -32,6 +32,9 @@ pub mod error;
 /// HTTP request handlers
 pub mod handlers;
 
+/// Middleware components for security, rate limiting, and request processing
+pub mod middleware;
+
 /// Data models and business logic
 pub mod models;
 
