@@ -26,7 +26,7 @@ use crate::models::user::{AuthUser, Claims, User};
 use crate::state::AppState;
 
 /// JWT token expiration time in hours
-const TOKEN_EXPIRATION_HOURS: i64 = 24;
+const TOKEN_EXPIRATION_MINUTES: i64 = 5;
 
 /// Password hashing utilities using Argon2
 pub struct PasswordHelper;
@@ -83,7 +83,7 @@ impl JwtManager {
     /// - Token type specification for access control
     pub fn generate_token(user: &User, secret: &str) -> Result<String> {
         let now = Utc::now();
-        let expiration = now + Duration::hours(TOKEN_EXPIRATION_HOURS);
+        let expiration = now + Duration::minutes(TOKEN_EXPIRATION_MINUTES);
         let not_before = now;
 
         let claims = Claims {
@@ -134,7 +134,7 @@ impl JwtManager {
 
     /// Get token expiration time in seconds
     pub fn get_expiration_seconds() -> i64 {
-        TOKEN_EXPIRATION_HOURS * 3600
+        TOKEN_EXPIRATION_MINUTES * 60
     }
 }
 
