@@ -27,6 +27,7 @@ use crate::state::AppState;
     ),
     tag = "auth_endpoints"
 )]
+
 pub async fn login(
     State(state): State<AppState>,
     Json(request): Json<LoginRequest>,

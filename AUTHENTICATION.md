@@ -108,7 +108,7 @@ SELECT username, is_admin, created_at FROM users;
 ### 1. User Login
 
 ```bash
-curl -X POST http://localhost:3000/auth/login \
+curl -s -X POST http://localhost:3000/auth/login \
   -H "Content-Type: application/json" \
   -d '{
     "username": "admin_user",
@@ -134,13 +134,13 @@ Use the token from login in the Authorization header:
 
 ```bash
 # List all words (admin only)
-curl -X GET http://localhost:3000/admin/en/words \
+curl -s -X GET http://localhost:3000/admin/en/words \
   -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
 ```
 
 ```bash
 # Create a new word (admin only)
-curl -X POST http://localhost:3000/admin/en/words \
+curl -s -X POST http://localhost:3000/admin/en/words \
   -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..." \
   -H "Content-Type: application/json" \
   -d '{
@@ -152,8 +152,14 @@ curl -X POST http://localhost:3000/admin/en/words \
 ```
 
 ```bash
-# Update a word (admin only)
-curl -X PUT http://localhost:3000/admin/en/words/1 \
+# Get a word by ID (admin only)
+curl -s -X GET http://localhost:3000/admin/en/words/1 \
+  -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
+```
+
+```bash
+# Update a word by ID (admin only)
+curl -s -X PUT http://localhost:3000/admin/en/words/1 \
   -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..." \
   -H "Content-Type: application/json" \
   -d '{
@@ -165,8 +171,8 @@ curl -X PUT http://localhost:3000/admin/en/words/1 \
 ```
 
 ```bash
-# Delete a word (admin only)
-curl -X DELETE http://localhost:3000/admin/en/words/1 \
+# Delete a word by ID (admin only)
+curl -s -X DELETE http://localhost:3000/admin/en/words/1 \
   -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
 ```
 
@@ -176,24 +182,24 @@ No authentication required:
 
 ```bash
 # Get a random word
-curl -X GET http://localhost:3000/en/words/random
+curl -s -X GET http://localhost:3000/en/words/random
 
 # Get a random noun
-curl -X GET http://localhost:3000/en/words/random/noun
+curl -s -X GET http://localhost:3000/en/words/random/noun
 
 # Health check
-curl -X GET http://localhost:3000/health
+curl -s -X GET http://localhost:3000/health
 ```
 
 ### 4. Accessing Protected Documentation
 
 ```bash
 # Swagger UI (requires authentication)
-curl -X GET http://localhost:3000/swagger-ui \
+curl -s -X GET http://localhost:3000/swagger-ui \
   -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
 
 # ReDoc (public access)
-curl -X GET http://localhost:3000/redoc
+curl -s -X GET http://localhost:3000/redoc
 ```
 
 ## Error Responses
@@ -262,99 +268,6 @@ curl -X GET http://localhost:3000/redoc
 - Regularly audit admin permissions
 - Use principle of least privilege
 - Monitor admin activity
-
-## Integration Examples
-
-### JavaScript/Fetch API
-
-```javascript
-// Login and store token
-async function login(username, password) {
-  const response = await fetch("/auth/login", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ username, password }),
-  });
-
-  if (response.ok) {
-    const data = await response.json();
-    localStorage.setItem("jwt_token", data.token);
-    return data;
-  } else {
-    throw new Error("Login failed");
-  }
-}
-
-// Use token for admin requests
-async function createWord(word, definition, pronunciation, wordType) {
-  const token = localStorage.getItem("jwt_token");
-
-  const response = await fetch("/admin/en/words", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({
-      word,
-      definition,
-      pronunciation,
-      wordType,
-    }),
-  });
-
-  if (response.ok) {
-    return await response.json();
-  } else if (response.status === 401) {
-    throw new Error("Authentication required");
-  } else if (response.status === 403) {
-    throw new Error("Admin privileges required");
-  } else {
-    throw new Error("Request failed");
-  }
-}
-```
-
-### Python/Requests
-
-```python
-import requests
-
-# Login and get token
-def login(username, password):
-    response = requests.post('/auth/login', json={
-        'username': username,
-        'password': password
-    })
-
-    if response.status_code == 200:
-        return response.json()
-    else:
-        raise Exception('Login failed')
-
-# Use token for admin requests
-def create_word(token, word, definition, pronunciation, word_type):
-    headers = {'Authorization': f'Bearer {token}'}
-    data = {
-        'word': word,
-        'definition': definition,
-        'pronunciation': pronunciation,
-        'wordType': word_type
-    }
-
-    response = requests.post('/admin/en/words', json=data, headers=headers)
-
-    if response.status_code == 200:
-        return response.json()
-    elif response.status_code == 401:
-        raise Exception('Authentication required')
-    elif response.status_code == 403:
-        raise Exception('Admin privileges required')
-    else:
-        raise Exception('Request failed')
-```
 
 ## Troubleshooting
 
