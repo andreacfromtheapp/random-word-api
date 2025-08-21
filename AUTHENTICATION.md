@@ -63,23 +63,19 @@ directly in the database:
 
 ```sql
 -- Create an admin user
-INSERT INTO users (username, password_hash, is_admin, created_at, updated_at)
+INSERT INTO users (username, password_hash, is_admin)
 VALUES (
     'admin_user',
     '$argon2id$v=19$m=19456,t=2,p=1$SALT$HASH',  -- Use proper Argon2 hash
-    true,
-    datetime('now'),
-    datetime('now')
+    true
 );
 
 -- Create a regular user
-INSERT INTO users (username, password_hash, is_admin, created_at, updated_at)
+INSERT INTO users (username, password_hash, is_admin)
 VALUES (
     'regular_user',
     '$argon2id$v=19$m=19456,t=2,p=1$SALT$HASH',  -- Use proper Argon2 hash
-    false,
-    datetime('now'),
-    datetime('now')
+    false
 );
 ```
 
@@ -116,7 +112,7 @@ curl -X POST http://localhost:3000/auth/login \
   -H "Content-Type: application/json" \
   -d '{
     "username": "admin_user",
-    "password": "your_password"
+    "password": "unsafe_password"
   }'
 ```
 
@@ -140,7 +136,9 @@ Use the token from login in the Authorization header:
 # List all words (admin only)
 curl -X GET http://localhost:3000/admin/en/words \
   -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
+```
 
+```bash
 # Create a new word (admin only)
 curl -X POST http://localhost:3000/admin/en/words \
   -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..." \
@@ -151,7 +149,9 @@ curl -X POST http://localhost:3000/admin/en/words \
     "pronunciation": "/ɪɡˈzæmpəl/",
     "wordType": "noun"
   }'
+```
 
+```bash
 # Update a word (admin only)
 curl -X PUT http://localhost:3000/admin/en/words/1 \
   -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..." \
@@ -162,7 +162,9 @@ curl -X PUT http://localhost:3000/admin/en/words/1 \
     "pronunciation": "/ʌpˈdeɪtɪd ɪɡˈzæmpəl/",
     "wordType": "noun"
   }'
+```
 
+```bash
 # Delete a word (admin only)
 curl -X DELETE http://localhost:3000/admin/en/words/1 \
   -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."

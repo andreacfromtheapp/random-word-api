@@ -10,19 +10,31 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE INDEX IF NOT EXISTS idx_users_username ON users (username);
 
 CREATE TRIGGER IF NOT EXISTS trg_insert_createdat_for_user
-AFTER INSERT ON users
+AFTER
+INSERT
+    ON users
 BEGIN
-    UPDATE users
-    SET created_at = DATETIME('NOW', 'subsec')
-    WHERE ROWID = new.ROWID;
+UPDATE
+    users
+SET
+    created_at = DATETIME('NOW', 'subsec')
+WHERE
+    ROWID = new.ROWID;
+
 END;
 
 CREATE TRIGGER IF NOT EXISTS trg_update_updatedat_for_user
-AFTER UPDATE ON users
+AFTER
+UPDATE
+    ON users
 BEGIN
-    UPDATE users
-    SET updated_at = DATETIME('NOW', 'subsec')
-    WHERE ROWID = new.ROWID;
+UPDATE
+    users
+SET
+    updated_at = DATETIME('NOW', 'subsec')
+WHERE
+    ROWID = new.ROWID;
+
 END;
 
 -- Note: No default users created. Use the /auth/register endpoint to create users.
