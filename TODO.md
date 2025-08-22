@@ -39,10 +39,10 @@
     related tech/code, I wouldn't have known what to TDD. Now that I do, the
     next API will take advantage of TDD as well.
 
-  - Disclaimer: I used Zed AI and guided the process to add all tests.
+  - Disclaimer: I used AI and guided the process to add all tests.
 
 - [x] Improve `rustdoc` documentation
-  - Disclaimer: I used Zed AI and guided the process to write all docs.
+  - Disclaimer: I used AI and guided the process to write all docs.
 
 ## Part 2
 
@@ -51,6 +51,15 @@
   - [x] <https://github.com/rustls/rcgen>
 - [x] Authentication with database credentials
 - [x] Authorization with JWT on protected endpoints
+- [x] Middleware pattern with:
+  - [x] Compression
+  - [x] Timeout
+  - [x] Security headers
+  - [x] CORS
+  - [x] Request limiting
+  - [x] Body limiting
+  - [x] Rate limiting
+  - [x] Tracing
 
 ## Part 3
 
@@ -61,13 +70,6 @@
   - [ ] Add frontend with `Leptos SSR` for admin with auth
 
 ## Part 4
-
-- [ ] Add Open Telemetry to Axum
-  - [ ] <https://crates.io/search?q=opentelemetry>
-  - [ ] <https://crates.io/crates/axum-tracing-opentelemetry>
-- [ ] Add all necessary services to collect and display
-
-## Part 5
 
 - [ ] Docker and Compose for a demo:
   - [ ] `Nginx` for:
@@ -80,10 +82,11 @@
     - [ ] <https://scalar.localhost/> (Scalar UI)
     - [ ] <https://rapidoc.localhost/> (RapiDoc UI)
     - [ ] <https://metrics.localhost/> (Grafana UI)
+  - [ ] <https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html>
   - [ ] API backend
   - [ ] Use Postgres?
 
-## Part 6
+## Part 5
 
 - [ ] Finalize `rustdoc` crates documentation
 - [ ] Finalize `openapi` documentation

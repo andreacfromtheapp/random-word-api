@@ -7,90 +7,25 @@
 //! Built with Axum for high-performance async HTTP handling and SQLite for
 //! lightweight data storage.
 //!
+//! # Security
+//! - Public endpoints: Word retrieval, health checks, API documentation
+//! - Protected endpoints: Administrative word management (requires JWT authentication)
+//!
 
 use anyhow::{Context, Result};
-use sqlx::sqlite::{SqliteConnectOptions, SqlitePoolOptions};
 use std::path::Path;
-use std::str::FromStr;
-use std::sync::{Arc, Mutex};
 
-/// Define default tracing log levels. Uses `RUST_LOG` when unset.
-pub const TRACING_LOG_LEVELS: &str = "sqlx=info,tower_http=debug,info";
-
-/// Authentication and authorization utilities
 pub mod auth;
-
-/// CLI argument parsing and configuration
 pub mod cli;
-
-/// Server configuration management
 pub mod config;
-
-/// Error handling types and conversions
 pub mod error;
-
-/// HTTP request handlers
 pub mod handlers;
-
-/// Middleware components for security, rate limiting, and request processing
 pub mod middleware;
-
-/// Data models and business logic
 pub mod models;
-
-/// Route configuration and middleware
 pub mod routes;
-
-/// Application state management
 pub mod state;
 
-use crate::cli::Commands;
-use crate::config::{ApiConfig, FileKind};
-use crate::error::{AppError, SqlxError};
-
-/// Configure  tracing and logging using Tokio lib-tracing
-pub fn init_tracing() {
-    use tracing_subscriber::{filter::LevelFilter, fmt, prelude::*, EnvFilter};
-
-    let rust_log =
-        std::env::var(EnvFilter::DEFAULT_ENV).unwrap_or_else(|_| TRACING_LOG_LEVELS.to_string());
-
-    tracing_subscriber::registry()
-        .with(fmt::layer())
-        .with(
-            EnvFilter::builder()
-                .with_default_directive(LevelFilter::INFO.into())
-                .parse_lossy(rust_log),
-        )
-        .init();
-}
-
-/// Configure the database pool with optimized settings
-///
-/// Creates a SQLite connection pool with:
-/// - WAL mode for better concurrency
-/// - Connection pooling with timeouts
-/// - Automatic database creation
-/// - Migration execution
-pub async fn init_dbpool(db_url: &str) -> Result<sqlx::Pool<sqlx::Sqlite>, SqlxError> {
-    let dbpool = SqlitePoolOptions::new()
-        .max_connections(10)
-        .acquire_timeout(std::time::Duration::from_secs(30))
-        .idle_timeout(Some(std::time::Duration::from_secs(10)))
-        .connect_with(
-            SqliteConnectOptions::from_str(db_url)?
-                .create_if_missing(true)
-                .journal_mode(sqlx::sqlite::SqliteJournalMode::Wal)
-                .synchronous(sqlx::sqlite::SqliteSynchronous::Normal)
-                .pragma("cache_size", "1000")
-                .pragma("temp_store", "memory"),
-        )
-        .await?;
-
-    sqlx::migrate!("./migrations").run(&dbpool).await?;
-
-    Ok(dbpool)
-}
+use crate::error::AppError;
 
 /// Validates file existence for configuration files
 ///
@@ -109,7 +44,12 @@ pub fn does_file_exist(file_name: &Path, file_kind: &str) -> Result<(), AppError
 /// sets up database connections, and starts the HTTP server with all routes.
 /// Extracted from main() for better testability and reusability.
 pub async fn run_app(cli: cli::Cli) -> Result<(), AppError> {
-    use routes::create_router;
+    use crate::cli::Commands;
+    use crate::config::{ApiConfig, FileKind};
+    use crate::routes::create_router;
+    use crate::state::init_dbpool;
+    use std::net::SocketAddr;
+    use std::sync::{Arc, Mutex};
 
     // Handle setup commands first
     match &cli.command {
@@ -143,11 +83,8 @@ pub async fn run_app(cli: cli::Cli) -> Result<(), AppError> {
         panic!("something went really wrong... this was not supposed to happen!");
     };
 
-    // Enable tracing using https://tokio.rs/#tk-lib-tracing
-    init_tracing();
-
     // Setup the database connection pool
-    let dbpool = init_dbpool(&apiconfig.database_url)
+    let dbpool = init_dbpool(&apiconfig.server_settings.database_url)
         .await
         .context("couldn't initialize the database connection pool")?;
 
@@ -161,14 +98,20 @@ pub async fn run_app(cli: cli::Cli) -> Result<(), AppError> {
     let router = create_router(shared_state).await;
 
     // Instantiate a listener on the socket address and port
-    let listener = tokio::net::TcpListener::bind((apiconfig.address, apiconfig.port))
-        .await
-        .context("couldn't bind TCP listener")?;
+    let listener = tokio::net::TcpListener::bind((
+        apiconfig.server_settings.address,
+        apiconfig.server_settings.port,
+    ))
+    .await
+    .context("couldn't bind TCP listener")?;
 
     // Serve the API
-    axum::serve(listener, router)
-        .await
-        .context("couldn't start the API server")?;
+    axum::serve(
+        listener,
+        router?.into_make_service_with_connect_info::<SocketAddr>(),
+    )
+    .await
+    .context("couldn't start the API server")?;
 
     Ok(())
 }

@@ -88,17 +88,21 @@ mod tests {
         let temp_db = NamedTempFile::new().unwrap();
         let db_url = format!("sqlite:{}", temp_db.path().display());
 
-        let dbpool = crate::init_dbpool(&db_url).await.unwrap();
+        let dbpool = crate::state::init_dbpool(&db_url).await.unwrap();
 
         // Run migrations to create the users table
         sqlx::migrate!("./migrations").run(&dbpool).await.unwrap();
 
         let config = ApiConfig {
-            address: "127.0.0.1".parse().unwrap(),
-            port: 3000,
-            database_url: db_url,
+            server_settings: crate::config::ApiSettings::new(
+                "127.0.0.1".parse().unwrap(),
+                3000,
+                db_url,
+                vec!["localhost".to_string()],
+            ),
+            compression: crate::config::ApiCompression::default(),
             jwt_settings: crate::config::JwtSettings::new(5, "test_secret_key".to_string()),
-            security_limits: crate::config::SecurityAndLimits::new(5),
+            api_limits: crate::config::ApiLimits::new(5, 10, 30, 1024),
             openapi: crate::config::OpenApiDocs::default(),
         };
 
@@ -119,7 +123,7 @@ mod tests {
         // Create a test user using User to avoid SQL compilation issues
         let temp_db = NamedTempFile::new().unwrap();
         let db_url = format!("sqlite:{}", temp_db.path().display());
-        let dbpool = crate::init_dbpool(&db_url).await.unwrap();
+        let dbpool = crate::state::init_dbpool(&db_url).await.unwrap();
         sqlx::migrate!("./migrations").run(&dbpool).await.unwrap();
 
         let password_hash = PasswordHelper::hash_password("loginpassword123").unwrap();
@@ -128,11 +132,15 @@ mod tests {
             .unwrap();
 
         let config = ApiConfig {
-            address: "127.0.0.1".parse().unwrap(),
-            port: 3000,
-            database_url: db_url,
+            server_settings: crate::config::ApiSettings::new(
+                "127.0.0.1".parse().unwrap(),
+                3000,
+                db_url,
+                vec!["localhost".to_string()],
+            ),
+            compression: crate::config::ApiCompression::default(),
             jwt_settings: crate::config::JwtSettings::new(5, "test_secret_key".to_string()),
-            security_limits: crate::config::SecurityAndLimits::new(5),
+            api_limits: crate::config::ApiLimits::new(5, 10, 30, 1024),
             openapi: crate::config::OpenApiDocs::default(),
         };
 
@@ -179,7 +187,7 @@ mod tests {
     async fn test_login_wrong_password() {
         let temp_db = NamedTempFile::new().unwrap();
         let db_url = format!("sqlite:{}", temp_db.path().display());
-        let dbpool = crate::init_dbpool(&db_url).await.unwrap();
+        let dbpool = crate::state::init_dbpool(&db_url).await.unwrap();
         sqlx::migrate!("./migrations").run(&dbpool).await.unwrap();
 
         let password_hash = PasswordHelper::hash_password("correctpassword123").unwrap();
@@ -188,11 +196,15 @@ mod tests {
             .unwrap();
 
         let config = ApiConfig {
-            address: "127.0.0.1".parse().unwrap(),
-            port: 3000,
-            database_url: db_url,
+            server_settings: crate::config::ApiSettings::new(
+                "127.0.0.1".parse().unwrap(),
+                3000,
+                db_url,
+                vec!["localhost".to_string()],
+            ),
+            compression: crate::config::ApiCompression::default(),
             jwt_settings: crate::config::JwtSettings::new(5, "test_secret_key".to_string()),
-            security_limits: crate::config::SecurityAndLimits::new(5),
+            api_limits: crate::config::ApiLimits::new(5, 10, 30, 1024),
             openapi: crate::config::OpenApiDocs::default(),
         };
 
@@ -243,11 +255,15 @@ mod tests {
 
         // Create config with custom JWT expiration (10 minutes)
         let config = ApiConfig {
-            address: "127.0.0.1".parse().unwrap(),
-            port: 3000,
-            database_url: db_url,
+            server_settings: crate::config::ApiSettings::new(
+                "127.0.0.1".parse().unwrap(),
+                3000,
+                db_url,
+                vec!["localhost".to_string()],
+            ),
+            compression: crate::config::ApiCompression::default(),
             jwt_settings: crate::config::JwtSettings::new(10, "test_secret_key".to_string()), // Custom expiration
-            security_limits: crate::config::SecurityAndLimits::new(5),
+            api_limits: crate::config::ApiLimits::new(5, 10, 30, 1024),
             openapi: crate::config::OpenApiDocs::default(),
         };
 

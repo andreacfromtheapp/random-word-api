@@ -78,6 +78,51 @@ pub struct Arguments {
     #[arg(short, long, default_value = "sqlite:random-words.db")]
     pub database_url: String,
 
+    /// Allowed origins for API requests
+    #[arg(short('o'), long, default_value = "localhost")]
+    pub allowed_origins: Vec<String>,
+
+    /// Enable Brotli compression
+    #[arg(long, default_value_t = false)]
+    pub enable_brotli: bool,
+
+    /// Enable Gzip compression
+    #[arg(long, default_value_t = false)]
+    pub enable_gzip: bool,
+
+    /// Token expiration time in minutes
+    #[validate(range(min = 1, max = 1440))]
+    #[arg(short('m'), long, default_value_t = 5)]
+    pub jwt_expiration_minutes: u16,
+
+    /// Secret key for signing and validating JWT tokens
+    #[arg(
+        short('s'),
+        long,
+        default_value = "default_jwt_secret_change_in_production"
+    )]
+    pub jwt_secret: String,
+
+    /// Maximum requests per second per IP address
+    #[validate(range(min = 1, max = 1000))]
+    #[arg(short('l'), long, default_value_t = 5)]
+    pub rate_limit_per_second: u64,
+
+    /// Maximum burst size per second per IP address
+    #[validate(range(min = 1, max = 1000))]
+    #[arg(short('b'), long, default_value_t = 5)]
+    pub burst_size: u32,
+
+    /// Request timeout in seconds
+    #[validate(range(min = 1, max = 300))]
+    #[arg(short('t'), long, default_value_t = 5)]
+    pub request_timeout: u64,
+
+    /// Maximum request body size in kilobytes
+    #[validate(range(min = 1, max = 10240))]
+    #[arg(short('k'), long, default_value_t = 512)]
+    pub request_body_limit_kilobytes: usize,
+
     /// Enable SwaggerUI documentation interface
     #[arg(long, default_value_t = false)]
     pub with_swagger_ui: bool,

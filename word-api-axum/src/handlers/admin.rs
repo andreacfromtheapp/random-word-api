@@ -1,4 +1,4 @@
-//! Administrative word management endpoints. Require authentication and administrative privileges.
+//! Administrative word management endpoints.
 //!
 //! Provides CRUD operations for word database management and user management.
 //! All endpoints require authentication and return JSON responses.

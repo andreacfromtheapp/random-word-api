@@ -28,7 +28,7 @@ use crate::state::AppState;
 pub struct PasswordHelper;
 
 impl PasswordHelper {
-    /// Hash a password using Argon2id
+    /// Hash a password using Argon2
     pub fn hash_password(password: &str) -> Result<String> {
         // Generate a random salt
         let mut salt_bytes = [0u8; 16];

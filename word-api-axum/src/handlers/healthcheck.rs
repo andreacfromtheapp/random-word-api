@@ -84,7 +84,9 @@ pub async fn ready(State(state): State<AppState>) -> Result<String, AppError> {
 #[cfg(test)]
 mod tests {
     use super::alive;
-    use crate::config::{ApiConfig, JwtSettings, OpenApiDocs, SecurityAndLimits};
+    use crate::config::{
+        ApiCompression, ApiConfig, ApiLimits, ApiSettings, JwtSettings, OpenApiDocs,
+    };
     use crate::error::AppError;
     use std::net::IpAddr;
     use std::str::FromStr;
@@ -108,17 +110,21 @@ mod tests {
     #[test]
     fn test_config_structure_logic() {
         let config = ApiConfig {
-            address: IpAddr::from_str("127.0.0.1").unwrap(),
-            port: 3000,
-            database_url: "sqlite:test.db".to_string(),
+            server_settings: ApiSettings::new(
+                IpAddr::from_str("127.0.0.1").unwrap(),
+                3000,
+                "sqlite:test.db".to_string(),
+                vec!["localhost".to_string()],
+            ),
+            compression: ApiCompression::default(),
             jwt_settings: JwtSettings::new(5, "test_secret".to_string()),
-            security_limits: SecurityAndLimits::new(5),
+            api_limits: ApiLimits::new(5, 10, 30, 1024),
             openapi: OpenApiDocs::default(),
         };
 
-        assert_eq!(config.address.to_string(), "127.0.0.1");
-        assert_eq!(config.port, 3000);
-        assert_eq!(config.database_url, "sqlite:test.db");
+        assert_eq!(config.server_settings.address.to_string(), "127.0.0.1");
+        assert_eq!(config.server_settings.port, 3000);
+        assert_eq!(config.server_settings.database_url, "sqlite:test.db");
         assert!(!config.openapi.enable_swagger_ui);
     }
 }

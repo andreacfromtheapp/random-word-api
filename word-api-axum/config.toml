@@ -1,13 +1,22 @@
+[server_settings]
 address = "0.0.0.0"
 port = 3000
 database_url = "sqlite:random-words.db"
+allowed_origins = ["localhost"]
+
+[compression]
+brotli = true
+gzip = true
 
 [jwt_settings]
 token_expiration_minutes = 5
 secret = "default_jwt_secret_change_in_production"
 
-[security_limits]
+[api_limits]
 rate_limit_per_second = 5
+burst_size = 5
+request_timeout = 5
+request_body_limit_kilobytes = 1024
 
 [openapi]
 enable_swagger_ui = false

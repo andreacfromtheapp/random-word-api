@@ -2,6 +2,9 @@
 //!
 //! Provides SwaggerUI, Redoc, Scalar, and RapiDoc interfaces when enabled
 //! via configuration. Each interface can be independently enabled or disabled.
+//!
+//! All documentation endpoints are publicly accessible without authentication,
+//! allowing developers to explore the API structure and test public endpoints.
 
 // OpenAPI documentation configuration
 use axum::Router;

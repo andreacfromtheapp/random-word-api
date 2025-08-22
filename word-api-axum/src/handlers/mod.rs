@@ -2,7 +2,7 @@
 //!
 //! # Modules
 //! - `admin`: Word management endpoints (requires auth)
-//! - `auth`: Authentication endpoints for login and registration
+//! - `auth`: Authentication endpoints for login
 //! - `healthcheck`: System status endpoints
 //! - `word`: Public word retrieval endpoints
 //!

@@ -18,25 +18,19 @@ use crate::cli::Cli;
 
 /// Main API configuration structure containing all runtime settings
 ///
-/// Holds server binding information, database connection details,
-/// and OpenAPI documentation interface settings.
-#[derive(Debug, Serialize, Deserialize, Clone)]
-/// Main API server configuration
-///
 /// Contains all configuration settings for the API server including network settings,
 /// database connection, JWT authentication, rate limiting, and documentation interfaces.
 /// Configuration can be loaded from CLI arguments, TOML files, or environment variables.
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ApiConfig {
-    /// IP address to bind the server to (e.g., "0.0.0.0", "127.0.0.1")
-    pub address: IpAddr,
-    /// Port number to listen on (1-65535, default: 3000)
-    pub port: u16,
-    /// Database connection URL (SQLite format: "sqlite:filename.db")
-    pub database_url: String,
+    /// Server binding and database configuration
+    pub server_settings: ApiSettings,
+    /// HTTP response compression settings
+    pub compression: ApiCompression,
     /// JWT authentication settings
     pub jwt_settings: JwtSettings,
-    /// Security and rate limiting configuration
-    pub security_limits: SecurityAndLimits,
+    /// API rate limiting and request constraints
+    pub api_limits: ApiLimits,
     /// OpenAPI documentation interface settings
     pub openapi: OpenApiDocs,
 }
@@ -56,21 +50,27 @@ pub enum FileKind {
 impl ApiConfig {
     /// Create new API configuration with specified settings
     ///
+    /// Combines all configuration sections into a complete API configuration.
     /// Used internally for constructing configuration from various sources.
+    ///
+    /// # Arguments
+    /// * `server_settings` - Server binding and database configuration
+    /// * `compression` - HTTP response compression settings
+    /// * `jwt_settings` - JWT authentication configuration
+    /// * `api_limits` - Rate limiting and request constraints
+    /// * `openapi` - OpenAPI documentation interface settings
     pub fn new(
-        address: std::net::IpAddr,
-        port: u16,
-        database_url: String,
+        server_settings: ApiSettings,
+        compression: ApiCompression,
         jwt_settings: JwtSettings,
-        security_limits: SecurityAndLimits,
+        api_limits: ApiLimits,
         openapi: OpenApiDocs,
     ) -> Self {
         Self {
-            address,
-            port,
-            database_url,
+            server_settings,
+            compression,
             jwt_settings,
-            security_limits,
+            api_limits,
             openapi,
         }
     }
@@ -132,16 +132,29 @@ impl ApiConfig {
 
         // set the variables as needed
         Ok(ApiConfig {
-            address: IpAddr::from_str(&dotenvy::var("BIND_ADDR")?)?,
-            port: u16::from_str(&dotenvy::var("BIND_PORT")?)?,
-            database_url: dotenvy::var("DATABASE_URL")?,
+            server_settings: ApiSettings::new(
+                IpAddr::from_str(&dotenvy::var("BIND_ADDR")?)?,
+                u16::from_str(&dotenvy::var("BIND_PORT")?)?,
+                dotenvy::var("DATABASE_URL")?,
+                dotenvy::var("ALLOWED_ORIGINS")?
+                    .split(',')
+                    .map(|s| s.trim().to_string())
+                    .collect(),
+            ),
+            compression: ApiCompression::new(
+                bool::from_str(&dotenvy::var("ENABLE_BROTLI")?)?,
+                bool::from_str(&dotenvy::var("ENABLE_GZIP")?)?,
+            ),
             jwt_settings: JwtSettings::new(
                 u16::from_str(&dotenvy::var("EXPIRATION_MINUTES")?)?,
                 dotenvy::var("SECRET")?,
             ),
-            security_limits: SecurityAndLimits::new(u16::from_str(&dotenvy::var(
-                "RATE_LIMIT_PER_SECOND",
-            )?)?),
+            api_limits: ApiLimits::new(
+                u64::from_str(&dotenvy::var("RATE_LIMIT_PER_SECOND")?)?,
+                u32::from_str(&dotenvy::var("BURST_SIZE")?)?,
+                u64::from_str(&dotenvy::var("REQUEST_TIMEOUT")?)?,
+                usize::from_str(&dotenvy::var("REQUEST_BODY_LIMIT")?)?,
+            ),
             openapi: OpenApiDocs::new(
                 bool::from_str(&dotenvy::var("ENABLE_SWAGGER_UI")?)?,
                 bool::from_str(&dotenvy::var("ENABLE_REDOC")?)?,
@@ -167,11 +180,10 @@ impl ApiConfig {
 
         // set the variables as needed
         Ok(ApiConfig {
-            address: my_configs.address,
-            port: my_configs.port,
-            database_url: my_configs.database_url,
+            server_settings: my_configs.server_settings,
+            compression: my_configs.compression,
             jwt_settings: my_configs.jwt_settings,
-            security_limits: my_configs.security_limits,
+            api_limits: my_configs.api_limits,
             openapi: my_configs.openapi,
         })
     }
@@ -183,11 +195,23 @@ impl ApiConfig {
     pub fn from_cli_args(cli: &Cli) -> Result<Self, anyhow::Error> {
         // set the variables as needed
         Ok(ApiConfig {
-            address: cli.arg.address,
-            port: cli.arg.port,
-            database_url: cli.arg.database_url.clone(),
-            jwt_settings: JwtSettings::new(5, "secret".to_string()),
-            security_limits: SecurityAndLimits::new(5),
+            server_settings: ApiSettings::new(
+                cli.arg.address,
+                cli.arg.port,
+                cli.arg.database_url.clone(),
+                cli.arg.allowed_origins.clone(),
+            ),
+            compression: ApiCompression::new(cli.arg.enable_brotli, cli.arg.enable_gzip),
+            jwt_settings: JwtSettings::new(
+                cli.arg.jwt_expiration_minutes,
+                cli.arg.jwt_secret.clone(),
+            ),
+            api_limits: ApiLimits::new(
+                cli.arg.rate_limit_per_second,
+                cli.arg.burst_size,
+                cli.arg.request_timeout,
+                cli.arg.request_body_limit_kilobytes,
+            ),
             openapi: OpenApiDocs::new(
                 cli.arg.with_swagger_ui,
                 cli.arg.with_redoc,
@@ -206,12 +230,11 @@ impl fmt::Display for ApiConfig {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(
             f,
-            "# Server Configuration\nBIND_ADDR=\"{}\"\nBIND_PORT={}\nDATABASE_URL={}\n\n{}\n\n{}\n\n{}",
-            self.address,
-            self.port,
-            self.database_url,
+            "{}\n\n{}\n\n{}\n\n{}\n\n{}",
+            self.server_settings,
+            self.compression,
             self.jwt_settings,
-            self.security_limits,
+            self.api_limits,
             self.openapi
         )
     }
@@ -223,16 +246,130 @@ impl fmt::Display for ApiConfig {
 /// Production deployments should use explicit configuration files.
 impl Default for ApiConfig {
     fn default() -> Self {
+        ApiConfig {
+            server_settings: ApiSettings::default(),
+            compression: ApiCompression::default(),
+            jwt_settings: JwtSettings::default(),
+            api_limits: ApiLimits::default(),
+            openapi: OpenApiDocs::default(),
+        }
+    }
+}
+
+/// Server binding and database configuration
+///
+/// Contains core server settings including network binding, database connection,
+/// and allowed origins for CORS. These settings determine where the server
+/// listens and how it connects to external resources.
+#[derive(Debug, Serialize, Deserialize, Clone, Validate)]
+pub struct ApiSettings {
+    /// IP address to bind the server to (e.g., "0.0.0.0", "127.0.0.1")
+    pub address: IpAddr,
+    /// Port number to listen on (1-65535, default: 3000)
+    #[validate(range(min = 1, max = 65535))]
+    pub port: u16,
+    /// Database connection URL (SQLite format: "sqlite:filename.db")
+    pub database_url: String,
+    /// Allowed origins domain to peruse the API
+    pub allowed_origins: Vec<String>,
+}
+
+impl ApiSettings {
+    /// Create new server settings configuration
+    ///
+    /// # Arguments
+    /// * `address` - IP address to bind the server to
+    /// * `port` - Port number to listen on
+    /// * `database_url` - Database connection URL
+    /// * `allowed_origins` - List of allowed CORS origins
+    pub fn new(
+        address: IpAddr,
+        port: u16,
+        database_url: String,
+        allowed_origins: Vec<String>,
+    ) -> Self {
+        Self {
+            address,
+            port,
+            database_url,
+            allowed_origins,
+        }
+    }
+}
+
+impl fmt::Display for ApiSettings {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        // Convert origins to a comma-separated string
+        let origins_str = self
+            .allowed_origins
+            .iter()
+            .map(|origin| format!("\"{origin}\"")) // Wrap each origin in quotes
+            .collect::<Vec<String>>()
+            .join(",");
+
+        write!(
+            f,
+            "# Server Configuration\nBIND_ADDR=\"{}\"\nBIND_PORT={}\nDATABASE_URL=\"{}\"\nALLOWED_ORIGINS={}",
+            self.address,
+            self.port,
+            self.database_url,
+            origins_str,
+        )
+    }
+}
+
+impl Default for ApiSettings {
+    fn default() -> Self {
         use std::str::FromStr;
 
-        ApiConfig {
+        ApiSettings {
             address: IpAddr::from_str("0.0.0.0").unwrap(),
             port: u16::from_str("3000").unwrap(),
             database_url: "sqlite:random-words.db".to_string(),
-            jwt_settings: JwtSettings::default(),
-            security_limits: SecurityAndLimits::default(),
-            openapi: OpenApiDocs::default(),
+            allowed_origins: vec!["localhost".to_string()],
         }
+    }
+}
+
+/// HTTP response compression configuration
+///
+/// Controls which compression algorithms are enabled for HTTP responses.
+/// Both algorithms can be enabled simultaneously for optimal client compatibility.
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct ApiCompression {
+    /// Enable Brotli compression (modern, high efficiency)
+    pub brotli: bool,
+    /// Enable Gzip compression (widely supported, good compatibility)
+    pub gzip: bool,
+}
+
+impl ApiCompression {
+    /// Create new compression configuration
+    ///
+    /// # Arguments
+    /// * `brotli` - Enable Brotli compression
+    /// * `gzip` - Enable Gzip compression
+    pub fn new(brotli: bool, gzip: bool) -> Self {
+        Self { brotli, gzip }
+    }
+}
+
+impl Default for ApiCompression {
+    fn default() -> Self {
+        ApiCompression {
+            brotli: true,
+            gzip: true,
+        }
+    }
+}
+
+impl fmt::Display for ApiCompression {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "# Compression\nENABLE_BROTLI={}\nENABLE_GZIP={}",
+            self.brotli, self.gzip,
+        )
     }
 }
 
@@ -277,49 +414,75 @@ impl fmt::Display for JwtSettings {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "# JWT Configuration\nEXPIRATION_MINUTES={}\nSECRET={}\n",
+            "# JWT Configuration\nEXPIRATION_MINUTES={}\nSECRET=\"{}\"",
             self.token_expiration_minutes, self.secret
         )
     }
 }
 
-/// Security and rate limiting configuration
-///
-/// Controls request rate limiting per IP address to prevent abuse.
-/// Rate limiting helps protect against DoS attacks and excessive API usage.
 #[derive(Debug, Serialize, Deserialize, Clone, Validate)]
-pub struct SecurityAndLimits {
+/// API rate limiting and request constraints
+///
+/// Controls request rate limiting, timeouts, and body size limits to prevent
+/// abuse and ensure service stability. All limits are enforced per IP address.
+pub struct ApiLimits {
     /// Maximum requests per second per IP address (1-1000, default: 5)
     #[validate(range(min = 1, max = 1000))]
-    pub rate_limit_per_second: u16,
+    pub rate_limit_per_second: u64,
+    /// Maximum burst size per second per IP address (1-1000, default: 5)
+    #[validate(range(min = 1, max = 1000))]
+    pub burst_size: u32,
+    /// Request timeout in seconds (1-300, default: 1)
+    #[validate(range(min = 1, max = 300))]
+    pub request_timeout: u64,
+    /// Maximum request body size in kilobytes (1-10240, default: 1024KB)
+    #[validate(range(min = 1, max = 10240))]
+    pub request_body_limit_kilobytes: usize,
 }
 
-impl SecurityAndLimits {
-    /// Create new security and limits configuration
+impl ApiLimits {
+    /// Create new API limits configuration
     ///
     /// # Arguments
     /// * `rate_limit_per_second` - Maximum requests per second per IP (1-1000)
-    pub fn new(rate_limit_per_second: u16) -> Self {
+    /// * `burst_size` - Maximum burst size per IP (1-1000)
+    /// * `request_timeout` - Request timeout in seconds (1-300)
+    /// * `request_body_limit_kilobytes` - Maximum request body size in kilobytes
+    pub fn new(
+        rate_limit_per_second: u64,
+        burst_size: u32,
+        request_timeout: u64,
+        request_body_limit_kilobytes: usize,
+    ) -> Self {
         Self {
             rate_limit_per_second,
+            burst_size,
+            request_timeout,
+            request_body_limit_kilobytes,
         }
     }
 }
 
-impl Default for SecurityAndLimits {
+/// Provides safe default values for API limits
+///
+/// Default configuration suitable for most applications with moderate traffic.
+impl Default for ApiLimits {
     fn default() -> Self {
-        SecurityAndLimits {
+        ApiLimits {
             rate_limit_per_second: 5,
+            burst_size: 5,
+            request_timeout: 5,
+            request_body_limit_kilobytes: 1024,
         }
     }
 }
 
-impl fmt::Display for SecurityAndLimits {
+impl fmt::Display for ApiLimits {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "# Rate Limiting (requests per second per IP)\nRATE_LIMIT_PER_SECOND={}\n",
-            self.rate_limit_per_second,
+            "# API Limiting\nRATE_LIMIT_PER_SECOND={}\nBURST_SIZE={}\nREQUEST_TIMEOUT={}\nREQUEST_BODY_LIMIT={}",
+            self.rate_limit_per_second, self.burst_size, self.request_timeout, self.request_body_limit_kilobytes
         )
     }
 }
@@ -390,20 +553,25 @@ mod tests {
     fn test_api_config_new() {
         let address = IpAddr::from_str("127.0.0.1").unwrap();
         let jwt_settings = JwtSettings::new(5, "secret".to_string());
-        let security_limits = SecurityAndLimits::new(5);
+        let api_limits = ApiLimits::new(5, 10, 30, 1024);
         let openapi = OpenApiDocs::new(true, false, true, false);
-        let config = ApiConfig::new(
+        let server_settings = ApiSettings::new(
             address,
             8080,
             "sqlite:test.db".to_string(),
+            vec!["localhost".to_string()],
+        );
+        let config = ApiConfig::new(
+            server_settings,
+            ApiCompression::default(),
             jwt_settings,
-            security_limits,
+            api_limits,
             openapi,
         );
 
-        assert_eq!(config.address, address);
-        assert_eq!(config.port, 8080);
-        assert_eq!(config.database_url, "sqlite:test.db");
+        assert_eq!(config.server_settings.address, address);
+        assert_eq!(config.server_settings.port, 8080);
+        assert_eq!(config.server_settings.database_url, "sqlite:test.db");
         assert!(config.openapi.enable_swagger_ui);
         assert!(!config.openapi.enable_redoc);
     }
@@ -412,20 +580,25 @@ mod tests {
     fn test_api_config_new_ipv4_custom() {
         let address = IpAddr::V4(Ipv4Addr::new(192, 168, 1, 100));
         let jwt_settings = JwtSettings::new(5, "secret".to_string());
-        let security_limits = SecurityAndLimits::new(5);
+        let api_limits = ApiLimits::new(5, 10, 30, 1024);
         let openapi = OpenApiDocs::new(false, true, true, false);
-        let config = ApiConfig::new(
+        let server_settings = ApiSettings::new(
             address,
             9000,
             "sqlite:ipv4_test.db".to_string(),
+            vec!["localhost".to_string()],
+        );
+        let config = ApiConfig::new(
+            server_settings,
+            ApiCompression::default(),
             jwt_settings,
-            security_limits,
+            api_limits,
             openapi,
         );
 
-        assert_eq!(config.address, address);
-        assert_eq!(config.port, 9000);
-        assert_eq!(config.database_url, "sqlite:ipv4_test.db");
+        assert_eq!(config.server_settings.address, address);
+        assert_eq!(config.server_settings.port, 9000);
+        assert_eq!(config.server_settings.database_url, "sqlite:ipv4_test.db");
         assert!(!config.openapi.enable_swagger_ui);
         assert!(config.openapi.enable_redoc);
     }
@@ -433,49 +606,76 @@ mod tests {
     #[test]
     fn test_api_config_ipv4_localhost() {
         let address = IpAddr::V4(Ipv4Addr::LOCALHOST); // 127.0.0.1
-        let config = ApiConfig::new(
+        let server_settings = ApiSettings::new(
             address,
             8080,
             "sqlite:test.db".to_string(),
+            vec!["localhost".to_string()],
+        );
+        let config = ApiConfig::new(
+            server_settings,
+            ApiCompression::default(),
             JwtSettings::default(),
-            SecurityAndLimits::default(),
+            ApiLimits::default(),
             OpenApiDocs::default(),
         );
 
-        assert_eq!(config.address, IpAddr::V4(Ipv4Addr::LOCALHOST));
-        assert_eq!(config.address.to_string(), "127.0.0.1");
+        assert_eq!(
+            config.server_settings.address,
+            IpAddr::V4(Ipv4Addr::LOCALHOST)
+        );
+        assert_eq!(config.server_settings.address.to_string(), "127.0.0.1");
     }
 
     #[test]
     fn test_api_config_ipv4_unspecified() {
         let address = IpAddr::V4(Ipv4Addr::UNSPECIFIED); // 0.0.0.0
-        let config = ApiConfig::new(
+        let server_settings = ApiSettings::new(
             address,
             3000,
             "sqlite:test.db".to_string(),
+            vec!["localhost".to_string()],
+        );
+        let config = ApiConfig::new(
+            server_settings,
+            ApiCompression::default(),
             JwtSettings::default(),
-            SecurityAndLimits::default(),
+            ApiLimits::default(),
             OpenApiDocs::default(),
         );
 
-        assert_eq!(config.address, IpAddr::V4(Ipv4Addr::UNSPECIFIED));
-        assert_eq!(config.address.to_string(), "0.0.0.0");
+        assert_eq!(
+            config.server_settings.address,
+            IpAddr::V4(Ipv4Addr::UNSPECIFIED)
+        );
+        assert_eq!(config.server_settings.address.to_string(), "0.0.0.0");
     }
 
     #[test]
     fn test_api_config_ipv4_broadcast() {
         let address = IpAddr::V4(Ipv4Addr::BROADCAST); // 255.255.255.255
-        let config = ApiConfig::new(
+        let server_settings = ApiSettings::new(
             address,
             8080,
             "sqlite:test.db".to_string(),
+            vec!["localhost".to_string()],
+        );
+        let config = ApiConfig::new(
+            server_settings,
+            ApiCompression::default(),
             JwtSettings::default(),
-            SecurityAndLimits::default(),
+            ApiLimits::default(),
             OpenApiDocs::default(),
         );
 
-        assert_eq!(config.address, IpAddr::V4(Ipv4Addr::BROADCAST));
-        assert_eq!(config.address.to_string(), "255.255.255.255");
+        assert_eq!(
+            config.server_settings.address,
+            IpAddr::V4(Ipv4Addr::BROADCAST)
+        );
+        assert_eq!(
+            config.server_settings.address.to_string(),
+            "255.255.255.255"
+        );
     }
 
     #[test]
@@ -484,14 +684,22 @@ mod tests {
         use tempfile::NamedTempFile;
 
         let mut temp_file = NamedTempFile::new().unwrap();
+        writeln!(temp_file, "[server_settings]").unwrap();
         writeln!(temp_file, "address = \"10.0.0.1\"").unwrap();
         writeln!(temp_file, "port = 8080").unwrap();
         writeln!(temp_file, "database_url = \"sqlite:ipv4.db\"").unwrap();
+        writeln!(temp_file, "allowed_origins = [\"localhost\"]").unwrap();
+        writeln!(temp_file, "[compression]").unwrap();
+        writeln!(temp_file, "brotli = true").unwrap();
+        writeln!(temp_file, "gzip = true").unwrap();
         writeln!(temp_file, "[jwt_settings]").unwrap();
         writeln!(temp_file, "token_expiration_minutes = 5").unwrap();
         writeln!(temp_file, "secret = \"test_secret_ipv4\"").unwrap();
-        writeln!(temp_file, "[security_limits]").unwrap();
+        writeln!(temp_file, "[api_limits]").unwrap();
         writeln!(temp_file, "rate_limit_per_second = 5").unwrap();
+        writeln!(temp_file, "burst_size = 10").unwrap();
+        writeln!(temp_file, "request_timeout = 30").unwrap();
+        writeln!(temp_file, "request_body_limit_kilobytes = 1024").unwrap();
         writeln!(temp_file, "[openapi]").unwrap();
         writeln!(temp_file, "enable_swagger_ui = false").unwrap();
         writeln!(temp_file, "enable_redoc = true").unwrap();
@@ -503,31 +711,39 @@ mod tests {
 
         assert!(result.is_ok());
         let config = result.unwrap();
-        assert_eq!(config.address, IpAddr::V4(Ipv4Addr::new(10, 0, 0, 1)));
-        assert_eq!(config.port, 8080);
-        assert_eq!(config.database_url, "sqlite:ipv4.db");
+        assert_eq!(
+            config.server_settings.address,
+            IpAddr::V4(Ipv4Addr::new(10, 0, 0, 1))
+        );
+        assert_eq!(config.server_settings.port, 8080);
+        assert_eq!(config.server_settings.database_url, "sqlite:ipv4.db");
         assert_eq!(config.jwt_settings.secret, "test_secret_ipv4");
         assert_eq!(config.jwt_settings.token_expiration_minutes, 5);
-        assert_eq!(config.security_limits.rate_limit_per_second, 5);
+        assert_eq!(config.api_limits.rate_limit_per_second, 5);
     }
 
     #[test]
     fn test_api_config_display_ipv4() {
         let address = IpAddr::V4(Ipv4Addr::new(172, 16, 0, 1));
         let openapi = OpenApiDocs::new(true, false, true, false);
-        let config = ApiConfig::new(
+        let server_settings = ApiSettings::new(
             address,
             8080,
             "sqlite:ipv4_display.db".to_string(),
+            vec!["localhost".to_string()],
+        );
+        let config = ApiConfig::new(
+            server_settings,
+            ApiCompression::default(),
             JwtSettings::new(5, "test_jwt_secret".to_string()),
-            SecurityAndLimits::default(),
+            ApiLimits::default(),
             openapi,
         );
 
         let output = format!("{config}");
         assert!(output.contains("BIND_ADDR=\"172.16.0.1\""));
         assert!(output.contains("BIND_PORT=8080"));
-        assert!(output.contains("DATABASE_URL=sqlite:ipv4_display.db"));
+        assert!(output.contains("DATABASE_URL=\"sqlite:ipv4_display.db\""));
     }
 
     #[test]
@@ -540,18 +756,23 @@ mod tests {
         ];
 
         for address in addresses {
-            let config = ApiConfig::new(
+            let server_settings = ApiSettings::new(
                 address,
                 8080,
                 "sqlite:test.db".to_string(),
+                vec!["localhost".to_string()],
+            );
+            let config = ApiConfig::new(
+                server_settings,
+                ApiCompression::default(),
                 JwtSettings::new(5, "test_jwt_secret".to_string()),
-                SecurityAndLimits::default(),
+                ApiLimits::default(),
                 OpenApiDocs::default(),
             );
-            assert_eq!(config.address, address);
+            assert_eq!(config.server_settings.address, address);
 
             // Verify the address is properly formatted
-            let addr_str = config.address.to_string();
+            let addr_str = config.server_settings.address.to_string();
             assert!(addr_str.contains('.'));
             assert!(!addr_str.contains(':'));
         }
@@ -561,18 +782,23 @@ mod tests {
     fn test_api_config_new_ipv6() {
         let address = IpAddr::V6(Ipv6Addr::new(0x2001, 0xdb8, 0, 0, 0, 0, 0, 1));
         let openapi = OpenApiDocs::new(false, true, false, true);
-        let config = ApiConfig::new(
+        let server_settings = ApiSettings::new(
             address,
             9000,
             "sqlite:ipv6_test.db".to_string(),
+            vec!["localhost".to_string()],
+        );
+        let config = ApiConfig::new(
+            server_settings,
+            ApiCompression::default(),
             JwtSettings::new(5, "test_jwt_secret".to_string()),
-            SecurityAndLimits::default(),
+            ApiLimits::default(),
             openapi,
         );
 
-        assert_eq!(config.address, address);
-        assert_eq!(config.port, 9000);
-        assert_eq!(config.database_url, "sqlite:ipv6_test.db");
+        assert_eq!(config.server_settings.address, address);
+        assert_eq!(config.server_settings.port, 9000);
+        assert_eq!(config.server_settings.database_url, "sqlite:ipv6_test.db");
         assert!(!config.openapi.enable_swagger_ui);
         assert!(config.openapi.enable_redoc);
     }
@@ -580,33 +806,49 @@ mod tests {
     #[test]
     fn test_api_config_ipv6_localhost() {
         let address = IpAddr::V6(Ipv6Addr::LOCALHOST); // ::1
-        let config = ApiConfig::new(
+        let server_settings = ApiSettings::new(
             address,
             8080,
             "sqlite:test.db".to_string(),
+            vec!["localhost".to_string()],
+        );
+        let config = ApiConfig::new(
+            server_settings,
+            ApiCompression::default(),
             JwtSettings::new(5, "test_jwt_secret".to_string()),
-            SecurityAndLimits::default(),
+            ApiLimits::default(),
             OpenApiDocs::default(),
         );
 
-        assert_eq!(config.address, IpAddr::V6(Ipv6Addr::LOCALHOST));
-        assert_eq!(config.address.to_string(), "::1");
+        assert_eq!(
+            config.server_settings.address,
+            IpAddr::V6(Ipv6Addr::LOCALHOST)
+        );
+        assert_eq!(config.server_settings.address.to_string(), "::1");
     }
 
     #[test]
     fn test_api_config_ipv6_unspecified() {
         let address = IpAddr::V6(Ipv6Addr::UNSPECIFIED); // ::
-        let config = ApiConfig::new(
+        let server_settings = ApiSettings::new(
             address,
             3000,
             "sqlite:test.db".to_string(),
+            vec!["localhost".to_string()],
+        );
+        let config = ApiConfig::new(
+            server_settings,
+            ApiCompression::default(),
             JwtSettings::new(5, "test_jwt_secret".to_string()),
-            SecurityAndLimits::default(),
+            ApiLimits::default(),
             OpenApiDocs::default(),
         );
 
-        assert_eq!(config.address, IpAddr::V6(Ipv6Addr::UNSPECIFIED));
-        assert_eq!(config.address.to_string(), "::");
+        assert_eq!(
+            config.server_settings.address,
+            IpAddr::V6(Ipv6Addr::UNSPECIFIED)
+        );
+        assert_eq!(config.server_settings.address.to_string(), "::");
     }
 
     #[test]
@@ -615,14 +857,22 @@ mod tests {
         use tempfile::NamedTempFile;
 
         let mut temp_file = NamedTempFile::new().unwrap();
+        writeln!(temp_file, "[server_settings]").unwrap();
         writeln!(temp_file, "address = \"::1\"").unwrap();
         writeln!(temp_file, "port = 9090").unwrap();
         writeln!(temp_file, "database_url = \"sqlite:ipv6.db\"").unwrap();
+        writeln!(temp_file, "allowed_origins = [\"localhost\"]").unwrap();
+        writeln!(temp_file, "[compression]").unwrap();
+        writeln!(temp_file, "brotli = true").unwrap();
+        writeln!(temp_file, "gzip = true").unwrap();
         writeln!(temp_file, "[jwt_settings]").unwrap();
         writeln!(temp_file, "token_expiration_minutes = 5").unwrap();
         writeln!(temp_file, "secret = \"test_secret_ipv6\"").unwrap();
-        writeln!(temp_file, "[security_limits]").unwrap();
+        writeln!(temp_file, "[api_limits]").unwrap();
         writeln!(temp_file, "rate_limit_per_second = 5").unwrap();
+        writeln!(temp_file, "burst_size = 10").unwrap();
+        writeln!(temp_file, "request_timeout = 30").unwrap();
+        writeln!(temp_file, "request_body_limit_kilobytes = 1024").unwrap();
         writeln!(temp_file, "[openapi]").unwrap();
         writeln!(temp_file, "enable_swagger_ui = true").unwrap();
         writeln!(temp_file, "enable_redoc = false").unwrap();
@@ -635,42 +885,53 @@ mod tests {
         assert!(result.is_ok());
         let config = result.unwrap();
         assert_eq!(
-            config.address,
+            config.server_settings.address,
             IpAddr::V6(Ipv6Addr::new(0, 0, 0, 0, 0, 0, 0, 1))
         );
-        assert_eq!(config.port, 9090);
-        assert_eq!(config.database_url, "sqlite:ipv6.db");
+        assert_eq!(config.server_settings.port, 9090);
+        assert_eq!(config.server_settings.database_url, "sqlite:ipv6.db");
         assert_eq!(config.jwt_settings.secret, "test_secret_ipv6");
         assert_eq!(config.jwt_settings.token_expiration_minutes, 5);
-        assert_eq!(config.security_limits.rate_limit_per_second, 5);
+        assert_eq!(config.api_limits.rate_limit_per_second, 5);
     }
 
     #[test]
     fn test_api_config_display_ipv6() {
         let address = IpAddr::V6(Ipv6Addr::new(0x2001, 0xdb8, 0, 0, 0, 0, 0, 1));
         let openapi = OpenApiDocs::new(true, false, false, true);
-        let config = ApiConfig::new(
+        let server_settings = ApiSettings::new(
             address,
             8080,
             "sqlite:ipv6_display.db".to_string(),
+            vec!["localhost".to_string()],
+        );
+        let config = ApiConfig::new(
+            server_settings,
+            ApiCompression::default(),
             JwtSettings::new(5, "test_jwt_secret".to_string()),
-            SecurityAndLimits::default(),
+            ApiLimits::default(),
             openapi,
         );
 
         let output = format!("{config}");
         assert!(output.contains("BIND_ADDR=\"2001:db8::1\""));
         assert!(output.contains("BIND_PORT=8080"));
-        assert!(output.contains("DATABASE_URL=sqlite:ipv6_display.db"));
+        assert!(output.contains("DATABASE_URL=\"sqlite:ipv6_display.db\""));
     }
 
     #[test]
     fn test_api_config_default() {
         let config = ApiConfig::default();
 
-        assert_eq!(config.address, IpAddr::from_str("0.0.0.0").unwrap());
-        assert_eq!(config.port, 3000);
-        assert_eq!(config.database_url, "sqlite:random-words.db");
+        assert_eq!(
+            config.server_settings.address,
+            IpAddr::from_str("0.0.0.0").unwrap()
+        );
+        assert_eq!(config.server_settings.port, 3000);
+        assert_eq!(
+            config.server_settings.database_url,
+            "sqlite:random-words.db"
+        );
         assert!(!config.openapi.enable_swagger_ui);
         assert!(!config.openapi.enable_redoc);
         assert!(!config.openapi.enable_scalar);
@@ -701,19 +962,24 @@ mod tests {
     fn test_api_config_display() {
         let address = IpAddr::from_str("192.168.1.1").unwrap();
         let openapi = OpenApiDocs::new(true, false, true, false);
-        let config = ApiConfig::new(
+        let server_settings = ApiSettings::new(
             address,
             9000,
             "sqlite:display_test.db".to_string(),
+            vec!["localhost".to_string()],
+        );
+        let config = ApiConfig::new(
+            server_settings,
+            ApiCompression::default(),
             JwtSettings::new(5, "test_jwt_secret".to_string()),
-            SecurityAndLimits::default(),
+            ApiLimits::default(),
             openapi,
         );
 
         let output = format!("{config}");
         assert!(output.contains("BIND_ADDR=\"192.168.1.1\""));
         assert!(output.contains("BIND_PORT=9000"));
-        assert!(output.contains("DATABASE_URL=sqlite:display_test.db"));
+        assert!(output.contains("DATABASE_URL=\"sqlite:display_test.db\""));
         assert!(output.contains("ENABLE_SWAGGER_UI=true"));
         assert!(output.contains("ENABLE_REDOC=false"));
         assert!(output.contains("ENABLE_SCALAR=true"));
@@ -809,14 +1075,22 @@ mod tests {
         use tempfile::NamedTempFile;
 
         let mut temp_file = NamedTempFile::new().unwrap();
+        writeln!(temp_file, "[server_settings]").unwrap();
         writeln!(temp_file, "address = \"127.0.0.1\"").unwrap();
         writeln!(temp_file, "port = 4000").unwrap();
         writeln!(temp_file, "database_url = \"sqlite:fromconfig.db\"").unwrap();
+        writeln!(temp_file, "allowed_origins = [\"localhost\"]").unwrap();
+        writeln!(temp_file, "[compression]").unwrap();
+        writeln!(temp_file, "brotli = true").unwrap();
+        writeln!(temp_file, "gzip = true").unwrap();
         writeln!(temp_file, "[jwt_settings]").unwrap();
         writeln!(temp_file, "token_expiration_minutes = 5").unwrap();
         writeln!(temp_file, "secret = \"test_secret_config\"").unwrap();
-        writeln!(temp_file, "[security_limits]").unwrap();
+        writeln!(temp_file, "[api_limits]").unwrap();
         writeln!(temp_file, "rate_limit_per_second = 5").unwrap();
+        writeln!(temp_file, "burst_size = 10").unwrap();
+        writeln!(temp_file, "request_timeout = 30").unwrap();
+        writeln!(temp_file, "request_body_limit_kilobytes = 1024").unwrap();
         writeln!(temp_file, "[openapi]").unwrap();
         writeln!(temp_file, "enable_swagger_ui = true").unwrap();
         writeln!(temp_file, "enable_redoc = true").unwrap();
@@ -828,12 +1102,15 @@ mod tests {
 
         assert!(result.is_ok());
         let config = result.unwrap();
-        assert_eq!(config.address, IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)));
-        assert_eq!(config.port, 4000);
-        assert_eq!(config.database_url, "sqlite:fromconfig.db");
+        assert_eq!(
+            config.server_settings.address,
+            IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1))
+        );
+        assert_eq!(config.server_settings.port, 4000);
+        assert_eq!(config.server_settings.database_url, "sqlite:fromconfig.db");
         assert_eq!(config.jwt_settings.secret, "test_secret_config");
         assert_eq!(config.jwt_settings.token_expiration_minutes, 5);
-        assert_eq!(config.security_limits.rate_limit_per_second, 5);
+        assert_eq!(config.api_limits.rate_limit_per_second, 5);
         assert!(config.openapi.enable_swagger_ui);
         assert!(config.openapi.enable_redoc);
     }
