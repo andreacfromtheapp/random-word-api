@@ -165,7 +165,7 @@ impl FromRequestParts<AppState> for AuthUser {
                     e
                 )))
             })?;
-            config.jwt_secret.clone()
+            config.jwt_settings.secret.clone()
         };
 
         // Validate token and extract claims
@@ -241,7 +241,7 @@ pub async fn admin_auth_middleware(
                 e
             )))
         })?;
-        config.jwt_secret.clone()
+        config.jwt_settings.secret.clone()
     };
 
     // Validate token and extract claims

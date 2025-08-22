@@ -84,7 +84,7 @@ pub async fn ready(State(state): State<AppState>) -> Result<String, AppError> {
 #[cfg(test)]
 mod tests {
     use super::alive;
-    use crate::config::{ApiConfig, OpenApiDocs};
+    use crate::config::{ApiConfig, JwtSettings, OpenApiDocs, SecurityAndLimits};
     use crate::error::AppError;
     use std::net::IpAddr;
     use std::str::FromStr;
@@ -111,11 +111,9 @@ mod tests {
             address: IpAddr::from_str("127.0.0.1").unwrap(),
             port: 3000,
             database_url: "sqlite:test.db".to_string(),
+            jwt_settings: JwtSettings::new(5, "test_secret".to_string()),
+            security_limits: SecurityAndLimits::new(5),
             openapi: OpenApiDocs::default(),
-            jwt_secret: "test_secret".to_string(),
-            jwt_expiration_minutes: 5,
-            rate_limit_per_second: 5,
-            security_headers_enabled: true,
         };
 
         assert_eq!(config.address.to_string(), "127.0.0.1");

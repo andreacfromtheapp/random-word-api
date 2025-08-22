@@ -81,10 +81,8 @@ pub async fn create_router(shared_state: AppState) -> Router {
         .merge(word_routes);
 
     // Apply middleware stack in the correct order (inside-out):
-    // Security headers (outermost)
-    if config.security_headers_enabled {
-        router = router.layer(middleware::from_fn(security_headers));
-    }
+    // Security headers (outermost) - always enabled
+    router = router.layer(middleware::from_fn(security_headers));
 
     // Rate limiting per IP
     if is_enabled(&config) {

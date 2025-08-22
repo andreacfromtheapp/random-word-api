@@ -1,24 +1,16 @@
-# Random Word API Configuration
-# Copy this file to config.toml and modify values as needed
-
-# Server Configuration
 address = "0.0.0.0"
 port = 3000
 database_url = "sqlite:random-words.db"
 
-# JWT Configuration
-jwt_secret = "your-secret-key-change-in-production"
-jwt_expiration_minutes = 5
+[jwt_settings]
+token_expiration_minutes = 5
+secret = "default_jwt_secret_change_in_production"
 
-# Rate Limiting (requests per second per IP)
+[security_limits]
 rate_limit_per_second = 5
 
-# Security Headers
-security_headers_enabled = true
-
-# OpenAPI Documentation
 [openapi]
-enable_swagger_ui = true
-enable_redoc = true
-enable_scalar = true
-enable_rapidoc = true
+enable_swagger_ui = false
+enable_redoc = false
+enable_scalar = false
+enable_rapidoc = false

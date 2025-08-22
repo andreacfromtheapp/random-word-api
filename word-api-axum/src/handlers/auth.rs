@@ -56,16 +56,19 @@ pub async fn login(
             .apiconfig
             .lock()
             .map_err(|e| AuthError::InternalError(anyhow::anyhow!("Config lock failed: {}", e)))?;
-        (config.jwt_secret.clone(), config.jwt_expiration_minutes)
+        (
+            config.jwt_settings.secret.clone(),
+            config.jwt_settings.token_expiration_minutes,
+        )
     };
 
     // Generate JWT token with dynamic expiration
-    let token = JwtManager::generate_token(&user, &jwt_secret, expiration_minutes)
+    let token = JwtManager::generate_token(&user, &jwt_secret, expiration_minutes.into())
         .map_err(AuthError::InternalError)?;
 
     let response = AuthResponse {
         token,
-        expires_in: JwtManager::get_expiration_seconds(expiration_minutes),
+        expires_in: JwtManager::get_expiration_seconds(expiration_minutes.into()),
     };
 
     Ok(Json(response))
@@ -94,11 +97,9 @@ mod tests {
             address: "127.0.0.1".parse().unwrap(),
             port: 3000,
             database_url: db_url,
+            jwt_settings: crate::config::JwtSettings::new(5, "test_secret_key".to_string()),
+            security_limits: crate::config::SecurityAndLimits::new(5),
             openapi: crate::config::OpenApiDocs::default(),
-            jwt_secret: "test_secret_key".to_string(),
-            jwt_expiration_minutes: 5,
-            rate_limit_per_second: 5,
-            security_headers_enabled: true,
         };
 
         let state = AppState {
@@ -130,11 +131,9 @@ mod tests {
             address: "127.0.0.1".parse().unwrap(),
             port: 3000,
             database_url: db_url,
+            jwt_settings: crate::config::JwtSettings::new(5, "test_secret_key".to_string()),
+            security_limits: crate::config::SecurityAndLimits::new(5),
             openapi: crate::config::OpenApiDocs::default(),
-            jwt_secret: "test_secret_key".to_string(),
-            jwt_expiration_minutes: 5,
-            rate_limit_per_second: 5,
-            security_headers_enabled: true,
         };
 
         let state = AppState {
@@ -192,11 +191,9 @@ mod tests {
             address: "127.0.0.1".parse().unwrap(),
             port: 3000,
             database_url: db_url,
+            jwt_settings: crate::config::JwtSettings::new(5, "test_secret_key".to_string()),
+            security_limits: crate::config::SecurityAndLimits::new(5),
             openapi: crate::config::OpenApiDocs::default(),
-            jwt_secret: "test_secret_key".to_string(),
-            jwt_expiration_minutes: 5,
-            rate_limit_per_second: 5,
-            security_headers_enabled: true,
         };
 
         let state = AppState {
@@ -249,11 +246,9 @@ mod tests {
             address: "127.0.0.1".parse().unwrap(),
             port: 3000,
             database_url: db_url,
+            jwt_settings: crate::config::JwtSettings::new(10, "test_secret_key".to_string()), // Custom expiration
+            security_limits: crate::config::SecurityAndLimits::new(5),
             openapi: crate::config::OpenApiDocs::default(),
-            jwt_secret: "test_secret_key".to_string(),
-            jwt_expiration_minutes: 10, // Custom expiration
-            rate_limit_per_second: 5,
-            security_headers_enabled: true,
         };
 
         let state = AppState {
