@@ -1,5 +1,5 @@
 [workspace]
-members = ["word-api-axum"]
+members = ["fe-leptos-randomword", "word-api-axum"]
 resolver = "2"
 
 [workspace.package]
@@ -9,11 +9,12 @@ license = "Apache-2.0"
 rust-version = "1.88"
 authors = ["Andrea C"]
 repository = "http://github.com/andreacfromtheapp/random-word-api"
+keywords = ["speak-and-spell"]
 homepage = "https://word-api-axum.netlify.app"
 
 [workspace.dependencies]
 # General purpose dependencies that could be shared across workspace members
-regex = "1.11.1"
+regex = "1.11.2"
 anyhow = "1.0.99"
 chrono = { version = "0.4.41", features = ["serde"] }
 serde = { version = "1.0.219", features = ["derive"] }

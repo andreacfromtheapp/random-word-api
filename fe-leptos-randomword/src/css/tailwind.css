@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+@plugin '@tailwindcss/typography';
+@plugin "daisyui" {
+  themes:
+    light --default,
+    dark --prefersdark;
+}
+
+@theme {
+  --font-sans: LexendDeca, sans-serif;
+}
+
+@layer utilities {
+}

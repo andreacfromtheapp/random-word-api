@@ -1,0 +1,181 @@
+use icondata as i;
+use leptos::prelude::*;
+use leptos_icons::Icon;
+use serde::{Deserialize, Serialize};
+
+const API_URL: &str = "http://localhost:3000/en";
+
+#[derive(Default, Deserialize, Serialize, Clone)]
+struct Word {
+    word: String,
+    definition: String,
+    pronunciation: String,
+}
+
+async fn get_word(word_type: &str) -> Result<Word, String> {
+    let uri = format!("{API_URL}/{}", word_type.to_lowercase());
+    let response = reqwest::get(&uri).await.map_err(|e| e.to_string())?;
+
+    match response.json::<Vec<Word>>().await {
+        Ok(words) => {
+            if let Some(word) = words.into_iter().next() {
+                Ok(word)
+            } else {
+                Err("No words found in response".to_string())
+            }
+        }
+        Err(e) => Err(format!("Failed to parse JSON: {}", e)),
+    }
+}
+
+#[component]
+fn Header() -> impl IntoView {
+    view! {
+        <h1 class="py-4 text-2xl font-bold text-center" aria-label="header title with API name">
+            "Really Simple Demo"
+        </h1>
+    }
+}
+
+#[component]
+fn Demo() -> impl IntoView {
+    let (gramm_type, set_gramm_type) = signal("Random");
+    let (word_data, set_word_data) = signal(None::<Word>);
+    let (error, set_error) = signal(None::<String>);
+
+    provide_context(set_gramm_type);
+
+    let fetch_word = move |_| {
+        let word_type = gramm_type.get();
+        set_error.set(None);
+
+        leptos::task::spawn_local(async move {
+            match get_word(word_type).await {
+                Ok(word) => {
+                    set_word_data.set(Some(word));
+                }
+                Err(e) => {
+                    set_error.set(Some(e));
+                }
+            }
+        });
+    };
+
+    view! {
+        <div class="flex flex-col h-4/5" aria-label="main area to display a random word">
+            <div class="justify-items-start py-6 px-4 m-auto w-full text-lg border-2 bg-base-200 border-base-300">
+                {move || {
+                    if let Some(err) = error.get() {
+                        view! {
+                            <div class="">
+                                <p class="p-1 text-error">"Error: " {err}</p>
+                            </div>
+                        }
+                            .into_any()
+                    } else if let Some(word) = word_data.get() {
+                        view! {
+                            <div class="">
+                                <p class="p-1">"word: " {word.word.clone()}</p>
+                            </div>
+                            <div class="">
+                                <p class="p-1">"definition: " {word.definition.clone()}</p>
+                            </div>
+                            <div class="">
+                                <p class="p-1">"pronunciation: " {word.pronunciation.clone()}</p>
+                            </div>
+                        }
+                            .into_any()
+                    } else {
+                        view! {
+                            <div class="text-center">
+                                <p class="p-1">
+                                    "Load a random word (optionally choose a grammatical type first)..."
+                                </p>
+                            </div>
+                        }
+                            .into_any()
+                    }
+                }} <div class="justify-self-end mt-8">
+                    <div class="dropdown">
+                        <div tabindex="0" role="button" class="m-1 btn btn-outline">
+                            Choose Type
+                            <Icon icon=i::FaChevronDownSolid />
+                        </div>
+                        <ul
+                            tabindex="0"
+                            class="p-2 w-52 shadow-sm dropdown-content menu bg-base-100 rounded-box z-1"
+                        >
+                            <GrammaticalTypeButton btn_name="Random" />
+                            <GrammaticalTypeButton btn_name="Adjective" />
+                            <GrammaticalTypeButton btn_name="Adverb" />
+                            <GrammaticalTypeButton btn_name="Article" />
+                            <GrammaticalTypeButton btn_name="Conjunction" />
+                            <GrammaticalTypeButton btn_name="Interjection" />
+                            <GrammaticalTypeButton btn_name="Noun" />
+                            <GrammaticalTypeButton btn_name="Preposition" />
+                            <GrammaticalTypeButton btn_name="Pronoun" />
+                            <GrammaticalTypeButton btn_name="Verb" />
+                        </ul>
+                    </div>
+                    <button class="btn btn-neutral" on:click=fetch_word>
+                        "Load "
+                        {gramm_type}
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+#[component]
+fn GrammaticalTypeButton(btn_name: &'static str) -> impl IntoView {
+    let setter =
+        use_context::<WriteSignal<&'static str>>().expect("to have found the setter provided");
+
+    view! {
+        <li>
+            <button onclick="document.activeElement.blur()" on:click=move |_| setter.set(btn_name)>
+                {btn_name}
+            </button>
+        </li>
+    }
+}
+
+#[component]
+fn Footer() -> impl IntoView {
+    view! {
+        <footer
+            class="items-center p-4 footer sm:footer-horizontal"
+            aria-label="footer with copyright info and link to GitHub repository"
+        >
+            <aside class="grid-flow-col items-center">
+                <Icon icon=i::FaCopyrightRegular />
+                <p>2025 - Andrea C</p>
+            </aside>
+            <nav class="grid-flow-col gap-2 text-2xl md:justify-self-end md:place-self-center">
+                <a
+                    href="https://github.com/andreacfromtheapp/random-word-api"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    <Icon icon=i::FaGithubBrands />
+                </a>
+            </nav>
+        </footer>
+    }
+}
+
+#[component]
+pub fn App() -> impl IntoView {
+    view! {
+        <main class="overflow-hidden overscroll-none font-sans bg-base-100 text-base-content h-dvh">
+            <div class="flex flex-col m-auto max-w-3xl h-full">
+                <div class="h-19/20">
+                    <Header />
+                    <Demo />
+                </div>
+                <Footer />
+            </div>
+        </main>
+    }
+}
