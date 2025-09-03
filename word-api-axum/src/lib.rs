@@ -14,6 +14,7 @@
 
 use anyhow::{Context, Result};
 use std::path::Path;
+use tokio::signal;
 
 pub mod auth;
 pub mod cli;
@@ -26,6 +27,32 @@ pub mod routes;
 pub mod state;
 
 use crate::error::AppError;
+
+/// Graceful shutdown implemented to stop accepting new requests, wait for the current
+///  requests to finish, and then shut down the server.
+async fn shutdown_signal() {
+    let ctrl_c = async {
+        signal::ctrl_c()
+            .await
+            .expect("failed to install Ctrl+C handler");
+    };
+
+    #[cfg(unix)]
+    let terminate = async {
+        signal::unix::signal(signal::unix::SignalKind::terminate())
+            .expect("failed to install signal handler")
+            .recv()
+            .await;
+    };
+
+    #[cfg(not(unix))]
+    let terminate = std::future::pending::<()>();
+
+    tokio::select! {
+        _ = ctrl_c => {},
+        _ = terminate => {},
+    }
+}
 
 /// Validates file existence for configuration files
 ///
@@ -110,6 +137,7 @@ pub async fn run_app(cli: cli::Cli) -> Result<(), AppError> {
         listener,
         router?.into_make_service_with_connect_info::<SocketAddr>(),
     )
+    .with_graceful_shutdown(shutdown_signal())
     .await
     .context("couldn't start the API server")?;
 
