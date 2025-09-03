@@ -9,7 +9,20 @@ license = "Apache-2.0"
 rust-version = "1.88"
 authors = ["Andrea C"]
 repository = "http://github.com/andreacfromtheapp/random-word-api"
-keywords = ["speak-and-spell"]
+keywords = [
+  "speak",
+  "spell",
+  "dictionary",
+  "words",
+  "random",
+  "restful",
+  "restful api",
+  "rest",
+  "rest api",
+  "api",
+  "axum",
+  "leptos",
+]
 homepage = "https://word-api-axum.netlify.app"
 
 [workspace.dependencies]
