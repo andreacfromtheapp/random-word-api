@@ -1,0 +1,20 @@
+# docker-compose.yml
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.backend
+    ports:
+      - "3000:3000"
+    # environment:
+    #   - RUST_LOG=info
+
+  frontends:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.frontends
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+

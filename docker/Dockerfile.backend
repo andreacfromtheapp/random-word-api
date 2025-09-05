@@ -1,0 +1,37 @@
+# Dockerfile.backend
+FROM rust:1.88.0-slim AS builder
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y pkg-config libssl-dev
+
+WORKDIR /app
+
+# Copy only the necessary files for dependency resolution
+COPY Cargo.toml Cargo.lock ./
+COPY be-word-api-axum/Cargo.toml be-word-api-axum/
+
+# Create a dummy src to cache dependencies
+RUN mkdir -p be-word-api-axum/src && \
+    echo "fn main() {}" > be-word-api-axum/src/main.rs && \
+    cargo build --manifest-path be-word-api-axum/Cargo.toml --release
+
+# Copy the actual source code
+COPY be-word-api-axum/src be-word-api-axum/src
+
+# Build the application
+RUN cargo build --manifest-path be-word-api-axum/Cargo.toml --release
+
+# Final runtime image
+FROM debian:bullseye-slim
+
+RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Copy the compiled binary
+COPY --from=builder /app/be-word-api-axum/target/release/be-word-api-axum /app/be-word-api-axum
+
+EXPOSE 3000
+
+CMD ["/app/be-word-api-axum"]
+
