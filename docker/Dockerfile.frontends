@@ -27,12 +27,10 @@ WORKDIR /app
 
 # Copy workspace files for Leptos frontends
 COPY Cargo.toml Cargo.lock ./
-# COPY fe-leptos-adminpage /app/fe-leptos-adminpage
 COPY fe-leptos-landingpage /app/fe-leptos-landingpage
 COPY fe-leptos-randomword /app/fe-leptos-randomword
 
 # Build Leptos frontends
-# RUN cd fe-leptos-adminpage && trunk build --release
 RUN cd fe-leptos-landingpage && trunk build --release
 RUN cd fe-leptos-randomword && trunk build --release
 
@@ -44,7 +42,6 @@ RUN apk add --no-cache apache2-utils
 
 # Create directory structure
 RUN mkdir -p /usr/share/nginx/html/elm-speakandspell
-# RUN mkdir -p /usr/share/nginx/html/leptos-adminpage
 RUN mkdir -p /usr/share/nginx/html/leptos-landingpage
 RUN mkdir -p /usr/share/nginx/html/leptos-randomword
 
@@ -52,7 +49,6 @@ RUN mkdir -p /usr/share/nginx/html/leptos-randomword
 COPY --from=elm-builder /app/fe-elm_speakandspell/dist /usr/share/nginx/html/elm-speakandspell
 
 # Copy built Leptos frontends
-# COPY --from=leptos-builder /app/fe-leptos-adminpage/dist /usr/share/nginx/html/leptos-adminpage
 COPY --from=leptos-builder /app/fe-leptos-landimgpage/dist /usr/share/nginx/html/leptos-landingpage
 COPY --from=leptos-builder /app/fe-leptos-randomword/dist /usr/share/nginx/html/leptos-randomword
 
