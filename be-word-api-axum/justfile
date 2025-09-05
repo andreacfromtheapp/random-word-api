@@ -3,7 +3,7 @@ help:
 dev:
     watchexec -r -e rs cargo run
 doc:
-    watchexec -r -e rs cargo doc
+    watchexec -r -e rs cargo doc --open
 swagger:
     watchexec -r -e rs cargo r -- --with-swagger-ui
 redoc:
