@@ -12,7 +12,6 @@ rust-version.workspace = true
 [dependencies]
 serde = { workspace = true }
 leptos = { version = "0.8", features = ["csr"] }
-leptos-use = { version = "0.16.2", features = [] }
 leptos_icons = { version = "0.7.0", features = [] }
 icondata = { version = "0.6.0", default-features = false, features = [
   "font-awesome",
