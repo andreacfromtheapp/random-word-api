@@ -1,5 +1,5 @@
 [workspace]
-members = ["be-word-api-axum", "fe-leptos-adminpage", "fe-leptos-randomword"]
+members = ["be-word-api-axum", "fe-leptos-adminpage", "fe-leptos-landingpage", "fe-leptos-randomword"]
 resolver = "2"
 
 [workspace.package]

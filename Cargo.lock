@@ -1011,6 +1011,16 @@ name = "fe-leptos-adminpage"
 version = "0.1.0"
 
 [[package]]
+name = "fe-leptos-landingpage"
+version = "0.1.0"
+dependencies = [
+ "console_error_panic_hook",
+ "icondata",
+ "leptos",
+ "leptos_icons",
+]
+
+[[package]]
 name = "fe-leptos-randomword"
 version = "0.1.0"
 dependencies = [
