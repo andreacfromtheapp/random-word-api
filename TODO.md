@@ -65,24 +65,18 @@
 
 - [x] Split codebase and use a workspace:
   - [x] Add backend with `Axum`
-  - [x] Add frontend with `Elm Speak and Spell` for fun UI
   - [x] Add frontend with `Leptos CSR` for random word UI + reload
-  - [ ] Add frontend with `Leptos SSR` for admin with auth
 
 ## Part 4
 
-- [ ] Docker and Compose for a demo:
-  - [ ] `Nginx` for:
-    - [ ] <https://localhost/> (a brief description and links to services)
-    - [ ] <https://admin.localhost/> (API admin of words)
-    - [ ] <https://random.localhost/> (page with random word + button)
-    - [ ] <https://play.localhost/> (Elm Speak n Spell)
-    - [ ] <https://swagger.localhost/> (Swagger UI)
-    - [ ] <https://redoc.localhost/> (Redoc UI)
-    - [ ] <https://scalar.localhost/> (Scalar UI)
-    - [ ] <https://rapidoc.localhost/> (RapiDoc UI)
-  - [ ] <https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html>
-  - [ ] API backend
+- [x] Docker and Compose for a demo:
+  - [x] API backend
+  - [x] `Nginx` for:
+    - [x] <https://localhost/> (a brief landing page with description and links)
+    - [x] <https://localhost/swagger-ui> (Swagger UI)
+    - [x] <https://localhost/redoc> (Redoc UI)
+    - [x] <https://localhost/scalar> (Scalar UI)
+    - [x] <https://localhost/rapidoc> (RapiDoc UI)
 
 ## Part 5
 
