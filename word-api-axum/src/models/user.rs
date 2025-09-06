@@ -75,16 +75,6 @@ pub struct LoginRequest {
     pub password: String,
 }
 
-/// User registration request data
-#[derive(Debug, Deserialize, Validate, ToSchema)]
-pub struct RegisterRequest {
-    #[validate(length(min = 3, max = 50))]
-    pub username: String,
-    #[validate(length(min = 6))]
-    pub password: String,
-    pub is_admin: Option<bool>,
-}
-
 /// Authentication response containing JWT token
 #[derive(Debug, Serialize, ToSchema)]
 pub struct AuthResponse {

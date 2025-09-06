@@ -12,7 +12,7 @@ use http::HeaderValue;
 use utoipa::OpenApi;
 
 use crate::handlers::{admin::*, auth::*, healthcheck::*, word::*};
-use crate::models::user::{AuthResponse, LoginRequest, RegisterRequest};
+use crate::models::user::{AuthResponse, LoginRequest};
 use crate::models::word::{GetWord, UpsertWord, Word};
 use crate::state::AppState;
 
@@ -36,7 +36,7 @@ use crate::state::AppState;
         word_delete,
     ),
     components(
-        schemas(Word, GetWord, UpsertWord, LoginRequest, RegisterRequest, AuthResponse)
+        schemas(Word, GetWord, UpsertWord, LoginRequest, AuthResponse)
     ),
     tags(
         (name = "healthcheck_endpoints", description = "Health check and system status endpoints"),

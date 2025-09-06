@@ -1,6 +1,6 @@
 //! Authentication endpoint handlers
 //!
-//! Provides login and registration endpoints for user authentication.
+//! Provides login endpoints for user authentication.
 //! Handles JWT token generation and user credential validation.
 
 use axum::{extract::State, response::IntoResponse, Json};
