@@ -1,37 +1,43 @@
 # Dockerfile.backend
-FROM rust:1.88.0-slim AS builder
+FROM rust:1.88.0-slim-bullseye AS builder
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y pkg-config libssl-dev
+RUN apt-get update && apt-get install -y pkg-config libssl-dev curl
 
 WORKDIR /app
 
-# Copy only the necessary files for dependency resolution
-COPY Cargo.toml Cargo.lock ./
-COPY be-word-api-axum/Cargo.toml be-word-api-axum/
+# Copy the entire project to maintain workspace integrity
+COPY . .
 
-# Create a dummy src to cache dependencies
-RUN mkdir -p be-word-api-axum/src && \
-    echo "fn main() {}" > be-word-api-axum/src/main.rs && \
-    cargo build --manifest-path be-word-api-axum/Cargo.toml --release
+# Build dependencies first
+RUN cargo fetch
 
-# Copy the actual source code
-COPY be-word-api-axum/src be-word-api-axum/src
-
-# Build the application
-RUN cargo build --manifest-path be-word-api-axum/Cargo.toml --release
+# Build the specific package
+RUN cargo build -p word-api-axum --release
 
 # Final runtime image
 FROM debian:bullseye-slim
 
-RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
+# Install essential runtime dependencies
+RUN apt-get update && apt-get install -y \
+    ca-certificates \
+    libssl1.1 \
+    && rm -rf /var/lib/apt/lists/*
+
 
 WORKDIR /app
 
+# Cory the API configuratinn file
+COPY docker/api/config.toml /app/word-api-axum/config.toml
+
 # Copy the compiled binary
-COPY --from=builder /app/be-word-api-axum/target/release/be-word-api-axum /app/be-word-api-axum
+COPY --from=builder /app/target/release/word-api-axum /app/word-api-axum
+
+# Ensure the binary has execute permissions
+RUN chmod +x /app/word-api-axum/word-api-axum
 
 EXPOSE 3000
 
-CMD ["/app/be-word-api-axum"]
+# Use ENTRYPOINT for the base command
+ENTRYPOINT ["/app/word-api-axum/word-api-axum", "-c", "/app/word-api-axum/config.toml"]
 

@@ -1,21 +1,3 @@
-# Dockerfile.frontends
-FROM node:22-alpine AS elm-builder
-
-# Install build dependencies
-RUN apk add --no-cache autoconf automake libtool gcc musl-dev
-
-WORKDIR /app/fe-elm_speakandspell
-
-# Copy Elm project files
-COPY fe-elm_speakandspell/package.json fe-elm_speakandspell/package-lock.json ./
-COPY fe-elm_speakandspell/vite.config.js ./
-COPY fe-elm_speakandspell/index.html ./
-COPY fe-elm_speakandspell/src ./src
-
-# Install dependencies and build
-RUN npm install
-RUN npm run build
-
 # Rust Leptos Frontends Builder
 FROM rust:1.88.0-slim AS leptos-builder
 
@@ -26,13 +8,13 @@ RUN cargo install trunk
 WORKDIR /app
 
 # Copy workspace files for Leptos frontends
-COPY Cargo.toml Cargo.lock ./
-COPY fe-leptos-landingpage /app/fe-leptos-landingpage
-COPY fe-leptos-randomword /app/fe-leptos-randomword
+COPY . .
+
+# Verify project structure and build
+RUN cargo fetch
 
 # Build Leptos frontends
 RUN cd fe-leptos-landingpage && trunk build --release
-RUN cd fe-leptos-randomword && trunk build --release
 
 # Final Nginx Stage
 FROM nginx:alpine
@@ -41,16 +23,10 @@ FROM nginx:alpine
 RUN apk add --no-cache apache2-utils
 
 # Create directory structure
-RUN mkdir -p /usr/share/nginx/html/elm-speakandspell
 RUN mkdir -p /usr/share/nginx/html/leptos-landingpage
-RUN mkdir -p /usr/share/nginx/html/leptos-randomword
-
-# Copy built Elm frontend (Vite build)
-COPY --from=elm-builder /app/fe-elm_speakandspell/dist /usr/share/nginx/html/elm-speakandspell
 
 # Copy built Leptos frontends
-COPY --from=leptos-builder /app/fe-leptos-landimgpage/dist /usr/share/nginx/html/leptos-landingpage
-COPY --from=leptos-builder /app/fe-leptos-randomword/dist /usr/share/nginx/html/leptos-randomword
+COPY --from=leptos-builder /app/fe-leptos-landingpage/dist /usr/share/nginx/html/leptos-landingpage
 
 # Create htpasswd file for authentication
 RUN htpasswd -b -c /etc/nginx/.htpasswd admin admin

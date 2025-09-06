@@ -32,3 +32,8 @@ README*
 
 # Tests
 tests/
+
+# Database files
+*.db*
+*.sqlite*
+*.sqlite3*
