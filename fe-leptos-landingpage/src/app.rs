@@ -1,6 +1,32 @@
 use icondata as i;
 use leptos::prelude::*;
 use leptos_icons::Icon;
+use serde::{Deserialize, Serialize};
+
+const API_URL: &str = "http://localhost:3000/en";
+
+#[derive(Default, Deserialize, Serialize, Clone)]
+struct Word {
+    word: String,
+    definition: String,
+    pronunciation: String,
+}
+
+async fn get_word(word_type: &str) -> Result<Word, String> {
+    let uri = format!("{API_URL}/{}", word_type.to_lowercase());
+    let response = reqwest::get(&uri).await.map_err(|e| e.to_string())?;
+
+    match response.json::<Vec<Word>>().await {
+        Ok(words) => {
+            if let Some(word) = words.into_iter().next() {
+                Ok(word)
+            } else {
+                Err("No words found in response".to_string())
+            }
+        }
+        Err(e) => Err(format!("Failed to parse JSON: {}", e)),
+    }
+}
 
 #[component]
 fn Header() -> impl IntoView {
@@ -15,71 +41,50 @@ fn Header() -> impl IntoView {
 fn Landing() -> impl IntoView {
     view! {
         <div class="flex flex-col h-4/5" aria-label="main landing page area">
-            <div class="my-4 mt-20 hero bg-base-200">
-                <div class="text-center hero-content">
-                    <div class="max-w-md">
+            <div class="my-4 mt-20 border-2 hero bg-base-200 border-base-300">
+                <div class="text-lg text-center hero-content">
+                    <div class="max-w-lg">
                         <h1 class="text-3xl font-bold">"Simple Demo"</h1>
                         <p class="py-6">
-                            "This is a simple landing page for my toy project Random Words API.
-                            This project served me well to learn developing a RESTful API with Rust
-                            using Axum. The landing page is a convenience entry point for users to
-                            access the different interfaces for interacting with random words."
+                            "A simple landing page for my toy project Random Words API.
+                            Which served me to learn developing a RESTful API with Axum."
                         </p>
+                        <p>"For an example of 'production usage', play with "</p>
+                        <a
+                            href="https://speak-and-spell.netlify.app/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="link"
+                        >
+                            "my Speak and Spell clone made with Elm!!"
+                        </a>
                     </div>
                 </div>
             </div>
 
-            <div class="flex my-8">
-                <div class="w-96 card card-border bg-base-100">
-                    <div class="card-body">
-                        <h2 class="card-title">"Speak and Spell Game"</h2>
-                        <p>
-                            "Interactive word learning game. A Speak and Spell clone Made with Elm."
-                        </p>
-                        <div class="justify-end card-actions">
-                            <button class="btn btn-primary">
-                                <a href="/play/">"Play"</a>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="w-96 card card-border bg-base-100">
-                    <div class="card-body">
-                        <h2 class="card-title">"Random Word Generator"</h2>
-                        <p>
-                            "Retrieve random words from the database on demand. Made with Leptos."
-                        </p>
-                        <div class="justify-end card-actions">
-                            <button class="btn btn-primary">
-                                <a href="/random/">"Random"</a>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <Demo />
 
             <div class="mt-12">
                 <h3 class="text-2xl font-bold text-center">"OpenAPI Documentation"</h3>
                 <div class="flex mt-5">
                     <ul class="flex mx-auto">
                         <li class="pr-2">
-                            <button class="btn btn-lg btn-primary">
+                            <button class="btn btn-neutral">
                                 <a href="/swagger-ui">"Swagger UI"</a>
                             </button>
                         </li>
                         <li class="px-2">
-                            <button class="btn btn-lg btn-primary">
+                            <button class="btn btn-neutral">
                                 <a href="/scalar">"Scalar"</a>
                             </button>
                         </li>
                         <li class="px-2">
-                            <button class="btn btn-lg btn-primary">
+                            <button class="btn btn-neutral">
                                 <a href="/redoc">"Redoc"</a>
                             </button>
                         </li>
                         <li class="pl-2">
-                            <button class="btn btn-lg btn-primary">
+                            <button class="btn btn-neutral">
                                 <a href="/rapidoc">"RapiDoc"</a>
                             </button>
                         </li>
@@ -87,6 +92,110 @@ fn Landing() -> impl IntoView {
                 </div>
             </div>
         </div>
+    }
+}
+
+#[component]
+fn Demo() -> impl IntoView {
+    let (gramm_type, set_gramm_type) = signal("Random");
+    let (word_data, set_word_data) = signal(None::<Word>);
+    let (error, set_error) = signal(None::<String>);
+
+    provide_context(set_gramm_type);
+
+    let fetch_word = move |_| {
+        let word_type = gramm_type.get();
+        set_error.set(None);
+
+        leptos::task::spawn_local(async move {
+            match get_word(word_type).await {
+                Ok(word) => {
+                    set_word_data.set(Some(word));
+                }
+                Err(e) => {
+                    set_error.set(Some(e));
+                }
+            }
+        });
+    };
+
+    view! {
+        <div class="flex flex-col h-3/5" aria-label="main area to display a random word">
+            <div class="justify-items-start py-6 px-4 m-auto w-full text-lg border-2 bg-base-200 border-base-300">
+                {move || {
+                    if let Some(err) = error.get() {
+                        view! {
+                            <div class="">
+                                <p class="p-1 text-error">"Error: " {err}</p>
+                            </div>
+                        }
+                            .into_any()
+                    } else if let Some(word) = word_data.get() {
+                        view! {
+                            <div class="">
+                                <p class="p-1">"word: " {word.word.clone()}</p>
+                            </div>
+                            <div class="">
+                                <p class="p-1">"definition: " {word.definition.clone()}</p>
+                            </div>
+                            <div class="">
+                                <p class="p-1">"pronunciation: " {word.pronunciation.clone()}</p>
+                            </div>
+                        }
+                            .into_any()
+                    } else {
+                        view! {
+                            <div class="text-center">
+                                <p class="p-1">
+                                    "Load a random word (optionally choose a grammatical type first)..."
+                                </p>
+                            </div>
+                        }
+                            .into_any()
+                    }
+                }} <div class="justify-self-end mt-8">
+                    <div class="dropdown">
+                        <div tabindex="0" role="button" class="m-1 btn btn-outline">
+                            Choose Type
+                            <Icon icon=i::FaChevronDownSolid />
+                        </div>
+                        <ul
+                            tabindex="0"
+                            class="p-2 w-52 shadow-sm dropdown-content menu bg-base-100 rounded-box z-1"
+                        >
+                            <GrammaticalTypeButton btn_name="Random" />
+                            <GrammaticalTypeButton btn_name="Adjective" />
+                            <GrammaticalTypeButton btn_name="Adverb" />
+                            <GrammaticalTypeButton btn_name="Article" />
+                            <GrammaticalTypeButton btn_name="Conjunction" />
+                            <GrammaticalTypeButton btn_name="Interjection" />
+                            <GrammaticalTypeButton btn_name="Noun" />
+                            <GrammaticalTypeButton btn_name="Preposition" />
+                            <GrammaticalTypeButton btn_name="Pronoun" />
+                            <GrammaticalTypeButton btn_name="Verb" />
+                        </ul>
+                    </div>
+                    <button class="btn btn-neutral" on:click=fetch_word>
+                        "Load "
+                        {gramm_type}
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+#[component]
+fn GrammaticalTypeButton(btn_name: &'static str) -> impl IntoView {
+    let setter =
+        use_context::<WriteSignal<&'static str>>().expect("to have found the setter provided");
+
+    view! {
+        <li>
+            <button onclick="document.activeElement.blur()" on:click=move |_| setter.set(btn_name)>
+                {btn_name}
+            </button>
+        </li>
     }
 }
 

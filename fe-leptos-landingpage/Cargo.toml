@@ -11,12 +11,14 @@ homepage.workspace = true
 description = "A simple Leptos landing page"
 
 [dependencies]
+serde = { workspace = true }
 leptos = { version = "0.8", features = ["csr"] }
 leptos_icons = { version = "0.7.0", features = [] }
 icondata = { version = "0.6.0", default-features = false, features = [
   "font-awesome",
 ] }
 console_error_panic_hook = "0.1.7"
+reqwest = { version = "0.12.23", features = ["brotli", "gzip", "json"] }
 
 [lints.clippy]
 empty_docs = "allow"
