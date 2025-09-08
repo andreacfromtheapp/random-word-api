@@ -65,12 +65,12 @@
 
 - [x] Split codebase and use a workspace:
   - [x] Add backend with `Axum`
-  - [x] Add frontend with `Leptos CSR` for random word UI + reload
+  - [x] Add landing page with `Leptos (CSR)`
 
 ## Part 4
 
 - [x] Docker and Compose for a demo:
-  - [x] API backend
+  - [x] API backend (with `OpenAPI`)
   - [x] `Nginx` for:
     - [x] <https://localhost/> (a brief landing page with description and links)
     - [x] <https://localhost/swagger-ui> (Swagger UI)
@@ -80,10 +80,10 @@
 
 ## Part 5
 
-- [ ] Finalize `rustdoc` crates documentation
-- [ ] Finalize `openapi` documentation
-- [ ] Finalize `README.md` with useful info about it all:
-  - [ ] rationale
-  - [ ] learning
-  - [ ] deployment
-  - [ ] usage
+- [x] Finalize `rustdoc` crates documentation
+- [x] Finalize `openapi` documentation
+- [x] Finalize `README.md` with useful info about it all:
+  - [x] rationale
+  - [x] learning
+  - [x] deployment
+  - [x] usage
