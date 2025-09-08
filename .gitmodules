@@ -1,0 +1,3 @@
+[submodule "fe-elm_speakandspell"]
+	path = fe-elm_speakandspell
+	url = https://github.com/andreacfromtheapp/elm_speakandspell.git
