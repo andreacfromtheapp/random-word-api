@@ -26,7 +26,6 @@
 //! - HTTP request tracing for observability
 //! - CORS headers for cross-origin requests
 
-// Routes module
 use anyhow::{Context, Result};
 use axum::{middleware, Router};
 use http::HeaderValue;

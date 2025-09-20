@@ -23,6 +23,9 @@ pub async fn security_headers(request: Request<Body>, next: Next) -> Response {
     // Prevent MIME type sniffing
     headers.insert("x-content-type-options", "nosniff".parse().unwrap());
 
+    // Specify Content-Type to mitigate XSS vulnerabilities
+    headers.insert("content-type", "application/json".parse().unwrap());
+
     // Control referrer information sent when following links
     headers.insert(
         "referrer-policy",
@@ -66,6 +69,7 @@ mod tests {
             headers.get("referrer-policy").unwrap(),
             "strict-origin-when-cross-origin"
         );
+        assert_eq!(headers.get("content-type").unwrap(), "application/json");
     }
 
     #[tokio::test]
@@ -92,6 +96,7 @@ mod tests {
 
         // Existing headers should be preserved
         assert_eq!(headers.get("custom-header").unwrap(), "custom-value");
+        assert_eq!(headers.get("content-type").unwrap(), "application/json");
     }
 
     #[tokio::test]

@@ -24,12 +24,12 @@ endpoints and OpenAPI documentation. This follows JWT best practices including:
 - `PUT /admin/{lang}/words/{id}` - Update word by ID
 - `DELETE /admin/{lang}/words/{id}` - Delete word by ID
 
-### OpenAPI Documentation (Require Authentication, except redoc)
+### OpenAPI Documentation (Nginx Authorization Required)
 
-- `GET /swagger-ui/*` - Swagger UI (protected)
-- `GET /scalar/*` - Scalar documentation (protected)
-- `GET /rapidoc/*` - RapiDoc documentation (protected)
-- `GET /redoc/*` - ReDoc documentation (public)
+- `GET /swagger-ui/*` - Swagger UI
+- `GET /scalar/*` - Scalar documentation
+- `GET /rapidoc/*` - RapiDoc documentation
+- `GET /redoc/*` - ReDoc documentation
 
 ### Public Endpoints (No Authentication Required)
 
@@ -182,24 +182,13 @@ No authentication required:
 
 ```bash
 # Get a random word
-curl -s -X GET http://localhost:3000/en/words/random
+curl -s -X GET http://localhost:3000/en/random
 
 # Get a random noun
-curl -s -X GET http://localhost:3000/en/words/random/noun
+curl -s -X GET http://localhost:3000/en/noun
 
 # Health check
 curl -s -X GET http://localhost:3000/health
-```
-
-### 4. Accessing Protected Documentation
-
-```bash
-# Swagger UI (requires authentication)
-curl -s -X GET http://localhost:3000/swagger-ui \
-  -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
-
-# ReDoc (public access)
-curl -s -X GET http://localhost:3000/redoc
 ```
 
 ## Error Responses
@@ -241,33 +230,6 @@ curl -s -X GET http://localhost:3000/redoc
   "error": "Username and password required"
 }
 ```
-
-## Security Best Practices
-
-### 1. JWT Secret Management
-
-- Use a strong, randomly generated secret (minimum 32 characters)
-- Store the secret securely (environment variables, secret management systems)
-- Rotate the secret periodically in production
-
-### 2. Password Requirements
-
-- Minimum 6 characters (consider increasing in production)
-- Use strong passwords with mixed case, numbers, and symbols
-- Hash passwords with Argon2id before storing
-
-### 3. Token Security
-
-- Tokens expire after 24 hours by default
-- Store tokens securely on the client side
-- Implement proper token refresh mechanisms
-
-### 4. Admin Account Management
-
-- Create admin accounts manually through database access
-- Regularly audit admin permissions
-- Use principle of least privilege
-- Monitor admin activity
 
 ## Troubleshooting
 

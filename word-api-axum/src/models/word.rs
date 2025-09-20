@@ -3,6 +3,7 @@
 //! Provides database operations for managing dictionary words with lemmas,
 //! definitions, and IPA pronunciations. Supports random word retrieval
 //! with optional filtering by grammatical type.
+
 use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 use sqlx::{query, query_as, SqlitePool};

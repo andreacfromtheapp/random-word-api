@@ -2,6 +2,7 @@
 //!
 //! Provides random word retrieval with optional filtering by grammatical type.
 //! All endpoints are publicly accessible and return JSON responses.
+
 use crate::error::AppError;
 use crate::models::word::GetWord;
 use crate::state::AppState;

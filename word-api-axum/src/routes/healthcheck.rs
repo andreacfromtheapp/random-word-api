@@ -3,7 +3,6 @@
 //! Provides `/health/alive` and `/health/ready` endpoints for liveness
 //! and readiness probes. Suitable for load balancers and orchestration platforms.
 
-// Public routes configuration
 use axum::{routing::get, Router};
 use http::{HeaderValue, Method};
 use tower_http::cors::CorsLayer;

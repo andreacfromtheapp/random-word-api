@@ -36,6 +36,3 @@ WHERE
     ROWID = new.ROWID;
 
 END;
-
--- Note: No default users created. Use the /auth/register endpoint to create users.
--- The first user can be created via API and manually set as admin in the database if needed.

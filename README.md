@@ -2,42 +2,53 @@
 
 > [!CAUTION]
 >
-> This API is NOT meant for production usage. It is a toy project I used for
-> learning purposes only. DO NOT DEPLOY THIS API. Do NOT bother opening GitHub
-> issues either, I won't support this project any further.
+> This API is NOT meant for production usage. It's a simple project I used for
+> learning purposes only!
 
-This is my first RESTful API made with [Axum](https://github.com/tokio-rs/axum).
-The proverbial itch to scratch to learn about and to develop REST API design and
-development with Axum. Its main purpose, besides learning, is to be a simple API
-to use with my
-[Speak and Spell](https://github.com/andreacfromtheapp/elm_speakandspell) toy
-project, made with Elm. This, however, didn't mean I had to limit the extent of
-my learning. In fact, I took this as an opportunity to learn more. Besides REST
-API concepts and improving idiomatic Rust skills, I learned a number of, new to
-me, techniques, concepts, and best practices:
+My first [RESTful](https://restfulapi.net/rest-architectural-constraints/) API
+made with [Axum](https://github.com/tokio-rs/axum). The proverbial itch to
+scratch to learn REST API design and development. Its main purpose, besides
+learning, is to be a simple API to use with my
+[Speak and Spell](https://github.com/andreacfromtheapp/elm_speakandspell) app.
+This, however, didn't limit the extent of my learning. Au contraire, this was an
+opportunity to learn as much as possible about RESTful APIs, improving idiomatic
+Rust skills; and to learn a number of techniques, concepts, and best practices:
 
+- [x] CLI interface, with parameters validation, to instantiate the service
 - [x] Use an environment file or configuration file to setup the API
-- [x] Use TLS encryption (learned it and removed it. Better left to the proxy)
-- [x] Proper `rustdoc` crate documentation (run `cargo doc --open` from within
-      the `word-api-axum` directory)
+- [x] `rustdoc` documentation (run `just doc` from within the `word-api-axum`
+      directory)
+- [x] Use TLS encryption (learned and removed, as it's best left to the proxy)
+- [x] User database with
+      [RBAC](https://en.wikipedia.org/wiki/Role-based_access_control) for users
+      and administrative accounts
 - [x] Authentication with database credentials for administrative endpoints
 - [x] Authorization with JWT on protected administrative endpoints
+- [x] Compile-time checked queries validation with
+      [SQLx](https://github.com/launchbadge/sqlx?tab=readme-ov-file#sqlx-is-not-an-orm)
+      to prevent SQL Injections.
+- [x] Requests validation to make sure all parameters are as expected
+- [x] Extensive error handling for REST and database operations
+- [x] Appropriate HTTP status codes for each request case
 - [x] Middleware pattern with:
-  - [x] Compression
-  - [x] Requests timeout
-  - [x] Security headers
-  - [x] Request limiting
-  - [x] Body size limiting
-  - [x] Requests rate limiting
-  - [x] CORS (only allow certain verbs on each endpoint)
-  - [x] Tracing (for API logging)
+  - [x] Compression for faster transfers
+  - [x] Requests time out to avoid client hanging too long
+  - [x] Security headers to apply restrictions and
+        [OWASP](https://owasp.org/www-project-secure-headers/) security list
+  - [x] Request limiting to avoid abuse
+  - [x] Body size limiting to avoid abuse
+  - [x] Requests rate limiting to avoid abuse
+  - [x] CORS Methods restrictions to control HTTP verbs and allow only what's
+        needed on each route
+  - [x] CORS Origins restrictions to control which domains can access the API
+  - [x] Tracing for API logging
 - [x] [Open API](https://www.openapis.org/) documentation with:
   - [x] [Swagger UI](https://swagger.io/tools/swagger-ui/)
   - [x] [Redoc](https://redocly.com/)
   - [x] [Scalar](https://scalar.com/)
   - [x] [RapiDoc](https://rapidocweb.com/)
-- [x] Developed a simple landing page with `Leptos (CSR)` for demo purposes
-- [x] Containerized everything with Docker Compose for demo purposes
+- [x] Simple landing page made with Leptos for demo purposes
+- [x] Containerized everything with Docker for demo purposes
 - [x] Password protected OpenAPI endpoints with Nginx (user and password: admin)
 
 ## Available endpoints
@@ -52,32 +63,28 @@ me, techniques, concepts, and best practices:
 
 ### Docker compose
 
-Until I find an inexpensive solution to host my API to peruse with Speak and
-Spell, I put together a little demo with Docker that you can see by following
-these three simple actions:
+I put together a little demo with Docker that you can run by following these
+three simple actions:
 
 - Clone the repository:
   `git clone https://github.com/andreacfromtheapp/random-word-api.git`
 - Move into the cloned repository: `cd random-word-api`
 - Run `docker compose up --build`
 
-Unfortunately Rust will take a while to compile on Docker, please be patient.
-When that's done, visit [http://localhost](http://localhost) in your web browser
-and enjoy.
+Rust takes a while on Docker, be patient. When that's ready, visit
+[http://localhost](http://localhost) in your web browser and enjoy.
 
 ### Run locally
 
-You could also see this API run as if it was deployed by:
+You could also peruse this API as if it was a deployed service:
 
 - Clone the repository:
   `git clone https://github.com/andreacfromtheapp/random-word-api.git`
 - Move into the API web service repository: `cd random-word-api/word-api-axum`
-- Running it locally from a terminal (see `justfile` commands)
-- Using `curl` or similar to query the API endpoints:
-  - For admin endpoints see [AUTHENTICATION](/AUTHENTICATION.md#usage-examples)
-  - For public endpoints run `curl` GET requests
-  - For OpenAPI endpoints append to <http://localhost>:
-    - `/swagger-ui`, `/redoc`, `/scalar,` `/rapidoc`
+- Running it locally from a terminal: `just run`
+- Using `curl` or similar to query the [API endpoints](#available-endpoints):
+- For administrative endpoints see
+  [AUTHENTICATION](/AUTHENTICATION.md#usage-examples)
 
 ### Run Elm Speak and Spell
 
@@ -86,22 +93,19 @@ To see this in action:
 - Clone the repository:
   `git clone https://github.com/andreacfromtheapp/random-word-api.git`
 - Move into the API web service repository: `cd random-word-api/word-api-axum`
-  and run the API: `cargo r`
-- In a new terminal window/tab move into the `fe-elm_speakandspell` directory
-  and:
-  - Set the backend local environment variable `VITE_APP_URL` to
-    `"http://localhost:3000"`
-  - Run the app with `npm run dev`
-  - Browse [http://localhost:5173/](http://localhost:5173/)
+  and run the API: `just run`
+- In a new terminal move into the `fe-elm_speakandspell` directory and run the
+  app with `npm run dev`
+- Browse [http://localhost:5173/](http://localhost:5173/) and enjoy
 
 ## Acknowledgments
 
-My API is inspired by <https://github.com/mcnaveen/random-words-api>, which I
-initially used to use when developing my Speak and Spell toy project. Then they
-closed the spigot, presumably because it was costing them too much (due to their
-success and free usage).
+Random Word API was inspired by <https://github.com/mcnaveen/random-words-api>,
+which I used to use when developing my Speak and Spell toy project. Then they
+closed the spigot, because it was costing them too much. Incidentally, this is
+why I'm not deploying my API to production. I can't afford it.
 
-Random Word API initial code is based on
+Random Word API code was initially based on
 [Code Like a Pro in Rust](https://www.manning.com/books/code-like-a-pro-in-rust);
 which I own and have used to learn more about Rust, after studying
 [The Book](https://doc.rust-lang.org/book/).

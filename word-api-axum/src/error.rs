@@ -4,7 +4,6 @@
 //! appropriate HTTP status codes and JSON error responses. Provides
 //! structured error types for database operations and path validation.
 
-// Error handling helpers
 use axum::{
     http::StatusCode,
     response::{IntoResponse, Response},

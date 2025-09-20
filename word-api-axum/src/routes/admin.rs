@@ -11,7 +11,6 @@
 //! - `PUT /admin/{lang}/words/{id}` - Update word by ID (admin only)
 //! - `DELETE /admin/{lang}/words/{id}` - Delete word by ID (admin only)
 
-// Admin routes configuration
 use axum::{middleware, routing::get, Router};
 use http::{HeaderValue, Method};
 use tower_http::cors::CorsLayer;

@@ -2,10 +2,12 @@
 //!
 //! Public endpoints for monitoring system health and database connectivity.
 //! Designed for use with load balancers and monitoring systems.
+
 use axum::extract::State;
 
 use crate::error::AppError;
 use crate::state::AppState;
+
 /// Simple API liveness check endpoint.
 ///
 /// This endpoint provides a basic liveness probe that confirms the API service

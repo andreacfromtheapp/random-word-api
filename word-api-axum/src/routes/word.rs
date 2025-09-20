@@ -15,7 +15,6 @@
 //! - `noun`, `verb`, `adjective`, `adverb`, `pronoun`, `preposition`,
 //!   `conjunction`, `interjection`, `article`
 
-// Public routes configuration
 use axum::{routing::get, Router};
 use http::{HeaderValue, Method};
 use tower_http::cors::CorsLayer;

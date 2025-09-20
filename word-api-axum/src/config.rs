@@ -9,7 +9,6 @@
 //! 2. TOML configuration files
 //! 3. CLI arguments (default)
 
-// Application configuration
 use serde::{Deserialize, Serialize};
 use std::{fmt, net::IpAddr, path::PathBuf};
 use validator::Validate;
@@ -86,7 +85,7 @@ impl ApiConfig {
         // set default config values
         let default_configs = Self::default();
 
-        let what_file = match kind {
+        let file_kind = match kind {
             FileKind::Toml => toml::to_string(&default_configs)?,
             FileKind::EnvFile => Self::to_string(&default_configs),
         };
@@ -94,7 +93,7 @@ impl ApiConfig {
         // create the default file
         let mut buffer = File::create(file)?;
         // write all lines from the above steps
-        buffer.write_all(what_file.as_bytes())?;
+        buffer.write_all(file_kind.as_bytes())?;
 
         println!("configuration file '{file:?}' created successfully");
 
@@ -132,6 +131,7 @@ impl ApiConfig {
 
         // set the variables as needed
         Ok(ApiConfig {
+            // TODO: possibly add checks where dotenvy won't parse/catch edge cases
             server_settings: ApiSettings::new(
                 IpAddr::from_str(&dotenvy::var("BIND_ADDR")?)?,
                 u16::from_str(&dotenvy::var("BIND_PORT")?)?,
@@ -176,15 +176,15 @@ impl ApiConfig {
             .collect::<String>();
 
         // parse the configuration String and store in model Struct
-        let my_configs: Self = toml::from_str(&file_content)?;
+        let configs_from_file: Self = toml::from_str(&file_content)?;
 
         // set the variables as needed
         Ok(ApiConfig {
-            server_settings: my_configs.server_settings,
-            compression: my_configs.compression,
-            jwt_settings: my_configs.jwt_settings,
-            api_limits: my_configs.api_limits,
-            openapi: my_configs.openapi,
+            server_settings: configs_from_file.server_settings,
+            compression: configs_from_file.compression,
+            jwt_settings: configs_from_file.jwt_settings,
+            api_limits: configs_from_file.api_limits,
+            openapi: configs_from_file.openapi,
         })
     }
 
@@ -297,6 +297,10 @@ impl ApiSettings {
     }
 }
 
+/// Formats ApiSettings as environment variable file content
+///
+/// Converts configuration to .env file format for easy sharing
+/// and deployment configuration management.
 impl fmt::Display for ApiSettings {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         // Convert origins to a comma-separated string
@@ -318,6 +322,10 @@ impl fmt::Display for ApiSettings {
     }
 }
 
+/// Provides default configuration values for development and testing
+///
+/// Safe defaults suitable for local development with minimal setup.
+/// Production deployments should use explicit configuration files.
 impl Default for ApiSettings {
     fn default() -> Self {
         use std::str::FromStr;
@@ -354,6 +362,10 @@ impl ApiCompression {
     }
 }
 
+/// Provides default configuration values for development and testing
+///
+/// Safe defaults suitable for local development with minimal setup.
+/// Production deployments should use explicit configuration files.
 impl Default for ApiCompression {
     fn default() -> Self {
         ApiCompression {
@@ -363,6 +375,10 @@ impl Default for ApiCompression {
     }
 }
 
+/// Formats ApiCompression as environment variable file content
+///
+/// Converts configuration to .env file format for easy sharing
+/// and deployment configuration management.
 impl fmt::Display for ApiCompression {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
@@ -390,26 +406,33 @@ impl JwtSettings {
     /// Create new JWT settings with specified expiration and secret
     ///
     /// # Arguments
-    /// * `expiration_minutes` - Token validity duration (1-1440 minutes)
+    /// * `token_expiration_minutes` - Token validity duration (1-1440 minutes)
     /// * `secret` - Cryptographically secure secret key for token signing
-    pub fn new(expiration_minutes: u16, secret: String) -> Self {
+    pub fn new(token_expiration_minutes: u16, secret: String) -> Self {
         Self {
-            token_expiration_minutes: expiration_minutes,
+            token_expiration_minutes,
             secret,
         }
     }
 }
 
+/// Provides default configuration values for development and testing
+///
+/// Safe defaults suitable for local development with minimal setup.
+/// Production deployments should use explicit configuration files.
 impl Default for JwtSettings {
     fn default() -> Self {
         JwtSettings {
-            // Token expiration time in minutes (1-1440, default: 5)
             token_expiration_minutes: 5,
             secret: "default_jwt_secret_change_in_production".to_string(),
         }
     }
 }
 
+/// Formats JwtSettings as environment variable file content
+///
+/// Converts configuration to .env file format for easy sharing
+/// and deployment configuration management.
 impl fmt::Display for JwtSettings {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
@@ -463,9 +486,10 @@ impl ApiLimits {
     }
 }
 
-/// Provides safe default values for API limits
+/// Provides default configuration values for development and testing
 ///
-/// Default configuration suitable for most applications with moderate traffic.
+/// Safe defaults suitable for local development with minimal setup.
+/// Production deployments should use explicit configuration files.
 impl Default for ApiLimits {
     fn default() -> Self {
         ApiLimits {
@@ -477,6 +501,10 @@ impl Default for ApiLimits {
     }
 }
 
+/// Formats ApiLimits as environment variable file content
+///
+/// Converts configuration to .env file format for easy sharing
+/// and deployment configuration management.
 impl fmt::Display for ApiLimits {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(

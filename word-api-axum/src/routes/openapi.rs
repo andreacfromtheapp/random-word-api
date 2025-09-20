@@ -6,7 +6,6 @@
 //! All documentation endpoints are publicly accessible without authentication,
 //! allowing developers to explore the API structure and test public endpoints.
 
-// OpenAPI documentation configuration
 use axum::Router;
 use http::HeaderValue;
 use utoipa::OpenApi;

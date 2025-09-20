@@ -8,7 +8,6 @@
 //! 2. TOML config files
 //! 3. CLI arguments
 
-// API command line interface
 use clap::{Args, Parser, Subcommand};
 use std::net::IpAddr;
 use std::path::PathBuf;

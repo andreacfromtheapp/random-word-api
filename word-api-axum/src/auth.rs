@@ -63,7 +63,7 @@ impl PasswordHelper {
 /// JWT token utilities with enhanced security validation
 ///
 /// Implements JWT best practices including:
-/// - Standard claims validation (iss, aud, exp, nbf, iat, jti)
+/// - Standard claims validation
 /// - Token type verification to prevent access/refresh confusion
 /// - Cryptographically secure unique identifiers
 /// - Comprehensive temporal validation
