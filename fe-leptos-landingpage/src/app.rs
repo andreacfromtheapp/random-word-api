@@ -3,7 +3,7 @@ use leptos::prelude::*;
 use leptos_icons::Icon;
 use serde::{Deserialize, Serialize};
 
-const API_URL: &str = "http://localhost:3000/en";
+const API_URL: &str = "http://localhost:3000";
 
 #[derive(Default, Deserialize, Serialize, Clone)]
 struct Word {
@@ -12,8 +12,12 @@ struct Word {
     pronunciation: String,
 }
 
-async fn get_word(word_type: &str) -> Result<Word, String> {
-    let uri = format!("{API_URL}/{}", word_type.to_lowercase());
+async fn get_word(dict_lang: &str, word_type: &str) -> Result<Word, String> {
+    let uri = format!(
+        "{API_URL}/{}/{}",
+        dict_lang.to_lowercase(),
+        word_type.to_lowercase()
+    );
     let response = reqwest::get(&uri).await.map_err(|e| e.to_string())?;
 
     match response.json::<Vec<Word>>().await {
@@ -46,18 +50,52 @@ fn Landing() -> impl IntoView {
                     <div class="max-w-lg">
                         <h1 class="text-3xl font-bold">"Simple Demo"</h1>
                         <p class="py-6">
-                            "A simple landing page for my toy project Random Words API.
-                            Which served me to learn developing a RESTful API with Axum."
+                            "A simple landing page for my toy project "
+                            <a
+                                href="https://github.com/andreacfromtheapp/random-word-api"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="link"
+                            >
+                                "Words API"
+                            </a>
+                            ". Which served me to learn "
+                            <a
+                                href="https://restfulapi.net/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="link"
+                            >
+                                "RESTful API"
+                            </a> " development with "
+                            <a
+                                href="https://github.com/tokio-rs/axum"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="link"
+                            >
+                                "Axum"
+                            </a> "."
                         </p>
-                        <p>"For an example of 'production usage', play with "</p>
-                        <a
-                            href="https://speak-and-spell.netlify.app/"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            class="link"
-                        >
-                            "my Speak and Spell clone made with Elm!!"
-                        </a>
+                        <p>
+                            "My "
+                            <a
+                                href="https://speak-and-spell.netlify.app/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="link"
+                            >
+                                "Speak and Spell clone"
+                            </a> " made with "
+                            <a
+                                href="https://elm-lang.org"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="link"
+                            >
+                                "Elm"
+                            </a> ", uses it as backend."
+                        </p>
                     </div>
                 </div>
             </div>
@@ -98,6 +136,7 @@ fn Landing() -> impl IntoView {
 #[component]
 fn Demo() -> impl IntoView {
     let (gramm_type, set_gramm_type) = signal("Random");
+    let (dict_lang, _set_dict_lang) = signal("en");
     let (word_data, set_word_data) = signal(None::<Word>);
     let (error, set_error) = signal(None::<String>);
 
@@ -105,10 +144,11 @@ fn Demo() -> impl IntoView {
 
     let fetch_word = move |_| {
         let word_type = gramm_type.get();
+        let lang = dict_lang.get();
         set_error.set(None);
 
         leptos::task::spawn_local(async move {
-            match get_word(word_type).await {
+            match get_word(lang, word_type).await {
                 Ok(word) => {
                     set_word_data.set(Some(word));
                 }

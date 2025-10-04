@@ -32,13 +32,6 @@ pub async fn security_headers(request: Request<Body>, next: Next) -> Response {
         "strict-origin-when-cross-origin".parse().unwrap(),
     );
 
-    // I may not need this since I already use Axum CORS.
-    // // Allow API access to specified domains
-    // headers.insert(
-    //     "access-control-allow-origin",
-    //     "https://speak-and-spell.netlify.app/".parse().unwrap(),
-    // );
-
     response
 }
 

@@ -35,7 +35,7 @@ RUN htpasswd -b -c /etc/nginx/.htpasswd admin admin
 COPY docker/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY docker/nginx/nginx-frontends.conf /etc/nginx/conf.d/default.conf
 
-EXPOSE 80
+EXPOSE 8080
 
 CMD ["nginx", "-g", "daemon off;"]
 

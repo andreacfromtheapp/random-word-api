@@ -51,6 +51,28 @@ Rust skills; and to learn a number of techniques, concepts, and best practices:
 - [x] Containerized everything with Docker for demo purposes
 - [x] Password protected OpenAPI endpoints with Nginx (user and password: admin)
 
+## Omitted RESTful requirements
+
+For a simple API as this is, I have deliberately chosen to omit implementing the
+following, although part of a RESTful API specs:
+
+- **Metadata and links ([HATEOAS](https://restfulapi.net/hateoas/))**: although
+  a recommendation I particularly agree with (I'm always in favor of code and
+  tool being as informative and self-explaining as possiblu), this particular
+  project API schema was always going to be simple. To allow focusing all
+  head-space to internalize all the _required-by-the-spec_ concepts and API
+  patterns.
+
+- **TLS encryption**: I have learned how to implement TLS encryption with tower
+  middleware and subsequently removed the functionality for two main reasons.
+  The first is to leave the certificate management to the proxy (Nginx); and the
+  second, purely demo related, is to not ask users to trust a self-signed cert.
+
+I'm sure there's plenty more to learn about RESTful APIs and 1) I'll update
+and/or refactor this project if/when necessary; 2) I'm going to develop other
+APIs and build them _more complex and better_. This should come with
+improvements for me too.
+
 ## Available endpoints
 
 - `/health/alive` and `/health/ready` - Public health check endpoints

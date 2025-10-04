@@ -105,7 +105,7 @@ pub struct AuthResponse {
 /// - All timestamps use Unix epoch format for consistency
 /// - UUIDs provide cryptographically strong unique identifiers
 /// - Validation occurs automatically during token verification
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Claims {
     // Standard JWT claims (RFC 7519)
     /// Issuer - identifies the service that issued this token
