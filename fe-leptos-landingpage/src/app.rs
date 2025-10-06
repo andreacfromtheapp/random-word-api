@@ -6,7 +6,8 @@ use crate::model::*;
 
 async fn get_word(dict_lang: &str, word_type: &str) -> Result<Word, String> {
     let uri = format!(
-        "{API_URL}/{}/{}",
+        "{}/{}/{}",
+        api_url(),
         dict_lang.to_lowercase(),
         word_type.to_lowercase()
     );
