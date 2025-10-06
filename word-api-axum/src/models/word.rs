@@ -102,27 +102,27 @@ impl std::fmt::Display for GrammaticalType {
 pub enum LanguageCode {
     #[strum(serialize = "en")]
     English,
-    // #[strum(serialize = "de")]
-    // German,
-    // #[strum(serialize = "fr")]
-    // French,
-    // #[strum(serialize = "es")]
-    // Spanish,
-    // #[strum(serialize = "it")]
-    // Italian,
-    // #[strum(serialize = "nl")]
-    // Dutch,
+    #[strum(serialize = "de")]
+    German,
+    #[strum(serialize = "fr")]
+    French,
+    #[strum(serialize = "es")]
+    Spanish,
+    #[strum(serialize = "it")]
+    Italian,
+    #[strum(serialize = "nl")]
+    Dutch,
 }
 
 impl LanguageCode {
     pub fn table_name(&self) -> &str {
         match self {
             LanguageCode::English => "words",
-            // Language::German => "words_de",
-            // Language::French => "words_fr",
-            // Language::Spanish => "words_es",
-            // Language::Italian => "words_it",
-            // Language::Dutch => "words_nl",
+            LanguageCode::German => "words_de",
+            LanguageCode::French => "words_fr",
+            LanguageCode::Spanish => "words_es",
+            LanguageCode::Italian => "words_it",
+            LanguageCode::Dutch => "words_nl",
         }
     }
 }
@@ -131,11 +131,11 @@ impl std::fmt::Display for LanguageCode {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             LanguageCode::English => write!(f, "en"),
-            // Language::German => write!(f, "de"),
-            // Language::French => write!(f, "fr"),
-            // Language::Spanish => write!(f, "es"),
-            // Language::Italian => write!(f, "it"),
-            // Language::Dutch => write!(f, "nl"),
+            LanguageCode::German => write!(f, "de"),
+            LanguageCode::French => write!(f, "fr"),
+            LanguageCode::Spanish => write!(f, "es"),
+            LanguageCode::Italian => write!(f, "it"),
+            LanguageCode::Dutch => write!(f, "nl"),
         }
     }
 }

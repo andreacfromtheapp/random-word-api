@@ -4,7 +4,7 @@
 @plugin "daisyui" {
   themes:
     light --default,
-    dark --prefersdark;
+    dark --dark;
 }
 
 @theme {
