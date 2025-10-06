@@ -16,6 +16,7 @@ use axum::{body::Body, http::Request, middleware::Next, response::Response};
 ///
 /// Refer to OWASP for more: <https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html>
 pub async fn security_headers(request: Request<Body>, next: Next) -> Response {
+    let path = request.uri().path().to_string();
     let mut response = next.run(request).await;
 
     let headers = response.headers_mut();
@@ -23,8 +24,21 @@ pub async fn security_headers(request: Request<Body>, next: Next) -> Response {
     // Prevent MIME type sniffing
     headers.insert("x-content-type-options", "nosniff".parse().unwrap());
 
-    // Specify Content-Type to mitigate XSS vulnerabilities
-    headers.insert("content-type", "application/json".parse().unwrap());
+    // Set appropriate content-type based on route
+    let is_docs_page = path == "/swagger-ui/"
+        || path == "/swagger-ui"
+        || path == "/redoc"
+        || path == "/redoc/"
+        || path == "/scalar"
+        || path == "/scalar/"
+        || path == "/rapidoc"
+        || path == "/rapidoc/";
+
+    if is_docs_page {
+        headers.insert("content-type", "text/html".parse().unwrap());
+    } else if !headers.contains_key("content-type") {
+        headers.insert("content-type", "application/json".parse().unwrap());
+    }
 
     // Control referrer information sent when following links
     headers.insert(
@@ -62,7 +76,10 @@ mod tests {
             headers.get("referrer-policy").unwrap(),
             "strict-origin-when-cross-origin"
         );
-        assert_eq!(headers.get("content-type").unwrap(), "application/json");
+        assert_eq!(
+            headers.get("content-type").unwrap(),
+            "text/plain; charset=utf-8"
+        );
     }
 
     #[tokio::test]
