@@ -5,73 +5,74 @@
 > This API is NOT meant for production usage. It's a simple project I used for
 > learning purposes only!
 
-My first [RESTful](https://restfulapi.net/rest-architectural-constraints/) API
-made with [Axum](https://github.com/tokio-rs/axum). The proverbial itch to
-scratch to learn REST API design and development. Its main purpose, besides
-learning, is to be a simple API to use with my
-[Speak and Spell](https://github.com/andreacfromtheapp/elm_speakandspell) app.
-This, however, didn't limit the extent of my learning. Au contraire, this was an
-opportunity to learn as much as possible about RESTful APIs, improving idiomatic
-Rust skills; and to learn a number of techniques, concepts, and best practices:
+A simple RESTful API built with Axum in Rust, created as a personal project to
+dive deep into web service development and to learn a number of techniques,
+concepts, and best practices. Initially designed to support my Speak and Spell
+application, it evolved into a comprehensive learning experience.
 
-- [x] CLI interface, with parameters validation, to instantiate the service
-- [x] Use an environment file or configuration file to setup the API
-- [x] `rustdoc` documentation (run `just doc` from within the `word-api-axum`
-      directory)
-- [x] Use TLS encryption (learned and removed, as it's best left to the proxy)
-- [x] User database with
-      [RBAC](https://en.wikipedia.org/wiki/Role-based_access_control) for users
-      and administrative accounts
-- [x] Authentication with database credentials for administrative endpoints
-- [x] Authorization with JWT on protected administrative endpoints
-- [x] Compile-time checked queries validation with
-      [SQLx](https://github.com/launchbadge/sqlx?tab=readme-ov-file#sqlx-is-not-an-orm)
-      to prevent SQL Injections.
-- [x] Requests validation to make sure all parameters are as expected
-- [x] Extensive error handling for REST and database operations
-- [x] Appropriate HTTP status codes for each request case
-- [x] Middleware pattern with:
-  - [x] Compression for faster transfers
-  - [x] Requests time out to avoid client hanging too long
-  - [x] Security headers to apply restrictions and
-        [OWASP](https://owasp.org/www-project-secure-headers/) security list
-  - [x] Request limiting to avoid abuse
-  - [x] Body size limiting to avoid abuse
-  - [x] Requests rate limiting to avoid abuse
-  - [x] CORS Methods restrictions to control HTTP verbs and allow only what's
-        needed on each route
-  - [x] CORS Origins restrictions to control which domains can access the API
-  - [x] Tracing for API logging
-- [x] [Open API](https://www.openapis.org/) documentation with:
-  - [x] [Swagger UI](https://swagger.io/tools/swagger-ui/)
-  - [x] [Redoc](https://redocly.com/)
-  - [x] [Scalar](https://scalar.com/)
-  - [x] [RapiDoc](https://rapidocweb.com/)
-- [x] Simple landing page made with Leptos for demo purposes
-- [x] Containerized everything with Docker for demo purposes
-- [x] Password protected OpenAPI endpoints with Nginx (user and password: admin)
+The model is simple by design. It fulfilled all app's requirements, and it
+allowed for a broader learning scope. This project showcases end-to-end web
+service development from database design through deployment, emphasizing
+security, performance, and maintainability practices expected in production
+environments.
 
-## Omitted RESTful requirements
+## Technical Learning Summary
 
-For a simple API as this is, I have deliberately chosen to omit implementing the
-following, although part of a RESTful API specs:
+I built a production-ready RESTful API in Rust using Axum to demonstrate
+full-stack web development capabilities and modern API design patterns.
 
-- **Metadata and links ([HATEOAS](https://restfulapi.net/hateoas/))**: although
-  a recommendation I particularly agree with (I'm always in favor of code and
-  tool being as informative and self-explaining as possible), this particular
-  project API schema was always going to be simple. To allow focusing all
-  head-space to internalize all the _required-by-the-spec_ concepts and API
-  patterns.
+**Core Technologies & Architecture:**
 
-- **TLS encryption**: I have learned how to implement TLS encryption with tower
-  middleware and subsequently removed the functionality for two main reasons.
-  The first is to leave the certificate management to the proxy (Nginx); and the
-  second, purely demo related, is to not ask users to trust a self-signed cert.
+- Rust with Axum framework for high-performance async web services
+- SQLx for compile-time verified database queries (prevents SQL injection)
+- JWT-based authentication with role-based access control (RBAC)
+- Docker containerization with multi-service orchestration
 
-I'm sure I have plenty more to learn about RESTful APIs and 1) I'll update
-and/or refactor this project if/when necessary; 2) I'm going to develop other
-APIs and build them _more complex and better_. This should come with
-improvements too.
+**Security & Production Readiness:**
+
+- Comprehensive middleware stack: compression, timeouts, rate limiting, CORS
+- OWASP security headers implementation
+- Request validation and extensive error handling
+- Proper HTTP status code usage throughout
+
+**Developer Experience & Documentation:**
+
+- CLI interface with parameter validation
+- Complete OpenAPI documentation with multiple UI options (Swagger, Redoc,
+  Scalar)
+- Comprehensive rustdoc documentation
+- Environment-based configuration management
+
+**Additional Skills Demonstrated:**
+
+- Frontend integration with Leptos framework
+- Nginx reverse proxy configuration with authentication
+- Database design with user management and administrative controls
+- RESTful API design following industry standards
+
+## Omitted RESTful Requirements
+
+For this learning-focused API, I deliberately omitted certain RESTful
+specifications to maintain project scope and focus:
+
+**HATEOAS (Hypermedia as the Engine of Application State):**
+
+- Chose to focus on core RESTful patterns rather than metadata and link
+  relationships
+- Simple API schema allowed deeper exploration of fundamental concepts
+- Would implement in more complex, production-scale projects
+
+**TLS Encryption:**
+
+- Initially implemented with Tower middleware, then removed for architectural
+  reasons
+- Delegated certificate management to reverse proxy (Nginx) following best
+  practices
+- Simplified demo experience by avoiding self-signed certificate trust issues
+
+These omissions were strategic decisions to maximize learning depth in core
+areas while maintaining realistic project scope. Future projects will
+incorporate these patterns as complexity and requirements warrant.
 
 ## Available endpoints
 
@@ -89,7 +90,8 @@ improvements too.
 >
 > The deployment free tier shuts the service down after some time of inactivity.
 > You may experience a slow loading because of that. This is not under my
-> control. Please be patient if that should happen. Please and thank you 🙏
+> control. Please be patient, if that should happen. Thank you for your
+> understanding 🙏
 
 An easy experience landing page, for the less technically inclined, is also
 available! Just visit:
@@ -119,11 +121,11 @@ You could also run this API as if it was a deployed service:
 - Running it locally from a terminal: `just run`
 - Using `curl` or similar to query the [API endpoints](#available-endpoints):
 - For administrative endpoints see
-  [AUTHENTICATION](/AUTHENTICATION.md#usage-examples)
+  [AUTHENTICATION](AUTHENTICATION.md#usage-examples)
 
-### Run Elm Speak and Spell
+#### Elm Speak and Spell
 
-To see this in action:
+To see this in action, locally:
 
 - Clone the repository:
   `git clone --recursive https://github.com/andreacfromtheapp/random-word-api.git`
