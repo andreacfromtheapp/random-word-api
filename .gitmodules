@@ -1,3 +1,6 @@
 [submodule "fe-elm_speakandspell"]
 	path = fe-elm_speakandspell
 	url = https://github.com/andreacfromtheapp/elm_speakandspell.git
+[submodule "fe-leptos-landingpage"]
+	path = fe-leptos-landingpage
+	url = git@github.com:andreacfromtheapp/random-word-api-landing.git
