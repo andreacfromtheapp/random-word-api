@@ -16,6 +16,18 @@ service development from database design through deployment, emphasizing
 security, performance, and maintainability practices expected in production
 environments.
 
+## Online demo page
+
+> [!NOTE]
+>
+> The deployment free tier shuts the service down after some time of inactivity.
+> You may experience a slow loading because of that. This is not under my
+> control. Please be patient, if that should happen. Thank you for your
+> understanding 🙏
+
+A demo landing page is available at:
+[https://word-api-axum.netlify.app](https://word-api-axum.netlify.app) 🙌
+
 ## Technical Learning Summary
 
 I built a production-ready RESTful API in Rust using Axum to demonstrate
@@ -82,23 +94,7 @@ incorporate these patterns as complexity and requirements warrant.
 - `/admin/{lang}/words` - Administrative CRUD endpoints (requires auth)
 - `/swagger-ui`, `/redoc`, `/scalar,` `/rapidoc` - OpenAPI documentation
 
-## See it in action
-
-### Online demo page
-
-> [!IMPORTANT]
->
-> The deployment free tier shuts the service down after some time of inactivity.
-> You may experience a slow loading because of that. This is not under my
-> control. Please be patient, if that should happen. Thank you for your
-> understanding 🙏
-
-An easy experience landing page, for the less technically inclined, is also
-available! Just visit:
-[https://word-api-axum.netlify.app](https://word-api-axum.netlify.app) and enjoy
-🙌
-
-### Docker compose
+## Docker compose
 
 I put together a little demo with Docker that you can run by following these
 three simple actions:
@@ -111,7 +107,7 @@ three simple actions:
 Rust takes a while on Docker, be patient. When that's ready, visit
 [http://localhost:8080](http://localhost:8080) in your web browser and enjoy.
 
-### Run locally
+## Run locally
 
 You could also run this API as if it was a deployed service:
 
