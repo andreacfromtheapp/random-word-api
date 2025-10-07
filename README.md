@@ -123,18 +123,6 @@ You could also run this API as if it was a deployed service:
 - For administrative endpoints see
   [AUTHENTICATION](AUTHENTICATION.md#usage-examples)
 
-#### Elm Speak and Spell
-
-To see this in action, locally:
-
-- Clone the repository:
-  `git clone --recursive https://github.com/andreacfromtheapp/random-word-api.git`
-- Move into the API web service repository: `cd random-word-api/word-api-axum`
-  and run the API: `just run`
-- In a new terminal move into the `fe-elm_speakandspell` directory and run the
-  app with `npm run dev`
-- Browse [http://localhost:5173/](http://localhost:5173/) and enjoy
-
 ## Acknowledgments
 
 Random Word API was inspired by <https://github.com/mcnaveen/random-words-api>,
