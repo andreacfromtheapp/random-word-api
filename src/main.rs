@@ -4,7 +4,7 @@
 //! command-line options and configuration help.
 
 use clap::Parser;
-use word_api_axum::{cli, error::AppError, run_app};
+use random_word_api::{cli, error::AppError, run_app};
 
 /// Minimal main function - just parse CLI args and delegate to library
 #[tokio::main]

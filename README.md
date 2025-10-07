@@ -85,6 +85,12 @@ improvements too.
 
 ### Online demo page
 
+> [!IMPORTANT]
+>
+> The deployment free tier shuts the service down after some time of inactivity.
+> You may experience a slow loading because of that. This is not under my
+> control. Please be patient if that should happen. Please and thank you 🙏
+
 An easy experience landing page, for the less technically inclined, is also
 available! Just visit:
 [https://word-api-axum.netlify.app](https://word-api-axum.netlify.app) and enjoy

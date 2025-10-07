@@ -1,47 +1,38 @@
-# Workspace-level justfile for random-word-api
-
-# Show available commands
-default:
-    @just --list
-
-# Run the API server
-run *args:
-    cargo run --bin word-api-axum -- {{args}}
-
-# Run the API server in development mode with auto-reload
+help:
+    cargo run -- -h
 dev:
-    watchexec -r -e rs cargo run --bin word-api-axum
-
-# Run the API server with Swagger UI
+    watchexec -r -e rs cargo run
+doc:
+    watchexec -r -e rs cargo doc --open
 swagger:
-    watchexec -r -e rs cargo run --bin word-api-axum -- --with-swagger-ui
-# Run the API server with Redoc
+    watchexec -r -e rs cargo r -- --with-swagger-ui
 redoc:
-    watchexec -r -e rs cargo run --bin word-api-axum -- --with-redoc  --with-swagger-ui
-# Run the API server with Scalar
+    watchexec -r -e rs cargo r -- --with-redoc  --with-swagger-ui
 scalar:
-    watchexec -r -e rs cargo run --bin word-api-axum -- --with-scalar  --with-swagger-ui
-# Run the API server with RapiDoc
+    watchexec -r -e rs cargo r -- --with-scalar --with-swagger-ui
 rapidoc:
-    watchexec -r -e rs cargo run --bin word-api-axum -- --with-rapidoc  --with-swagger-ui
+    watchexec -r -e rs cargo r -- --with-rapidoc --with-swagger-ui
+run:
+    cargo run
 
-# Generate API configuration file
-gen-config:
-    cargo run --bin word-api-axum -- gen-config
-
-# Generate environment file
-gen-env:
-    cargo run --bin word-api-axum -- gen-env-file
-
-# Install development dependencies
-install-deps:
-    cargo install watchexec-cli
-
-# Show workspace information
-info:
-    @echo "=== Workspace Information ==="
-    @cargo tree --workspace
-    @echo ""
-    @echo "=== Workspace Members ==="
-    @cargo metadata --format-version 1 | jq -r '.workspace_members[]'
-
+# Test commands
+test:
+    cargo test
+test-integration:
+    cargo test --test integration_tests
+test-health:
+    cargo test --test health_tests
+test-word-api:
+    cargo test --test word_tests
+test-admin:
+    cargo test --test admin_tests
+test-config:
+    cargo test --test config_tests
+test-all:
+    cargo test --tests
+test-verbose:
+    cargo test --tests -- --nocapture
+test-parallel:
+    cargo test --tests --test-threads=1
+test-watch:
+    watchexec -e rs cargo test --tests
