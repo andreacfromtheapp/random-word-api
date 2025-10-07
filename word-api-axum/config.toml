@@ -7,6 +7,8 @@ allowed_origins = [
   "http://localhost:5173",
   "http://127.0.0.1:1420",
   "http://127.0.0.1:5173",
+  "https://word-api-axum.netlify.app/",
+  "https://speak-and-spell.netlify.app/",
 ]
 
 [compression]
