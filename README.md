@@ -58,7 +58,7 @@ following, although part of a RESTful API specs:
 
 - **Metadata and links ([HATEOAS](https://restfulapi.net/hateoas/))**: although
   a recommendation I particularly agree with (I'm always in favor of code and
-  tool being as informative and self-explaining as possiblu), this particular
+  tool being as informative and self-explaining as possible), this particular
   project API schema was always going to be simple. To allow focusing all
   head-space to internalize all the _required-by-the-spec_ concepts and API
   patterns.
@@ -82,6 +82,13 @@ improvements for me too.
 - `/swagger-ui`, `/redoc`, `/scalar,` `/rapidoc` - OpenAPI documentation
 
 ## See it in action
+
+### Online demo page
+
+An easy experience landing page, for the less technically inclined, is also
+available! Just visit:
+[https://word-api-axum.netlify.app](https://word-api-axum.netlify.app) and enjoy
+🙌
 
 ### Docker compose
 
@@ -124,10 +131,9 @@ To see this in action:
 
 Random Word API was inspired by <https://github.com/mcnaveen/random-words-api>,
 which I used to use when developing my Speak and Spell toy project. Then they
-closed the spigot, because it was costing them too much. Incidentally, this is
-why I'm not deploying my API to production. I can't afford it.
+closed the spigot, because it was costing them too much.
 
-Random Word API code was initially based on
+Random Word API code initially based on
 [Code Like a Pro in Rust](https://www.manning.com/books/code-like-a-pro-in-rust);
 which I own and have used to learn more about Rust, after studying
 [The Book](https://doc.rust-lang.org/book/).
