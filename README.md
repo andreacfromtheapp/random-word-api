@@ -68,10 +68,10 @@ following, although part of a RESTful API specs:
   The first is to leave the certificate management to the proxy (Nginx); and the
   second, purely demo related, is to not ask users to trust a self-signed cert.
 
-I'm sure there's plenty more to learn about RESTful APIs and 1) I'll update
+I'm sure I have plenty more to learn about RESTful APIs and 1) I'll update
 and/or refactor this project if/when necessary; 2) I'm going to develop other
 APIs and build them _more complex and better_. This should come with
-improvements for me too.
+improvements too.
 
 ## Available endpoints
 
@@ -96,16 +96,16 @@ I put together a little demo with Docker that you can run by following these
 three simple actions:
 
 - Clone the repository:
-  `git clone https://github.com/andreacfromtheapp/random-word-api.git`
+  `git clone --recursive https://github.com/andreacfromtheapp/random-word-api.git`
 - Move into the cloned repository: `cd random-word-api`
 - Run `docker compose up --build`
 
 Rust takes a while on Docker, be patient. When that's ready, visit
-[http://localhost](http://localhost) in your web browser and enjoy.
+[http://localhost:8080](http://localhost:8080) in your web browser and enjoy.
 
 ### Run locally
 
-You could also peruse this API as if it was a deployed service:
+You could also run this API as if it was a deployed service:
 
 - Clone the repository:
   `git clone https://github.com/andreacfromtheapp/random-word-api.git`
@@ -120,7 +120,7 @@ You could also peruse this API as if it was a deployed service:
 To see this in action:
 
 - Clone the repository:
-  `git clone https://github.com/andreacfromtheapp/random-word-api.git`
+  `git clone --recursive https://github.com/andreacfromtheapp/random-word-api.git`
 - Move into the API web service repository: `cd random-word-api/word-api-axum`
   and run the API: `just run`
 - In a new terminal move into the `fe-elm_speakandspell` directory and run the
@@ -132,8 +132,3 @@ To see this in action:
 Random Word API was inspired by <https://github.com/mcnaveen/random-words-api>,
 which I used to use when developing my Speak and Spell toy project. Then they
 closed the spigot, because it was costing them too much.
-
-Random Word API code initially based on
-[Code Like a Pro in Rust](https://www.manning.com/books/code-like-a-pro-in-rust);
-which I own and have used to learn more about Rust, after studying
-[The Book](https://doc.rust-lang.org/book/).
