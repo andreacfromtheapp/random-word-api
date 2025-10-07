@@ -78,10 +78,8 @@ fn Landing() -> impl IntoView {
                         class="link link-primary"
                     >
                         "Rust"
-                    </a> ", created as a personal project to dive deep into web service development.
-                    To learn as much as possible about RESTful APIs, to improve my idiomatic Rust,
-                    and to learn a number of techniques, concepts, and best practices.
-                    Initially designed to support my "
+                    </a> ", created as a personal project to dive deep into web service development
+                    and to learn a number of techniques, concepts, and best practices. Initially designed to support my "
                     <a
                         href="https://github.com/andreacfromtheapp/elm_speakandspell"
                         target="_blank"
@@ -89,9 +87,15 @@ fn Landing() -> impl IntoView {
                         class="link link-primary"
                     >
                         "Speak and Spell"
-                    </a>
-                    " application, it evolved into a comprehensive learning experience. This very
-                    landing page is developed with "
+                    </a> " application, it evolved into a "
+                    <a
+                        href="https://funzen.xyz/projects/random-word-api"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="link link-primary"
+                    >
+                        "comprehensive learning experience"
+                    </a> ". Landing page made with "
                     <a
                         href="https://leptos.dev"
                         target="_blank"
@@ -99,12 +103,21 @@ fn Landing() -> impl IntoView {
                         class="link link-primary"
                     >
                         "Leptos"
+                    </a> " and "
+                    <a
+                        href="https://daisyui.com/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="link link-primary"
+                    >
+                        "daisyUI"
                     </a> "."
                 </p>
                 <h2 class="mt-2 text-lg font-semibold md:text-xl">"A Note"</h2>
                 <p>
-                    "Don't be deceived by the minimalism of this page, designed to be enjoyed by everyone.
-                    Try out the demo below and, if more technically inclined, browse the fullstack code on the "
+                    "Don't be deceived by the minimalism of the API. Keeping the
+                    model simple by design, while fulfilling all app's requirements, allowed for a
+                    broader learning scope. Try out the demo below and, if more technically inclined, browse the fullstack code on the "
                     <a
                         href="https://github.com/andreacfromtheapp/random-word-api"
                         target="_blank"
@@ -113,7 +126,7 @@ fn Landing() -> impl IntoView {
                     >
                         "Random Word API"
                     </a>
-                    " repository. I hope you like it as much as I loved learning with this! ❤️🦀"
+                    " repository. I hope you like it as much as I loved learning with this project! ❤️🦀"
                 </p>
             </div>
 
@@ -132,45 +145,29 @@ fn Landing() -> impl IntoView {
             </div>
 
             <div class="mt-2">
-                <h2 class="text-lg font-semibold md:text-xl">"OpenAPI Documentation"</h2>
+                <h2 class="text-lg font-semibold md:text-xl">"API Documentation"</h2>
                 <p>
-                    "OpenAPI is a standardized specification for describing RESTful APIs, providing a
-                    machine-readable interface that generates interactive documentation. By enabling tools like "
                     <a
-                        href="https://swagger.io/tools/swagger-ui/"
+                        href="https://www.openapis.org"
                         target="_blank"
                         rel="noopener noreferrer"
                         class="link link-primary"
                     >
-                        "Swagger UI"
-                    </a> ", "
-                    <a
-                        href="https://scalar.com/"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="link link-primary"
-                    >
-                        "Scalar"
-
-                    </a> ", "
-                    <a
-                        href="https://redocly.com/"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="link link-primary"
-                    >
-                        "Redoc"
-                    </a> ", and "
-                    <a
-                        href="https://rapidocweb.com/"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="link link-primary"
-                    >
-                        "RapiDoc"
+                        "OpenAPI"
                     </a>
-                    ", it transforms complex API interactions into an accessible, self-documenting resource.
-                    The following are available to peruse:"
+                    " is a standardized specification for describing RESTful APIs, providing a
+                    machine-readable interface that generates interactive documentation. It transforms
+                    complex API interactions into an accessible, self-documenting resource. I have
+                    implemented - with the "
+                    <a
+                        href="https://crates.io/crates/utoipa"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="link link-primary"
+                    >
+                        "utoipa"
+                    </a>
+                    " family of crates - the following OpenAPI tools:"
                 </p>
                 <div class="flex mt-5">
                     <ul class="flex mx-auto">

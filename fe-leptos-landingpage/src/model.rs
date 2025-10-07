@@ -1,11 +1,11 @@
 use serde::{Deserialize, Serialize};
 use std::fmt;
 
+pub const REPO_URL: &str = "https://github.com/andreacfromtheapp/random-word-api";
+
 pub fn api_url() -> String {
     dotenvy::var("API_URL").unwrap_or_else(|_| "http://localhost:3000".to_string())
 }
-
-pub const REPO_URL: &str = "https://github.com/andreacfromtheapp/random-word-api";
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum GrammaticalType {
