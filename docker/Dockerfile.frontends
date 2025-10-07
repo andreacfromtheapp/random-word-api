@@ -7,11 +7,8 @@ RUN cargo install trunk
 
 WORKDIR /app
 
-# Copy workspace files for Leptos frontends
-COPY . .
-
-# Verify project structure and build
-RUN cargo fetch
+# Copy the leptos frontend directly
+COPY fe-leptos-landingpage ./fe-leptos-landingpage
 
 # Build Leptos frontends
 RUN cd fe-leptos-landingpage && trunk build --release

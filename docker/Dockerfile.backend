@@ -6,14 +6,14 @@ RUN apt-get update && apt-get install -y pkg-config libssl-dev curl
 
 WORKDIR /app
 
-# Copy the entire project to maintain workspace integrity
+# Copy the entire project
 COPY . .
 
 # Build dependencies first
 RUN cargo fetch
 
-# Build the specific package
-RUN cargo build -p word-api-axum --release
+# Build the package
+RUN cargo build --release
 
 # Final runtime image
 FROM debian:bullseye-slim
@@ -24,20 +24,19 @@ RUN apt-get update && apt-get install -y \
     libssl1.1 \
     && rm -rf /var/lib/apt/lists/*
 
-
 WORKDIR /app
 
-# Cory the API configuratinn file
-COPY docker/api/config.toml /app/word-api-axum/config.toml
+# Copy the API configuration file
+COPY docker/api/config.toml /app/config.toml
 
 # Copy the compiled binary
-COPY --from=builder /app/target/release/word-api-axum /app/word-api-axum
+COPY --from=builder /app/target/release/random-word-api /app/random-word-api
 
 # Ensure the binary has execute permissions
-RUN chmod +x /app/word-api-axum/word-api-axum
+RUN chmod +x /app/random-word-api
 
 EXPOSE 3000
 
 # Use ENTRYPOINT for the base command
-ENTRYPOINT ["/app/word-api-axum/word-api-axum", "-c", "/app/word-api-axum/config.toml"]
+ENTRYPOINT ["/app/random-word-api", "-c", "/app/config.toml"]
 
