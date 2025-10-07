@@ -24,6 +24,9 @@ pub async fn security_headers(request: Request<Body>, next: Next) -> Response {
     // Prevent MIME type sniffing
     headers.insert("x-content-type-options", "nosniff".parse().unwrap());
 
+    // Allow Access-Control-Allow-Origin
+    headers.insert("access-control-allow-origin", "*".parse().unwrap());
+
     // Set appropriate content-type based on route
     let is_docs_page = path == "/swagger-ui/"
         || path == "/swagger-ui"
