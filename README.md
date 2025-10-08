@@ -20,10 +20,10 @@ environments.
 
 > [!NOTE]
 >
-> The deployment free tier shuts the service down after some time of inactivity.
-> You may experience a slow loading because of that. This is not under my
-> control. Please be patient, if that should happen. Thank you for your
-> understanding 🙏
+> The free tier shuts down after some time of inactivity or stop serving
+> entirely if quota is reached. You may experience slow loading times or no demo
+> at all. This is not under my control. Please be patient, if that should
+> happen. Thank you for your understanding 🙏
 
 A demo landing page is available at:
 [https://word-api-axum.netlify.app](https://word-api-axum.netlify.app) 🙌
@@ -115,7 +115,7 @@ You could also run this API as if it was a deployed service:
   `git clone https://github.com/andreacfromtheapp/random-word-api.git`
 - Move into the API web service repository: `cd random-word-api/word-api-axum`
 - Running it locally from a terminal: `just run`
-- Using `curl` or similar to query the [API endpoints](#available-endpoints):
+- Using `curl` or similar to query the [API endpoints](#available-endpoints)
 - For administrative endpoints see
   [AUTHENTICATION](AUTHENTICATION.md#usage-examples)
 
