@@ -7,8 +7,6 @@ allowed_origins = [
   "http://localhost:5173",
   "http://127.0.0.1:1420",
   "http://127.0.0.1:5173",
-  "https://word-api-axum.netlify.app",
-  "https://speak-and-spell.netlify.app",
 ]
 
 [compression]
@@ -20,9 +18,9 @@ token_expiration_minutes = 5
 secret = "default_jwt_secret_change_in_production"
 
 [api_limits]
-rate_limit_per_second = 50
-burst_size = 50
-request_timeout = 50
+rate_limit_per_second = 5
+burst_size = 5
+request_timeout = 5
 request_body_limit_kilobytes = 1024
 
 [openapi]
