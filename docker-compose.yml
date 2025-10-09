@@ -6,8 +6,6 @@ services:
       dockerfile: docker/Dockerfile.backend
     ports:
       - "3000:3000"
-    # environment:
-    #   - RUST_LOG=info
     container_name: backend
 
   frontends:

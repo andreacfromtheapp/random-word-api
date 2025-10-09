@@ -1,3 +1,17 @@
+# Elm Frontend Builder
+FROM node:22-slim AS elm-builder
+
+# Install ca-certificates for SSL connections
+RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Copy Elm frontend
+COPY fe-elm_speakandspell ./fe-elm_speakandspell
+
+# Build Elm frontend - install deps without problematic imagemin
+RUN cd fe-elm_speakandspell && npm install --ignore-scripts && npx elm-tooling install && npx vite build --base=/play/
+
 # Rust Leptos Frontends Builder
 FROM rust:1.88.0-slim AS leptos-builder
 
@@ -10,8 +24,8 @@ WORKDIR /app
 # Copy the leptos frontend directly
 COPY fe-leptos-landingpage ./fe-leptos-landingpage
 
-# Build Leptos frontends
-RUN cd fe-leptos-landingpage && trunk build --release
+# Build Leptos frontends with SPS_URL set to /play
+RUN cd fe-leptos-landingpage && SPS_URL=/play trunk build --release
 
 # Final Nginx Stage
 FROM nginx:alpine
@@ -20,9 +34,10 @@ FROM nginx:alpine
 RUN apk add --no-cache apache2-utils
 
 # Create directory structure
-RUN mkdir -p /usr/share/nginx/html/leptos-landingpage
+RUN mkdir -p /usr/share/nginx/html/leptos-landingpage /usr/share/nginx/html/elm-speakandspell
 
-# Copy built Leptos frontends
+# Copy built frontends
+COPY --from=elm-builder /app/fe-elm_speakandspell/dist /usr/share/nginx/html/elm-speakandspell
 COPY --from=leptos-builder /app/fe-leptos-landingpage/dist /usr/share/nginx/html/leptos-landingpage
 
 # Create htpasswd file for authentication
