@@ -22,11 +22,15 @@ environments.
 >
 > The free tier shuts down after some time of inactivity or stop serving
 > entirely if quota is reached. You may experience slow loading times or no demo
-> at all. This is not under my control. Please be patient, if that should
-> happen. Thank you for your understanding 🙏
+> at all. In the latter case, you could run this demo in
+> [Docker](#docker-compose). This is not under my control. Please be patient, if
+> that should happen. Thank you for your understanding 🙏
 
 A demo landing page is available at:
 [https://word-api-axum.netlify.app](https://word-api-axum.netlify.app) 🙌
+
+Care to read
+[a blogpost about my learning journey](https://funzen.xyz/projects/random-word-api/)?
 
 ## Technical Learning Summary
 
