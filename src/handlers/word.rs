@@ -150,11 +150,11 @@ mod tests {
             "verb",
             "adjective",
             "adverb",
-            "pronoun",
-            "preposition",
-            "conjunction",
-            "interjection",
-            "article",
+            // "pronoun",
+            // "preposition",
+            // "conjunction",
+            // "interjection",
+            // "article",
         ];
 
         for word_type in supported_types {
