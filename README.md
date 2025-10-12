@@ -10,11 +10,8 @@ dive deep into web service development and to learn a number of techniques,
 concepts, and best practices. Initially designed to support my Speak and Spell
 application, it evolved into a comprehensive learning experience.
 
-The model is simple by design. It fulfilled all app's requirements, and it
-allowed for a broader learning scope. This project showcases end-to-end web
-service development from database design through deployment, emphasizing
-security, performance, and maintainability practices expected in production
-environments.
+Read more about design choices and about my learning journey in
+[a blogpost](https://funzen.xyz/projects/random-word-api/) on my homepage.
 
 ## Online demo page
 
@@ -22,19 +19,16 @@ environments.
 >
 > The free tier shuts down after some time of inactivity or stop serving
 > entirely if quota is reached. You may experience slow loading times or no demo
-> at all. In the latter case, you could run this demo in
-> [Docker](#docker-compose). This is not under my control. Please be patient, if
-> that should happen. Thank you for your understanding 🙏
+> at all. In the latter case, you could run the demo with
+> [Docker Compose](#docker-compose). This is not under my control. Please be
+> patient, if that should happen. Thank you for your understanding 🙏
 
 A demo landing page is available at:
 [https://word-api-axum.netlify.app](https://word-api-axum.netlify.app) 🙌
 
-Care to read
-[a blogpost about my learning journey](https://funzen.xyz/projects/random-word-api/)?
-
 ## Technical Learning Summary
 
-I built a production-ready RESTful API in Rust using Axum to demonstrate
+I built a _production-ready_ RESTful API in Rust using Axum to demonstrate
 full-stack web development capabilities and modern API design patterns.
 
 **Core Technologies & Architecture:**
@@ -55,13 +49,14 @@ full-stack web development capabilities and modern API design patterns.
 
 - CLI interface with parameter validation
 - Complete OpenAPI documentation with multiple UI options (Swagger, Redoc,
-  Scalar)
-- Comprehensive rustdoc documentation
+  Scalar, RapiDoc)
+- Comprehensive Rustdoc documentation
 - Environment-based configuration management
 
 **Additional Skills Demonstrated:**
 
 - Frontend integration with Leptos framework
+- Frontend integration with Elm functional programming language
 - Nginx reverse proxy configuration with authentication
 - Database design with user management and administrative controls
 - RESTful API design following industry standards
@@ -86,15 +81,15 @@ specifications to maintain project scope and focus:
   practices
 - Simplified demo experience by avoiding self-signed certificate trust issues
 
-These omissions were strategic decisions to maximize learning depth in core
-areas while maintaining realistic project scope. Future projects will
-incorporate these patterns as complexity and requirements warrant.
+These were strategic decisions to maximize learning depth in core areas while
+maintaining realistic project scope. Future projects will incorporate these
+patterns as complexity and requirements warrant.
 
 ## Available endpoints
 
 - `/health/alive` and `/health/ready` - Public health check endpoints
 - `/{lang}/random` and `/{lang}/{type}` - Public word retrieval endpoints
-- `/auth` - Authentication and authorization (requires admin user)
+- `/auth/login` - Authentication and authorization (requires admin user)
 - `/admin/{lang}/words` - Administrative CRUD endpoints (requires auth)
 - `/swagger-ui`, `/redoc`, `/scalar,` `/rapidoc` - OpenAPI documentation
 
@@ -103,25 +98,29 @@ incorporate these patterns as complexity and requirements warrant.
 I put together a little demo with Docker that you can run by following these
 three simple actions:
 
-- Clone the repository:
-  `git clone --recursive https://github.com/andreacfromtheapp/random-word-api.git`
-- Move into the cloned repository: `cd random-word-api`
-- Run `docker compose up --build`
+```sh
+git clone --recursive https://github.com/andreacfromtheapp/random-word-api.git
+cd random-word-api
+docker compose up --build
+```
 
 Rust takes a while on Docker, be patient. When that's ready, visit
 [http://localhost:8080](http://localhost:8080) in your web browser and enjoy.
 
 ## Run locally
 
-You could also run this API as if it was a deployed service:
+You could also run this API as if it was a deployed service by following these
+three simple actions:
 
-- Clone the repository:
-  `git clone https://github.com/andreacfromtheapp/random-word-api.git`
-- Move into the API web service repository: `cd random-word-api/word-api-axum`
-- Running it locally from a terminal: `just run`
-- Using `curl` or similar to query the [API endpoints](#available-endpoints)
-- For administrative endpoints see
-  [AUTHENTICATION](AUTHENTICATION.md#usage-examples)
+```sh
+git clone https://github.com/andreacfromtheapp/random-word-api.git
+cd random-word-api
+just run
+```
+
+Then, you could use `curl` or similar to query the
+[API endpoints](#available-endpoints). For administrative endpoints see
+[AUTHENTICATION](AUTHENTICATION.md#usage-examples).
 
 ## Acknowledgments
 
